@@ -1,26 +1,23 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.skill-grad-1 {
+  background: linear-gradient(90deg, #2dd4bf, #06b6d4);
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.skill-grad-2 {
+  background: linear-gradient(90deg, #a78bfa, #7c3aed);
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.skill-grad-3 {
+  background: linear-gradient(90deg, #60a5fa, #0ea5e9);
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.skill-grad-4 {
+  background: linear-gradient(90deg, #86efac, #22c55e);
+}
+.skill-grad-5 {
+  background: linear-gradient(90deg, #f472b6, #fb7185);
+}
+.skill-grad-6 {
+  background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+}
+.skill-grad-7 {
+  background: linear-gradient(90deg, #fb923c, #f97316);
 }
