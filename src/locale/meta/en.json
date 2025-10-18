@@ -1,0 +1,15 @@
+{
+  "title": "AimoonHub",
+  "description": "AimoonHub",
+  "keywords": ["next.js", "react", "multilingual", "website"],
+  "openGraph": {
+    "title": "My Multilingual Website",
+    "description": "Explore our multilingual platform built with Next.js.",
+    "image": "/og-en.jpg"
+  },
+  "twitter": {
+    "title": "My Multilingual Website",
+    "description": "Welcome to our multilingual website!",
+    "image": "/twitter-en.jpg"
+  }
+}
