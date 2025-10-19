@@ -14,7 +14,8 @@ import { SchemaMarkup } from "@/app/[lang]/ShemaMarkup";
 
 // Interfaces
 
-import { type Lang } from "@/configs/language";
+import { LangLayoutProps } from "@/Interfaces/global";
+import { languages, type Lang } from "@/configs/language";
 
 // Functions
 
@@ -31,15 +32,11 @@ export async function generateMetadata({
 
 // Page component
 
-export default async function Page({
-  params,
-  children,
-}: {
-  params: { lang: string };
-  children: React.ReactNode;
-}) {
+export default async function Page({ children, params }: LangLayoutProps) {
   const resolvedParams = await params;
-  const websiteSchema = generateWebsiteSchema(resolvedParams.lang as Lang);
+  const lang =
+    resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
+  const websiteSchema = generateWebsiteSchema(lang);
 
   return (
     <>

@@ -9,8 +9,6 @@
 "use client";
 import React from "react";
 
-interface NetworkSectionProps {}
-
 export default function NetworkSection() {
   return (
     <section id="network" className="mt-8 bg-white rounded-xl p-4 shadow-sm">
