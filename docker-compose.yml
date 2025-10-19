@@ -1,0 +1,13 @@
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_ROUTE: "landing"
+        NEXT_PUBLIC_BASE_PATH: "/next-portfolio"
+        NEXT_PUBLIC_API_URL: "https://news.imoonex.ir"
+        NEXT_PUBLIC_BASE_URL: "http://79.175.177.113:"
+        NEXT_PUBLIC_BASE_PORT: "30800"
+    ports:
+      - "3000:3000"

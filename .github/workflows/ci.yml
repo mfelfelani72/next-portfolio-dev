@@ -1,0 +1,94 @@
+name: Next.js CI/CD Build & Deploy (m.felfelani)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout Source Repo
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: 📦 Install pnpm
+        run: |
+          npm install -g pnpm@10.18.1
+          echo "$(npm bin -g)" >> $GITHUB_PATH   # ✅ pnpm در تمام steps در دسترس است
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build Next.js
+        run: pnpm run build
+
+      - name: 📤 Prepare Build Repo
+        env:
+          BUILD_REPO_TOKEN: ${{ secrets.BUILD_REPO_TOKEN }}
+        run: |
+          git clone https://x-access-token:$BUILD_REPO_TOKEN@github.com/mfelfelani72/next-portfolio-build.git ../next-portfolio-build
+          rm -rf ../next-portfolio-build/*
+          cp -R src public package.json pnpm-lock.yaml next.config.ts tsconfig.json tailwind.config.ts postcss.config.mjs Dockerfile docker-compose.yml ../next-portfolio-build/
+          cp -R .next ../next-portfolio-build/
+
+      - name: 🪶 Commit & Push Build Repo
+        env:
+          BUILD_REPO_TOKEN: ${{ secrets.BUILD_REPO_TOKEN }}
+        run: |
+          cd ../next-portfolio-build
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Automated Build $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push origin main
+
+      - name: 🚀 Deploy to Server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          BUILD_REPO_TOKEN: ${{ secrets.BUILD_REPO_TOKEN }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh -o StrictHostKeyChecking=no -p 30022 $SSH_USER@$SSH_HOST "
+            set -e
+            cd ~/projects/front || exit 1
+
+            # اگر پوشه پروژه وجود ندارد، کلون کن
+            if [ ! -d next-portfolio-build ]; then
+              echo '📂 Cloning build repo for the first time...'
+              git clone https://x-access-token:$BUILD_REPO_TOKEN@github.com/mfelfelani72/next-portfolio-build.git
+            fi
+
+            cd next-portfolio-build
+
+            echo '🧹 Fixing permissions (بدون sudo)...'
+            # بدون sudo، فقط مالک current user شود
+            chown -R \$USER:\$USER .git || true
+            chmod -R u+rwX .git
+
+            echo '🧠 Syncing latest build...'
+            git config --global --add safe.directory /home/$SSH_USER/projects/front/next-portfolio-build
+            git fetch https://x-access-token:$BUILD_REPO_TOKEN@github.com/mfelfelani72/next-portfolio-build.git main
+            git reset --hard FETCH_HEAD
+
+            echo '🐳 Rebuilding Docker...'
+            docker-compose down
+            docker-compose build
+            docker-compose up -d
+
+            echo '🧹 Cleaning old Docker cache...'
+            docker system prune -af --volumes || true
+
+            echo '✅ Deployment completed successfully!'
+          "
