@@ -16,8 +16,9 @@ export default function PageLanding() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("home");
 
+
   useEffect(() => {
-    fetch("/api/resume/")
+    fetch("/next-portfolio/api/resume/")
       .then((r) => r.json())
       .then((d: ResumeData) => setData(d));
   }, []);
