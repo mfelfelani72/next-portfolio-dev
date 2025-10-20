@@ -17,7 +17,7 @@ export default function PageLanding() {
   const [active, setActive] = useState("home");
 
   useEffect(() => {
-    fetch("/api/resume")
+    fetch("/api/resume/")
       .then((r) => r.json())
       .then((d: ResumeData) => setData(d));
   }, []);
