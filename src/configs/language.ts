@@ -7,21 +7,26 @@
  */
 
 export const languages = {
-  en: { 
+  en: {
     dir: "ltr",
     locale: "en_US",
-    schemaLocale: "en-US"
+    schemaLocale: "en-US",
+    name: "English",
+    flag: "🇺🇸",
+    nativeName: "English",
   },
-  fa: { 
-    dir: "rtl", 
+  fa: {
+    dir: "rtl",
     locale: "fa_IR",
-    schemaLocale: "fa-IR"
+    schemaLocale: "fa-IR",
+    name: "Persian",
+    flag: "🇮🇷",
+    nativeName: "فارسی",
   },
 } as const;
 
 export type Lang = keyof typeof languages;
 
-// Helper functions
 export function getLocale(lang: Lang): string {
   return languages[lang].locale;
 }
@@ -32,4 +37,16 @@ export function getSchemaLocale(lang: Lang): string {
 
 export function getDirection(lang: Lang): "ltr" | "rtl" {
   return languages[lang].dir;
+}
+
+export function getName(lang: Lang): string {
+  return languages[lang].name;
+}
+
+export function getNativeName(lang: Lang): string {
+  return languages[lang].nativeName;
+}
+
+export function getFlag(lang: Lang): string {
+  return languages[lang].flag;
 }

@@ -19,6 +19,7 @@ export default function PageLanding() {
 
   useEffect(() => {
     fetch("/next-portfolio/api/resume/")
+    // fetch("/api/resume/")
       .then((r) => r.json())
       .then((d: ResumeData) => setData(d));
   }, []);

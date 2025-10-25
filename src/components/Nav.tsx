@@ -8,6 +8,8 @@
 
 "use client";
 import React from "react";
+import LanguageSwitcher from "./base/LanguageSwitcher";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface NavProps {
   active: string;
@@ -24,15 +26,18 @@ export default function Nav({
   name,
   title,
 }: NavProps) {
+  const { t } = useTranslation();
+  
   const items = [
-    "home",
-    "skills",
-    "projects",
-    "network",
-    "certs",
-    "languages",
-    "contact",
+    { id: "home", label: t("home") },
+    { id: "skills", label: t("skills") },
+    { id: "projects", label: t("projects") },
+    { id: "network", label: t("network") },
+    { id: "certs", label: t("certs") },
+    { id: "languages", label: t("languages") },
+    { id: "contact", label: t("contact") },
   ];
+
   return (
     <header className="fixed inset-x-0 top-4 z-40 px-4">
       <div className="max-w-5xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl p-3 flex items-center justify-between shadow-sm">
@@ -47,17 +52,17 @@ export default function Nav({
         </div>
 
         <nav className="hidden md:flex items-center gap-2">
-          {items.map((id) => (
+          {items.map((item) => (
             <a
-              key={id}
-              href={`#${id}`}
+              key={item.id}
+              href={`#${item.id}`}
               className={`px-3 py-1 rounded-md text-xs font-medium transition transform ${
-                active === id
+                active === item.id
                   ? "bg-indigo-600 text-white scale-105 shadow"
                   : "text-gray-700 hover:scale-105"
               }`}
             >
-              {id.charAt(0).toUpperCase() + id.slice(1)}
+              {item.label}
             </a>
           ))}
           <a
@@ -67,6 +72,8 @@ export default function Nav({
             Hire
           </a>
         </nav>
+
+        <LanguageSwitcher />
 
         <div className="md:hidden">
           <button
@@ -79,7 +86,7 @@ export default function Nav({
                 d="M4 7h16M4 12h16M4 17h16"
                 stroke="#111827"
                 strokeWidth="1.6"
-                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </button>

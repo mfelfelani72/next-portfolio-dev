@@ -6,16 +6,14 @@
  * @Description:
  */
 
-// libs/detectComponentResponsive.ts
 import { cookies } from "next/headers";
 import { type ComponentType } from "react";
 
 const detectComponentsResponsive = async (
   MobileComponent: ComponentType<any>,
-  DesktopComponent: ComponentType<any>,
   IpadComponent: ComponentType<any>,
-  TvComponent: ComponentType<any>
-): Promise<ComponentType<any>> => {
+  DesktopComponent: ComponentType<any>
+): Promise<ComponentType<any> | string> => {
   const cookieStore = await cookies();
   const deviceType = cookieStore.get("device-type")?.value;
 
@@ -26,10 +24,8 @@ const detectComponentsResponsive = async (
       return IpadComponent;
     case "desktop":
       return DesktopComponent;
-    case "tv":
-      return TvComponent;
     default:
-      throw new Error(`Unknown device type: ${deviceType}`);
+      return "Unknown";
   }
 };
 

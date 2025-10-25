@@ -1,3 +1,9 @@
 {
-  "aimoonhub": "aimoonhub"
+  "home": "Home",
+  "skills": "Skills",
+  "projects": "Projects",
+  "network": "Network",
+  "certs": "Certs",
+  "languages": "Languages",
+  "contact": "Contact"
 }
