@@ -1,8 +1,9 @@
 import { cache } from "react";
 import en from "./en";
 import fa from "./fa";
+import de from "./de";
 
-const dictionaries = { en, fa };
+const dictionaries = { en, fa, de };
 
 export type Lang = keyof typeof dictionaries;
 

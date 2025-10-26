@@ -15,6 +15,14 @@ export const languages = {
     flag: "🇺🇸",
     nativeName: "English",
   },
+  de: {
+    dir: "ltr",
+    locale: "de",
+    schemaLocale: "de-DE",
+    name: "German",
+    flag: "🇩🇪",
+    nativeName: "Deutsch",
+  },
   fa: {
     dir: "rtl",
     locale: "fa_IR",

@@ -1,0 +1,15 @@
+{
+  "title": "m.felfelani",
+  "description": "Portfolio",
+  "keywords": ["next.js", "react", "mehrsprachig", "Webseite"],
+  "openGraph": {
+    "title": "Meine mehrsprachige Webseite",
+    "description": "Entdecken Sie unsere mit Next.js erstellte mehrsprachige Plattform.",
+    "image": "/og-de.jpg"
+  },
+  "twitter": {
+    "title": "Meine mehrsprachige Webseite",
+    "description": "Willkommen auf unserer mehrsprachigen Webseite!",
+    "image": "/twitter-de.jpg"
+  }
+}
