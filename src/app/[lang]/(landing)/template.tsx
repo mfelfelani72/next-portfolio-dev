@@ -29,7 +29,7 @@ export default function LayoutAnimation({
   }, []);
 
   return (
-    <div className="min-h-screen w-full overflow-y-auto">
+    <div className="w-full overflow-hidden">
       <div
         className={`
           w-full

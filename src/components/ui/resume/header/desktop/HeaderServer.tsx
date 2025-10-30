@@ -1,14 +1,15 @@
 import React from "react";
 
-import Links from "../Links";
+// Components
 
-import { createTranslator } from "@/libs/translation";
-
-import { type Lang } from "@/configs/language";
+import Links from "@/components/ui/resume/header/Links";
 import LanguageSwitcher from "@/components/base/LanguageSwitcher";
 
+// Interfaces
+
+import { type Lang } from "@/configs/language";
+
 const HeaderServer = ({ params = { lang: "en" } }) => {
-  const { t } = createTranslator(params.lang as Lang);
 
   return (
     <>

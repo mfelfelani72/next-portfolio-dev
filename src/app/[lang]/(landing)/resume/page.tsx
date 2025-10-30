@@ -1,6 +1,4 @@
-
 import React from "react";
-
 
 import Header from "@/components/ui/resume/header/HeaderLanding";
 
@@ -13,11 +11,9 @@ export default async function PageLanding({
 }: {
   params: Promise<{ lang: string }>;
 }) {
-   const resolvedParams = await params;
+  const resolvedParams = await params;
   const lang =
     resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
-
-
 
   //   useEffect(() => {
   //     fetchResume(currentLang);
@@ -84,24 +80,23 @@ export default async function PageLanding({
 
   return (
     <>
-      <div className="text-slate-900 text-sm">
-       <Header  params={{ lang }}/>
-
-        <main className="max-w-5xl mx-auto py-5">
-          {/* Home Section with Sidebar */}
-          {/* <section
-            id="home"
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start"
-          >
-            <div className="md:col-span-2 bg-white rounded-xl p-5 shadow-sm">
-              <h1 className="text-xl font-bold">{data.name}</h1>
-              <div className="text-xs text-indigo-600 font-medium mt-1">
-                {data.title}
-              </div>
-              <p className="mt-3 text-sm text-gray-700">{data.summary}</p>
-            </div>
-          </section> */}
-        </main>
+      <div className="h-full flex flex-col bg-amber-200">
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+        <div>sdsadf</div>
+    
       </div>
     </>
   );

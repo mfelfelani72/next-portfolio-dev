@@ -11,6 +11,7 @@ import { generateWebsiteSchema } from "@/configs/metadata";
 // Components
 
 import { SchemaMarkup } from "@/app/[lang]/ShemaMarkup";
+import Header from "@/components/ui/resume/header/HeaderLanding";
 
 // Interfaces
 
@@ -41,7 +42,15 @@ export default async function Page({ children, params }: LangLayoutProps) {
   return (
     <>
       <SchemaMarkup schema={websiteSchema} />
-      {children}
+
+      <div className="relative min-w-screen h-screen">
+        <div className="text-slate-900 text-sm h-full flex flex-col">
+          <Header params={{ lang }} />
+          <main className="flex-1 overflow-y-scroll px-4 pt-24 pb-12 w-full">
+            <div className="max-w-5xl mx-auto">{children}</div>
+          </main>
+        </div>
+      </div>
     </>
   );
 }
