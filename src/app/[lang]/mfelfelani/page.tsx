@@ -11,21 +11,33 @@ import LanguagesSection from "@/components/LanguagesSection";
 import ContactSection from "@/components/ContactSection";
 import { ResumeData } from "@/Interfaces/portfolio";
 
-export default function PageLanding() {
+export default function PageLanding({ params }: { params: Promise<{ lang: string }> }) {
+  const resolvedParams = React.use(params);
   const [data, setData] = useState<ResumeData | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("home");
-
-
-  useEffect(() => {
-    fetch("/next-portfolio/api/resume/")
-    // fetch("/api/resume/")
-      .then((r) => r.json())
-      .then((d: ResumeData) => setData(d));
-  }, []);
+  const [currentLang, setCurrentLang] = useState(resolvedParams.lang || 'en');
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    fetchResume(currentLang);
+  }, [currentLang]);
+
+  const fetchResume = async (language: string) => {
+    try {
+      const response = await fetch(`/api/resume/${language}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch resume');
+      }
+      const data: ResumeData = await response.json();
+      setData(data);
+    } catch (error) {
+      console.error('Error fetching resume:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !data) return;
+    
     const ids = [
       "home",
       "skills",
@@ -35,10 +47,13 @@ export default function PageLanding() {
       "languages",
       "contact",
     ];
+    
     const observers: IntersectionObserver[] = [];
+    
     ids.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
+      
       const obs = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -47,23 +62,54 @@ export default function PageLanding() {
         },
         { root: null, threshold: 0.6 }
       );
+      
       obs.observe(el);
       observers.push(obs);
     });
+    
     return () => observers.forEach((o) => o.disconnect());
-  }, []);
+  }, [data]);
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading portfolio...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const contact = data.contact || {
+    email: "",
+    linkedin: "",
+    github: ""
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-slate-50 text-slate-900 text-sm">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <select 
+          value={currentLang}
+          onChange={(e) => setCurrentLang(e.target.value)}
+          className="p-2 border rounded bg-white shadow-sm"
+        >
+          <option value="en">English</option>
+          <option value="fa">فارسی</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+
       <Nav
         active={active}
         onToggleMobile={() => setMobileOpen((s) => !s)}
-        contactEmail={data.contact.email}
+        contactEmail={contact.email}
         name={data.name}
         title={data.title}
       />
+      
       <MobileDrawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
@@ -83,25 +129,26 @@ export default function PageLanding() {
             </div>
             <p className="mt-3 text-sm text-gray-700">{data.summary}</p>
           </div>
+          
           <Sidebar
-            skills={data.skills}
+            skills={data.skills || []}
             name={data.name}
             title={data.title}
-            email={data.contact.email}
+            email={contact.email}
           />
         </section>
 
         {/* Other Sections */}
         <SkillsSection
-          skills={data.skills}
-          tools={data.tools}
-          networkingExperience={data.networkingExperience}
+          skills={data.skills || []}
+          tools={data.tools || []}
+          networkingExperience={data.networkingExperience || []}
         />
-        <ProjectsSection projects={data.projects} />
+        <ProjectsSection projects={data.projects || []} />
         <NetworkSection />
-        <CertificationsSection certifications={data.certifications} />
-        <LanguagesSection languages={data.languages} />
-        <ContactSection contact={data.contact} />
+        <CertificationsSection certifications={data.certifications || []} />
+        <LanguagesSection languages={data.languages || []} />
+        <ContactSection contact={contact} />
       </main>
     </div>
   );

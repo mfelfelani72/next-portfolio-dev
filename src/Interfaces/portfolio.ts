@@ -49,3 +49,7 @@ export interface ResumeData {
   languages: Language[];
   contact: Contact;
 }
+
+export interface MultiLanguageResume {
+  [key: string]: ResumeData;
+}
