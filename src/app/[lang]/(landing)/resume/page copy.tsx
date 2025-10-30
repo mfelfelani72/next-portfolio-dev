@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Nav from "@/components/Nav";
-import MobileDrawer from "@/components/MobileDrawer";
+
 import Sidebar from "@/components/Sidebar";
 import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
@@ -11,12 +10,16 @@ import LanguagesSection from "@/components/LanguagesSection";
 import ContactSection from "@/components/ContactSection";
 import { ResumeData } from "@/Interfaces/portfolio";
 
-export default function PageLanding({ params }: { params: Promise<{ lang: string }> }) {
+export default function PageLanding({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const resolvedParams = React.use(params);
   const [data, setData] = useState<ResumeData | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("home");
-  const [currentLang, setCurrentLang] = useState(resolvedParams.lang || 'en');
+  const [currentLang, setCurrentLang] = useState(resolvedParams.lang || "en");
 
   useEffect(() => {
     fetchResume(currentLang);
@@ -26,18 +29,18 @@ export default function PageLanding({ params }: { params: Promise<{ lang: string
     try {
       const response = await fetch(`/api/resume/${language}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch resume');
+        throw new Error("Failed to fetch resume");
       }
       const data: ResumeData = await response.json();
       setData(data);
     } catch (error) {
-      console.error('Error fetching resume:', error);
+      console.error("Error fetching resume:", error);
     }
   };
 
   useEffect(() => {
     if (typeof window === "undefined" || !data) return;
-    
+
     const ids = [
       "home",
       "skills",
@@ -47,13 +50,13 @@ export default function PageLanding({ params }: { params: Promise<{ lang: string
       "languages",
       "contact",
     ];
-    
+
     const observers: IntersectionObserver[] = [];
-    
+
     ids.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
-      
+
       const obs = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -62,11 +65,11 @@ export default function PageLanding({ params }: { params: Promise<{ lang: string
         },
         { root: null, threshold: 0.6 }
       );
-      
+
       obs.observe(el);
       observers.push(obs);
     });
-    
+
     return () => observers.forEach((o) => o.disconnect());
   }, [data]);
 
@@ -84,38 +87,11 @@ export default function PageLanding({ params }: { params: Promise<{ lang: string
   const contact = data.contact || {
     email: "",
     linkedin: "",
-    github: ""
+    github: "",
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-slate-50 text-slate-900 text-sm">
-      {/* Language Switcher */}
-      <div className="fixed top-4 right-4 z-50">
-        <select 
-          value={currentLang}
-          onChange={(e) => setCurrentLang(e.target.value)}
-          className="p-2 border rounded bg-white shadow-sm"
-        >
-          <option value="en">English</option>
-          <option value="fa">فارسی</option>
-          <option value="fr">Français</option>
-        </select>
-      </div>
-
-      <Nav
-        active={active}
-        onToggleMobile={() => setMobileOpen((s) => !s)}
-        contactEmail={contact.email}
-        name={data.name}
-        title={data.title}
-      />
-      
-      <MobileDrawer
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        active={active}
-      />
-
       <main className="max-w-5xl mx-auto pt-28 pb-20 px-4">
         {/* Home Section with Sidebar */}
         <section
@@ -129,7 +105,7 @@ export default function PageLanding({ params }: { params: Promise<{ lang: string
             </div>
             <p className="mt-3 text-sm text-gray-700">{data.summary}</p>
           </div>
-          
+
           <Sidebar
             skills={data.skills || []}
             name={data.name}

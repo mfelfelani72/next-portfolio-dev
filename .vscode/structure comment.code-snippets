@@ -1,0 +1,57 @@
+{
+  "Components": {
+    "prefix": "comp",
+    "body": ["// Components"],
+    "description": "Insert Components"
+  },
+  "Containers": {
+    "prefix": "cont",
+    "body": ["// Containers"],
+    "description": "Insert Containers"
+  },
+  "Functions": {
+    "prefix": "func",
+    "body": ["// Functions"],
+    "description": "Insert Functions"
+  },
+  "Constants": {
+    "prefix": "cons",
+    "body": ["// Constants"],
+    "description": "Insert Constants"
+  },
+  "States": {
+    "prefix": "sta",
+    "body": ["// States"],
+    "description": "Insert States"
+  },
+  "Refs": {
+    "prefix": "ref",
+    "body": ["// Refs"],
+    "description": "Insert Refs"
+  },
+  "Interfaces": {
+    "prefix": "inte",
+    "body": ["// Interfaces"],
+    "description": "Insert Interfaces"
+  },
+  "Zustand": {
+    "prefix": "zu",
+    "body": ["// Zustand"],
+    "description": "Insert Zustand"
+  },
+  "Hooks": {
+    "prefix": "hook",
+    "body": ["// Hooks"],
+    "description": "Insert Hooks"
+  },
+  "Images": {
+    "prefix": "img",
+    "body": ["// Images"],
+    "description": "Insert Images"
+  },
+  "Devices": {
+    "prefix": "devi",
+    "body": ["// Devices"],
+    "description": "Insert Devices"
+  }
+}

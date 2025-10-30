@@ -13,7 +13,7 @@ export default function LangWrapper({
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // اگر lang تغییر کرد، trigger برای refresh دیتا
+
     if (lang !== langFromUrl) {
       setLang(langFromUrl);
       triggerRefresh?.();
@@ -24,7 +24,7 @@ export default function LangWrapper({
   if (!loaded) return null;
 
   return (
-    <div lang={lang} dir={dir} className="min-h-screen">
+    <div lang={lang} dir={dir} className="bg-gradient-to-br from-sky-50 to-slate-50">
       <AppLoading>{children}</AppLoading>
     </div>
   );
