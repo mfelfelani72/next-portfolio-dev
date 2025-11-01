@@ -13,6 +13,10 @@ import { generateWebsiteSchema } from "@/configs/metadata";
 import { SchemaMarkup } from "@/app/[lang]/ShemaMarkup";
 import Header from "@/components/ui/resume/header/HeaderLanding";
 
+// Containers
+
+import GetUserInfo from "@/containers/landing/GetUserInfo";
+
 // Interfaces
 
 import { LangLayoutProps } from "@/Interfaces/global";
@@ -42,6 +46,8 @@ export default async function Page({ children, params }: LangLayoutProps) {
   return (
     <>
       <SchemaMarkup schema={websiteSchema} />
+
+      <GetUserInfo params={{ lang }} />
 
       <div className="relative min-w-screen h-screen">
         <div className="text-slate-900 text-sm h-full flex flex-col">

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getResumeData, setResumeData } from '@/libs/redis/redis';
+import { getResumeData, setResumeData } from '@/libs/cache/redis/redis';
 import { MultiLanguageResume } from '@/Interfaces/portfolio';
 
 export async function GET() {

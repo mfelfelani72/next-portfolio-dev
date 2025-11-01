@@ -36,7 +36,12 @@ const HeaderLanding = async ({ params }: { params: { lang: Lang } }) => {
     HeaderDesktop
   );
 
-  return <HeaderComponent params={params} />;
+  return (
+    <>
+      
+      <HeaderComponent params={params} />
+    </>
+  );
 };
 
 export default HeaderLanding;

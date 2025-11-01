@@ -9,6 +9,7 @@ import {
   getFlag,
 } from "@/configs/language";
 import { useLangStore } from "@/LangStore";
+import { LanguageIcon } from "forma-ui";
 
 export default function LanguageSwitcher() {
   const { lang, setLang } = useLangStore();
@@ -43,7 +44,10 @@ export default function LanguageSwitcher() {
         onClick={() => setIsOpen((prev) => !prev)}
         className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer"
       >
-        <span className="text-lg">{getFlag(lang)}</span>
+        <span className="text-lg w-[1.5rem]">
+          <LanguageIcon className="text-neutral-600" />
+        </span>
+
         <span className="hidden 3xl:block font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
           {getNativeName(lang)}
         </span>
@@ -66,11 +70,11 @@ export default function LanguageSwitcher() {
 
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-40" 
+          <div
+            className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          
+
           <div className="absolute z-50 top-full left-0 mt-2 min-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl py-2">
             {Object.keys(languages).map((l) => {
               const currentLang = l as Lang;
@@ -91,18 +95,18 @@ export default function LanguageSwitcher() {
                       {getNativeName(currentLang)}
                     </span>
                   </div>
-                  
+
                   {/* آیکون تأیید برای زبان انتخاب شده */}
                   {isActive && (
-                    <svg 
-                      className="w-4 h-4 text-blue-500" 
-                      fill="currentColor" 
+                    <svg
+                      className="w-4 h-4 text-blue-500"
+                      fill="currentColor"
                       viewBox="0 0 20 20"
                     >
-                      <path 
-                        fillRule="evenodd" 
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                        clipRule="evenodd" 
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
                       />
                     </svg>
                   )}

@@ -9,5 +9,8 @@ services:
         NEXT_PUBLIC_API_URL: "https://news.imoonex.ir"
         NEXT_PUBLIC_BASE_URL: "http://79.175.177.113:"
         NEXT_PUBLIC_BASE_PORT: "30800"
+        NEXT_PUBLIC_DATABASE_NAME: "portfolio"
+        NEXT_PUBLIC_TABLE_NAMES: "user,settings"
+        NEXT_PUBLIC_REDIS_URL: redis://localhost:6379
     ports:
       - "3001:3000"

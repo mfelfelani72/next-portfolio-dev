@@ -49,7 +49,7 @@ const DetectDevice = () => {
           sameSite: "lax",
         });
 
-        router.replace(window.location.pathname + window.location.search);
+        router.refresh();
       }
     }
   }, [isMobile, isIpad, isDesktop, setDevice, router]);

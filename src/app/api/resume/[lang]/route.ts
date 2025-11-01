@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getResumeByLanguage, initializeDefaultData } from '@/libs/redis/redis';
+import { getResumeByLanguage } from '@/libs/cache/redis/redis';
 
-export async function GET(
+export async function POST(
   request: Request,
   { params }: { params: { lang: string } }
 ) {
   try {
     const { lang } = params;
-    
-    await initializeDefaultData();
-    
     const resume = await getResumeByLanguage(lang);
     
     if (!resume) {
@@ -18,7 +15,6 @@ export async function GET(
     
     return NextResponse.json(resume);
   } catch (error) {
-    console.error('Error in resume API:', error);
     return NextResponse.json({ error: 'Failed to fetch resume' }, { status: 500 });
   }
 }

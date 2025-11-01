@@ -11,7 +11,7 @@ import {
   Contact 
 } from '@/Interfaces/portfolio'; // مسیر فایل types رو اصلاح کن
 
-const languages = ['en', 'fa', 'fr'];
+const languages = ['en', 'fa', 'de'];
 
 export default function AdminPanel() {
   const [resume, setResume] = useState<MultiLanguageResume>({});
