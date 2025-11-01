@@ -22,21 +22,13 @@ interface PostFetchParams<T = any> {
   route?: string;
 }
 
-interface UsePostFetchConfig extends SWRConfiguration {
-  manual?: boolean;
-}
-
 export const usePostFetch = <T = any>(
   params: PostFetchParams,
-  swrConfig?: UsePostFetchConfig
+  swrConfig?: SWRConfiguration
 ) => {
   const key = [params.endPoint, JSON.stringify(params.body)];
   const fetcher = () => cns({ method: "post", ...params });
-
-  const { data, error, isLoading, mutate } = useSWR<T>(key, fetcher, {
-    ...swrConfig,
-    isPaused: () => swrConfig?.manual === true,
-  });
+  const { data, error, isLoading, mutate } = useSWR<T>(key, fetcher, swrConfig);
 
   return { data, error, isLoading, mutate };
 };

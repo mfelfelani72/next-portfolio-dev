@@ -20,6 +20,7 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body: MultiLanguageResume = await request.json();
+    console.log(body)
     
     const success = await setResumeData(body);
     

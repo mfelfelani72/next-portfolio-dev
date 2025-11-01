@@ -1,24 +1,24 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { 
-  MultiLanguageResume, 
-  ResumeData, 
-  Skill, 
-  Project, 
-  Certification, 
-  NetworkingExperience, 
+"use client";
+import { useState, useEffect } from "react";
+import {
+  MultiLanguageResume,
+  ResumeData,
+  Skill,
+  Project,
+  Certification,
+  NetworkingExperience,
   Language,
-  Contact 
-} from '@/Interfaces/portfolio'; // مسیر فایل types رو اصلاح کن
+  Contact,
+} from "@/Interfaces/portfolio"; // مسیر فایل types رو اصلاح کن
 
-const languages = ['en', 'fa', 'de'];
+const languages = ["en", "fa", "de"];
 
 export default function AdminPanel() {
   const [resume, setResume] = useState<MultiLanguageResume>({});
-  const [activeLang, setActiveLang] = useState('en');
+  const [activeLang, setActiveLang] = useState("en");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetchResume();
@@ -26,11 +26,12 @@ export default function AdminPanel() {
 
   const fetchResume = async () => {
     try {
-      const response = await fetch('/api/admin/resume');
+      const response = await fetch("/api/admin/resume");
       const data: MultiLanguageResume = await response.json();
-      setResume(data);
+      if (data.error) console.log(data);
+      else setResume(data);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
@@ -38,70 +39,74 @@ export default function AdminPanel() {
 
   const handleSave = async () => {
     setSaving(true);
-    setMessage('');
-    
+    setMessage("");
+
     try {
-      const response = await fetch('/api/admin/resume', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/resume", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(resume),
       });
-      
+
       const result = await response.json();
-      setMessage(result.success ? '✅ Saved!' : '❌ Error');
+      setMessage(result.success ? "✅ Saved!" : "❌ Error");
     } catch (error) {
-      setMessage('❌ Error');
+      setMessage("❌ Error");
     } finally {
       setSaving(false);
     }
   };
 
   const updateField = (field: keyof ResumeData, value: any) => {
-    setResume(prev => ({
+    setResume((prev) => ({
       ...prev,
       [activeLang]: {
         ...prev[activeLang],
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
   const updateContactField = (field: keyof Contact, value: string) => {
-    setResume(prev => ({
+    setResume((prev) => ({
       ...prev,
       [activeLang]: {
         ...prev[activeLang],
         contact: {
           ...prev[activeLang]?.contact,
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
   // بقیه توابع مثل قبل...
   const addSkill = () => {
-    setResume(prev => ({
+    setResume((prev) => ({
       ...prev,
       [activeLang]: {
         ...prev[activeLang],
         skills: [
           ...(prev[activeLang]?.skills || []),
-          { name: '', level: 50, colorClass: 'skill-grad-1' }
-        ]
-      }
+          { name: "", level: 50, colorClass: "skill-grad-1" },
+        ],
+      },
     }));
   };
 
-  const updateSkill = (index: number, field: keyof Skill, value: string | number) => {
-    setResume(prev => ({
+  const updateSkill = (
+    index: number,
+    field: keyof Skill,
+    value: string | number
+  ) => {
+    setResume((prev) => ({
       ...prev,
       [activeLang]: {
         ...prev[activeLang],
-        skills: (prev[activeLang]?.skills || []).map((skill, i) => 
+        skills: (prev[activeLang]?.skills || []).map((skill, i) =>
           i === index ? { ...skill, [field]: value } : skill
-        )
-      }
+        ),
+      },
     }));
   };
 
@@ -109,9 +114,9 @@ export default function AdminPanel() {
 
   const addResumeLanguage = (newLang: string) => {
     if (!resume[newLang]) {
-      setResume(prev => ({
+      setResume((prev) => ({
         ...prev,
-        [newLang]: { ...prev['en'] }
+        [newLang]: { ...prev["en"] },
       }));
     }
     setActiveLang(newLang);
@@ -120,25 +125,29 @@ export default function AdminPanel() {
   if (loading) return <div className="p-8">Loading...</div>;
 
   const currentData = resume[activeLang] || {};
-  const currentContact = currentData.contact || { email: '', linkedin: '', github: '' };
+  const currentContact = currentData.contact || {
+    email: "",
+    linkedin: "",
+    github: "",
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Resume Admin Panel</h1>
-        
+
         {/* Language Selector */}
         <div className="bg-white p-4 rounded-lg shadow mb-6">
           <h2 className="text-lg font-semibold mb-3">Languages</h2>
           <div className="flex gap-2">
-            {languages.map(lang => (
+            {languages.map((lang) => (
               <button
                 key={lang}
                 onClick={() => addResumeLanguage(lang)}
                 className={`px-4 py-2 rounded ${
-                  activeLang === lang 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-200 text-gray-700'
+                  activeLang === lang
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
                 }`}
               >
                 {lang.toUpperCase()}
@@ -148,9 +157,13 @@ export default function AdminPanel() {
         </div>
 
         {message && (
-          <div className={`p-4 mb-6 rounded ${
-            message.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          }`}>
+          <div
+            className={`p-4 mb-6 rounded ${
+              message.includes("✅")
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
             {message}
           </div>
         )}
@@ -165,8 +178,8 @@ export default function AdminPanel() {
               <label className="block text-sm font-medium mb-2">Name</label>
               <input
                 type="text"
-                value={currentData.name || ''}
-                onChange={(e) => updateField('name', e.target.value)}
+                value={currentData.name || ""}
+                onChange={(e) => updateField("name", e.target.value)}
                 className="w-full p-2 border rounded"
               />
             </div>
@@ -174,16 +187,16 @@ export default function AdminPanel() {
               <label className="block text-sm font-medium mb-2">Title</label>
               <input
                 type="text"
-                value={currentData.title || ''}
-                onChange={(e) => updateField('title', e.target.value)}
+                value={currentData.title || ""}
+                onChange={(e) => updateField("title", e.target.value)}
                 className="w-full p-2 border rounded"
               />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">Summary</label>
               <textarea
-                value={currentData.summary || ''}
-                onChange={(e) => updateField('summary', e.target.value)}
+                value={currentData.summary || ""}
+                onChange={(e) => updateField("summary", e.target.value)}
                 className="w-full p-2 border rounded h-24"
               />
             </div>
@@ -201,16 +214,21 @@ export default function AdminPanel() {
               Add Skill
             </button>
           </div>
-          
+
           <div className="space-y-4">
             {(currentData.skills || []).map((skill, index) => (
-              <div key={index} className="flex gap-4 items-center p-4 border rounded">
+              <div
+                key={index}
+                className="flex gap-4 items-center p-4 border rounded"
+              >
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-2">Skill Name</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Skill Name
+                  </label>
                   <input
                     type="text"
                     value={skill.name}
-                    onChange={(e) => updateSkill(index, 'name', e.target.value)}
+                    onChange={(e) => updateSkill(index, "name", e.target.value)}
                     className="w-full p-2 border rounded"
                   />
                 </div>
@@ -223,7 +241,9 @@ export default function AdminPanel() {
                     min="0"
                     max="100"
                     value={skill.level}
-                    onChange={(e) => updateSkill(index, 'level', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateSkill(index, "level", parseInt(e.target.value))
+                    }
                     className="w-full"
                   />
                 </div>
@@ -241,7 +261,7 @@ export default function AdminPanel() {
               <input
                 type="email"
                 value={currentContact.email}
-                onChange={(e) => updateContactField('email', e.target.value)}
+                onChange={(e) => updateContactField("email", e.target.value)}
                 className="w-full p-2 border rounded"
               />
             </div>
@@ -250,7 +270,7 @@ export default function AdminPanel() {
               <input
                 type="url"
                 value={currentContact.linkedin}
-                onChange={(e) => updateContactField('linkedin', e.target.value)}
+                onChange={(e) => updateContactField("linkedin", e.target.value)}
                 className="w-full p-2 border rounded"
               />
             </div>
@@ -259,7 +279,7 @@ export default function AdminPanel() {
               <input
                 type="url"
                 value={currentContact.github}
-                onChange={(e) => updateContactField('github', e.target.value)}
+                onChange={(e) => updateContactField("github", e.target.value)}
                 className="w-full p-2 border rounded"
               />
             </div>
@@ -273,7 +293,7 @@ export default function AdminPanel() {
             disabled={saving}
             className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 disabled:opacity-50"
           >
-            {saving ? 'Saving...' : 'Save All Languages'}
+            {saving ? "Saving..." : "Save All Languages"}
           </button>
         </div>
       </div>
