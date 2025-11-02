@@ -53,3 +53,8 @@ export interface ResumeData {
 export interface MultiLanguageResume {
   [key: string]: ResumeData;
 }
+
+export interface UpdateResumeRequest {
+  table: string;
+  data: MultiLanguageResume;
+}

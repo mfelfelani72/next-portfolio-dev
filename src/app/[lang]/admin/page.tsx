@@ -1,5 +1,9 @@
 "use client";
+
 import { useState, useEffect } from "react";
+
+// Interfaces
+
 import {
   MultiLanguageResume,
   ResumeData,
@@ -9,54 +13,80 @@ import {
   NetworkingExperience,
   Language,
   Contact,
-} from "@/Interfaces/portfolio"; // مسیر فایل types رو اصلاح کن
+} from "@/Interfaces/portfolio";
 
-const languages = ["en", "fa", "de"];
+import { languages } from "@/configs/language";
+
+// Hooks
+
+import { useFetch } from "@/libs/api/useFetch";
 
 export default function AdminPanel() {
+  // States
+
   const [resume, setResume] = useState<MultiLanguageResume>({});
   const [activeLang, setActiveLang] = useState("en");
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [manual, setManual] = useState(true);
 
-  useEffect(() => {
-    fetchResume();
-  }, []);
+  // Constants
 
-  const fetchResume = async () => {
-    try {
-      const response = await fetch("/api/admin/resume");
-      const data: MultiLanguageResume = await response.json();
-      if (data.error) console.log(data);
-      else setResume(data);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+  const currentData = resume[activeLang] || {};
+  const currentContact = currentData.contact || {
+    email: "",
+    linkedin: "",
+    github: "",
   };
 
-  const handleSave = async () => {
+  // Functions
+
+  const { mutate } = useFetch<MultiLanguageResume>(
+    "post",
+    {
+      endPoint: "/api/admin/resume",
+      body: { table: "user" },
+    },
+    {
+      onSuccess: async (data) => {
+        if (data && "error" in data) {
+          console.log(data);
+        } else if (data) {
+          setResume(data);
+        }
+      },
+    }
+  );
+
+  const { mutate: saveResume } = useFetch<any>(
+    "put",
+    {
+      endPoint: "/api/admin/resume",
+      body: {
+        table: "user",
+        data: resume,
+      },
+    },
+    {
+      manual: manual,
+      onSuccess: (result) => {
+        setMessage(result?.success ? "✅ Saved!" : "❌ Error");
+        setManual(false);
+        setSaving(false);
+      },
+      onError: (error) => {
+        setMessage("❌ Error : " + error);
+        setManual(false);
+        setSaving(false);
+      },
+    }
+  );
+
+  const handleSave = () => {
     setSaving(true);
     setMessage("");
-
-    try {
-      const response = await fetch("/api/admin/resume", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(resume),
-      });
-
-      const result = await response.json();
-      setMessage(result.success ? "✅ Saved!" : "❌ Error");
-    } catch (error) {
-      setMessage("❌ Error");
-    } finally {
-      setSaving(false);
-    }
+    setManual(false);
   };
-
   const updateField = (field: keyof ResumeData, value: any) => {
     setResume((prev) => ({
       ...prev,
@@ -80,7 +110,6 @@ export default function AdminPanel() {
     }));
   };
 
-  // بقیه توابع مثل قبل...
   const addSkill = () => {
     setResume((prev) => ({
       ...prev,
@@ -110,8 +139,6 @@ export default function AdminPanel() {
     }));
   };
 
-  // بقیه توابع مدیریت state...
-
   const addResumeLanguage = (newLang: string) => {
     if (!resume[newLang]) {
       setResume((prev) => ({
@@ -122,14 +149,12 @@ export default function AdminPanel() {
     setActiveLang(newLang);
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
-
-  const currentData = resume[activeLang] || {};
-  const currentContact = currentData.contact || {
-    email: "",
-    linkedin: "",
-    github: "",
-  };
+  useEffect(() => {
+    mutate();
+  }, []);
+  useEffect(() => {
+    if (!manual) saveResume();
+  }, [manual]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -140,17 +165,17 @@ export default function AdminPanel() {
         <div className="bg-white p-4 rounded-lg shadow mb-6">
           <h2 className="text-lg font-semibold mb-3">Languages</h2>
           <div className="flex gap-2">
-            {languages.map((lang) => (
+            {Object.entries(languages).map(([langKey, langData]) => (
               <button
-                key={lang}
-                onClick={() => addResumeLanguage(lang)}
+                key={langKey}
+                onClick={() => addResumeLanguage(langKey)}
                 className={`px-4 py-2 rounded ${
-                  activeLang === lang
+                  activeLang === langKey
                     ? "bg-blue-500 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}
               >
-                {lang.toUpperCase()}
+                {langData.flag} {langData.name}
               </button>
             ))}
           </div>

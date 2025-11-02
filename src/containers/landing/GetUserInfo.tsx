@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ResumeData } from "@/Interfaces/portfolio";
-import { usePostFetch } from "@/libs/api/usePostFetch";
+import { useFetch } from "@/libs/api/useFetch";
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
 import { type Lang } from "@/configs/language";
 
@@ -14,29 +14,34 @@ interface CachedResume {
 }
 
 const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
-  // manual رو حذف کن و همیشه auto fetch کن
-  const { mutate } = usePostFetch<ResumeData>(
+  const { mutate } = useFetch<ResumeData>(
+    "post",
     {
       endPoint: `/api/resume/${params.lang}`,
       body: {},
     },
     {
       onSuccess: async (res) => {
-        console.log('API Response:', res);
-        
-        const result = await indexDB.update<CachedResume>('user', params.lang, {
+        if (!res) {
+          console.error("API request failed");
+          return;
+        }
+
+        console.log("API Response:", res);
+
+        const result = await indexDB.update<CachedResume>("user", params.lang, {
           id: params.lang,
           language: params.lang,
           data: res,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
-        
+
         if (result.success) {
-          console.log('Data saved/updated in IndexedDB');
+          console.log("Data saved/updated in IndexedDB");
         } else {
-          console.error('Error in IndexedDB:', result.error);
+          console.error("Error in IndexedDB:", result.error);
         }
-      }
+      },
     }
   );
 
@@ -44,18 +49,22 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
     const checkCacheFirst = async () => {
       try {
         await indexDB.connect();
-        
-        const cached = await indexDB.read<CachedResume>('user', params.lang);
-        
+
+        const cached = await indexDB.read<CachedResume>("user", params.lang);
+
         if (cached.success && cached.data) {
-          console.log('Using cached data for language:', params.lang);
+          console.log("Using cached data for language:", params.lang);
           // اینجا می‌تونی داده رو به parent کامپوننت پاس بدی
         } else {
-          console.log('No cached data for language:', params.lang, 'fetching from API');
+          console.log(
+            "No cached data for language:",
+            params.lang,
+            "fetching from API"
+          );
           mutate();
         }
       } catch (error) {
-        console.error('Error checking cache:', error);
+        console.error("Error checking cache:", error);
         mutate();
       }
     };

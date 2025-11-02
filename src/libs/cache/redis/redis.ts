@@ -1,53 +1,60 @@
-import Redis from 'ioredis';
-import { MultiLanguageResume, ResumeData } from '@/Interfaces/portfolio';
+import Redis from "ioredis";
 
-const redis = new Redis(process.env.NEXT_PUBLIC_REDIS_URL || 'redis://localhost:6379');
+// Interfaces
+
+import { MultiLanguageResume, ResumeData } from "@/Interfaces/portfolio";
+
+//  Classes
 
 export class RedisManager {
   private redis: Redis;
 
   constructor() {
-    this.redis = new Redis(process.env.NEXT_PUBLIC_REDIS_URL || 'redis://localhost:6379');
+    this.redis = new Redis(
+      process.env.NEXT_PUBLIC_REDIS_URL || "redis://localhost:6379"
+    );
   }
 
-  // ============ Resume Specific Methods ============
+  // Functions
 
-  async getResumeData(): Promise<MultiLanguageResume | null> {
+  async getData(table: string): Promise<MultiLanguageResume | null> {
     try {
-      const data = await this.redis.get('resume');
+      const data = await this.redis.get(table);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error('Error getting resume data:', error);
+      console.error("Error getting resume data:", error);
       return null;
     }
   }
 
-  async getResumeByLanguage(lang: string): Promise<ResumeData | null> {
-    const data = await this.getResumeData();
+  async getResumeByLanguage(
+    lang: string,
+    table: string
+  ): Promise<ResumeData | null> {
+    const data = await this.getData(table);
     return data?.[lang] || null;
   }
 
-  async setResumeData(data: MultiLanguageResume): Promise<boolean> {
+  async setData(table: string, data: MultiLanguageResume): Promise<boolean> {
     try {
-      await this.redis.set('resume', JSON.stringify(data));
+      await this.redis.set(table, JSON.stringify(data));
       return true;
     } catch (error) {
-      console.error('Error setting resume data:', error);
+      console.error("Error setting resume data:", error);
       return false;
     }
   }
 
   async initializeDefaultData(): Promise<void> {
-    // هیچ داده پیش‌فرضی ایجاد نمی‌کنیم
-    // فقط برای compatibility با کد موجود
-    console.log('No default data initialized - data must be set manually');
+    console.log("No default data initialized - data must be set manually");
   }
 }
 
 export const redisManager = new RedisManager();
 
-// Export توابع برای استفاده مستقیم
-export const getResumeData = () => redisManager.getResumeData();
-export const getResumeByLanguage = (lang: string) => redisManager.getResumeByLanguage(lang);
-export const setResumeData = (data: MultiLanguageResume) => redisManager.setResumeData(data);
+export const getData = (table: string) => redisManager.getData(table);
+export const getResumeByLanguage = (lang: string, table: string) =>
+  redisManager.getResumeByLanguage(lang, table);
+export const setData = (table: string, data: MultiLanguageResume) =>
+  redisManager.setData(table, data);
 export const initializeDefaultData = () => redisManager.initializeDefaultData();
