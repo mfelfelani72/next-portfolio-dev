@@ -24,31 +24,31 @@ export interface OperationResult<T = any> {
   error?: string;
 }
 
-// خواندن از environment variables - برای کلاینت
 export function getDatabaseConfig(): DBConfig {
-  // در کلاینت باید از NEXT_PUBLIC_ استفاده کنیم
-  const databaseName = process.env.NEXT_PUBLIC_DATABASE_NAME || 'portfolio';
-  const tableNames = process.env.NEXT_PUBLIC_TABLE_NAMES?.split(',') || ['user'];
-  
-  console.log('Database Config:', {
+  const databaseName = process.env.NEXT_PUBLIC_DATABASE_NAME || "portfolio";
+  const tableNames = process.env.NEXT_PUBLIC_TABLE_NAMES?.split(",") || [
+    "user",
+  ];
+
+  console.log("Database Config:", {
     databaseName,
     tableNames,
-    env: process.env.NEXT_PUBLIC_DATABASE_NAME
+    env: process.env.NEXT_PUBLIC_DATABASE_NAME,
   });
-  
-  const stores: StoreConfig[] = tableNames.map(tableName => ({
+
+  const stores: StoreConfig[] = tableNames.map((tableName) => ({
     name: tableName.trim(),
-    keyPath: 'id',
+    keyPath: "id",
     autoIncrement: true,
     indices: [
-      { name: 'timestamp', keyPath: 'timestamp', unique: false },
-      { name: 'language', keyPath: 'language', unique: false }
-    ]
+      { name: "timestamp", keyPath: "timestamp", unique: false },
+      { name: "language", keyPath: "language", unique: false },
+    ],
   }));
 
   return {
     name: databaseName,
     version: 1,
-    stores
+    stores,
   };
 }

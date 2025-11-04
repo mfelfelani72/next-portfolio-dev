@@ -27,8 +27,6 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
           return;
         }
 
-        console.log("API Response:", res);
-
         const result = await indexDB.update<CachedResume>("user", params.lang, {
           id: params.lang,
           language: params.lang,
@@ -54,7 +52,6 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
 
         if (cached.success && cached.data) {
           console.log("Using cached data for language:", params.lang);
-          // اینجا می‌تونی داده رو به parent کامپوننت پاس بدی
         } else {
           console.log(
             "No cached data for language:",
@@ -71,8 +68,7 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
 
     // همیشه وقتی زبان عوض شد چک کن
     checkCacheFirst();
-  }, [mutate, params.lang]); // وابسته به params.lang
-
+  }, [mutate, params.lang]);
   return null;
 };
 

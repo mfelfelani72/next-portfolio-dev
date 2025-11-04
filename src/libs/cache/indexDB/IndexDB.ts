@@ -1,4 +1,12 @@
-import { DBConfig, OperationResult } from './config';
+// Functions
+
+import {
+  DBConfig,
+  OperationResult,
+  getDatabaseConfig,
+} from "@/libs/cache/indexDB/config";
+
+// Classes
 
 class IndexedDBManager {
   private db: IDBDatabase | null = null;
@@ -10,6 +18,7 @@ class IndexedDBManager {
     this.config = config;
   }
 
+  // Functions
   async connect(): Promise<void> {
     if (this.initPromise) {
       return this.initPromise;
@@ -21,7 +30,7 @@ class IndexedDBManager {
       request.onerror = () => {
         reject(new Error(`Database error: ${request.error}`));
       };
-      
+
       request.onsuccess = () => {
         this.db = request.result;
         this.isInitialized = true;
@@ -30,26 +39,19 @@ class IndexedDBManager {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
-        
-        this.config.stores.forEach(storeConfig => {
-          if (!db.objectStoreNames.contains(storeConfig.name)) {
-            const objectStore = db.createObjectStore(
-              storeConfig.name, 
-              { 
-                keyPath: storeConfig.keyPath,
-                autoIncrement: storeConfig.autoIncrement || false 
-              }
-            );
 
-            storeConfig.indices?.forEach(indexConfig => {
-              objectStore.createIndex(
-                indexConfig.name,
-                indexConfig.keyPath,
-                { 
-                  unique: indexConfig.unique || false,
-                  multiEntry: indexConfig.multiEntry || false 
-                }
-              );
+        this.config.stores.forEach((storeConfig) => {
+          if (!db.objectStoreNames.contains(storeConfig.name)) {
+            const objectStore = db.createObjectStore(storeConfig.name, {
+              keyPath: storeConfig.keyPath,
+              autoIncrement: storeConfig.autoIncrement || false,
+            });
+
+            storeConfig.indices?.forEach((indexConfig) => {
+              objectStore.createIndex(indexConfig.name, indexConfig.keyPath, {
+                unique: indexConfig.unique || false,
+                multiEntry: indexConfig.multiEntry || false,
+              });
             });
           }
         });
@@ -64,7 +66,7 @@ class IndexedDBManager {
       await this.connect();
     }
     if (!this.db) {
-      throw new Error('Database not initialized');
+      throw new Error("Database not initialized");
     }
     return this.db;
   }
@@ -73,70 +75,76 @@ class IndexedDBManager {
   async create<T>(storeName: string, data: T): Promise<OperationResult<T>> {
     try {
       const db = await this.ensureConnected();
-      
+
       if (!db.objectStoreNames.contains(storeName)) {
-        return { 
-          success: false, 
-          error: `Store '${storeName}' not found` 
+        return {
+          success: false,
+          error: `Store '${storeName}' not found`,
         };
       }
-      
+
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], 'readwrite');
+        const transaction = db.transaction([storeName], "readwrite");
         const store = transaction.objectStore(storeName);
-        
+
         const request = store.add(data);
-        
+
         request.onsuccess = () => {
-          resolve({ 
-            success: true, 
-            data: { ...data, id: request.result } as T 
+          resolve({
+            success: true,
+            data: { ...data, id: request.result } as T,
           });
         };
-        
+
         request.onerror = () => {
-          resolve({ 
-            success: false, 
-            error: `Failed to create: ${request.error}` 
+          resolve({
+            success: false,
+            error: `Failed to create: ${request.error}`,
           });
         };
       });
     } catch (error) {
-      return { 
-        success: false, 
-        error: `Connection error: ${error}` 
+      return {
+        success: false,
+        error: `Connection error: ${error}`,
       };
     }
   }
 
   // READ
-  async read<T>(storeName: string, key: IDBValidKey): Promise<OperationResult<T>> {
+  async read<T>(
+    storeName: string,
+    key: IDBValidKey
+  ): Promise<OperationResult<T>> {
     try {
       const db = await this.ensureConnected();
-      
+
       if (!db.objectStoreNames.contains(storeName)) {
-        return { 
-          success: false, 
-          error: `Store '${storeName}' not found` 
+        return {
+          success: false,
+          error: `Store '${storeName}' not found`,
         };
       }
-      
+
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], 'readonly');
+        const transaction = db.transaction([storeName], "readonly");
         const store = transaction.objectStore(storeName);
-        
+
         const request = store.get(key);
-        
+
         request.onsuccess = () => {
           if (request.result) {
             resolve({ success: true, data: request.result as T });
           } else {
-            resolve({ success: false, error: 'Record not found' });
+            resolve({ success: false, error: "Record not found" });
           }
         };
-        
+
         request.onerror = () => {
-          resolve({ success: false, error: `Failed to read: ${request.error}` });
+          resolve({
+            success: false,
+            error: `Failed to read: ${request.error}`,
+          });
         };
       });
     } catch (error) {
@@ -144,43 +152,45 @@ class IndexedDBManager {
     }
   }
 
-  // UPDATE - این متد رو اضافه کردم
-  async update<T>(storeName: string, key: IDBValidKey, data: T): Promise<OperationResult<T>> {
+  async update<T>(
+    storeName: string,
+    key: IDBValidKey,
+    data: T
+  ): Promise<OperationResult<T>> {
     try {
       const db = await this.ensureConnected();
-      
+
       if (!db.objectStoreNames.contains(storeName)) {
-        return { 
-          success: false, 
-          error: `Store '${storeName}' not found` 
+        return {
+          success: false,
+          error: `Store '${storeName}' not found`,
         };
       }
-      
+
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], 'readwrite');
+        const transaction = db.transaction([storeName], "readwrite");
         const store = transaction.objectStore(storeName);
-        
-        // از put استفاده می‌کنیم که هم update کنه هم create
+
         const request = store.put(data);
-        
+
         request.onsuccess = () => {
-          resolve({ 
-            success: true, 
-            data: data 
+          resolve({
+            success: true,
+            data: data,
           });
         };
-        
+
         request.onerror = () => {
-          resolve({ 
-            success: false, 
-            error: `Failed to update: ${request.error}` 
+          resolve({
+            success: false,
+            error: `Failed to update: ${request.error}`,
           });
         };
       });
     } catch (error) {
-      return { 
-        success: false, 
-        error: `Connection error: ${error}` 
+      return {
+        success: false,
+        error: `Connection error: ${error}`,
       };
     }
   }
@@ -189,26 +199,29 @@ class IndexedDBManager {
   async delete(storeName: string, key: IDBValidKey): Promise<OperationResult> {
     try {
       const db = await this.ensureConnected();
-      
+
       if (!db.objectStoreNames.contains(storeName)) {
-        return { 
-          success: false, 
-          error: `Store '${storeName}' not found` 
+        return {
+          success: false,
+          error: `Store '${storeName}' not found`,
         };
       }
-      
+
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], 'readwrite');
+        const transaction = db.transaction([storeName], "readwrite");
         const store = transaction.objectStore(storeName);
-        
+
         const request = store.delete(key);
-        
+
         request.onsuccess = () => {
           resolve({ success: true });
         };
-        
+
         request.onerror = () => {
-          resolve({ success: false, error: `Failed to delete: ${request.error}` });
+          resolve({
+            success: false,
+            error: `Failed to delete: ${request.error}`,
+          });
         };
       });
     } catch (error) {
@@ -235,12 +248,9 @@ class IndexedDBManager {
   }
 }
 
-// ایجاد نمونه
-import { getDatabaseConfig } from './config';
 const config = getDatabaseConfig();
 export const indexDB = new IndexedDBManager(config);
 
-// اتصال خودکار
 indexDB.connect().catch(console.error);
 
 export default IndexedDBManager;
