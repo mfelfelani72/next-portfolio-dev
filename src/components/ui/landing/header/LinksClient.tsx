@@ -16,16 +16,7 @@ import { usePathname } from "next/navigation";
 
 // Interfaces
 
-interface Item {
-  id: string;
-  label: string;
-}
-
-interface LinksClientProps {
-  items: Item[];
-  initialActivePage: string;
-}
-
+import { LinksClientProps } from "@/configs/menuItems";
 const LinksClient = ({ items, initialActivePage }: LinksClientProps) => {
   // Hooks
 
