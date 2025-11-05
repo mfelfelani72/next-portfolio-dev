@@ -30,12 +30,6 @@ export function getDatabaseConfig(): DBConfig {
     "user",
   ];
 
-  console.log("Database Config:", {
-    databaseName,
-    tableNames,
-    env: process.env.NEXT_PUBLIC_DATABASE_NAME,
-  });
-
   const stores: StoreConfig[] = tableNames.map((tableName) => ({
     name: tableName.trim(),
     keyPath: "id",

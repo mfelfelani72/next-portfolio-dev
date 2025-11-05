@@ -11,7 +11,7 @@ import { generateWebsiteSchema } from "@/configs/metadata";
 // Components
 
 import { SchemaMarkup } from "@/app/[lang]/ShemaMarkup";
-import Header from "@/components/ui/resume/header/HeaderLanding";
+import Header from "@/components/ui/landing/header/HeaderLanding";
 
 // Containers
 

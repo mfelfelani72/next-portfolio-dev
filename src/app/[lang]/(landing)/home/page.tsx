@@ -1,8 +1,6 @@
 import React from "react";
 
-import Header from "@/components/ui/resume/header/HeaderLanding";
-
-import { ResumeData } from "@/Interfaces/portfolio";
+// Interfaces
 
 import { languages, type Lang } from "@/configs/language";
 

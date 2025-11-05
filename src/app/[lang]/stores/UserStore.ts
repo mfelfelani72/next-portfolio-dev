@@ -6,9 +6,11 @@
  * @Description:
  */
 
-// Interfaces
-import { ResumeData } from "@/Interfaces/portfolio";
 import { create } from "zustand";
+
+// Interfaces
+
+import { ResumeData } from "@/Interfaces/portfolio";
 
 interface UserState {
   user: ResumeData | false;

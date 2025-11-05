@@ -11,14 +11,14 @@ import dynamic from "next/dynamic";
 // Components
 
 const HeaderDesktop = dynamic(
-  () => import("@/components/ui/resume/header/desktop/HeaderServer")
+  () => import("@/components/ui/landing/header/desktop/HeaderServer")
 );
 const HeaderMobile = dynamic(
-  () => import("@/components/ui/resume/header/mobile/HeaderServer")
+  () => import("@/components/ui/landing/header/mobile/HeaderServer")
 );
 
 const HeaderIpad = dynamic(
-  () => import("@/components/ui/resume/header/ipad/HeaderServer")
+  () => import("@/components/ui/landing/header/ipad/HeaderServer")
 );
 
 // Functions

@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { ResumeData } from "@/Interfaces/portfolio";
-import { useFetch } from "@/libs/api/useFetch";
+import { useEffect } from "react";
+
+// Functions
+
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
+
+// Interfaces
+
+import { ResumeData } from "@/Interfaces/portfolio";
 import { type Lang } from "@/configs/language";
-import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
 interface CachedResume {
   id: string;
@@ -14,8 +18,21 @@ interface CachedResume {
   timestamp: number;
 }
 
+// Hooks
+
+import { useFetch } from "@/libs/api/useFetch";
+
+// Zustand
+
+import { useUserStore } from "@/app/[lang]/stores/UserStore";
+
 const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
+  // States
+
   const setUser = useUserStore((state) => state.setUser);
+
+  // Functions
+
   const { mutate } = useFetch<ResumeData>(
     "post",
     {
@@ -38,7 +55,6 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
 
         if (result.success) {
           setUser(res);
-          console.log("Data saved/updated in IndexedDB");
         } else {
           console.error("Error in IndexedDB:", result.error);
         }
@@ -70,7 +86,6 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
       }
     };
 
-   
     checkCacheFirst();
   }, [mutate, params.lang]);
   return null;
