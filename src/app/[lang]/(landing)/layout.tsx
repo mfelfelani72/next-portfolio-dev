@@ -37,7 +37,7 @@ export async function generateMetadata({
 
 // Page component
 
-export default async function Page({ children, params }: LangLayoutProps) {
+export default async function landingLayout({ children, params }: LangLayoutProps) {
   const resolvedParams = await params;
   const lang =
     resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";

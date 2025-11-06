@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import Sidebar from "@/components/Sidebar";
-import SkillsSection from "@/components/SkillsSection";
-import ProjectsSection from "@/components/ProjectsSection";
-import NetworkSection from "@/components/NetworkSection";
-import CertificationsSection from "@/components/CertificationsSection";
-import LanguagesSection from "@/components/LanguagesSection";
-import ContactSection from "@/components/ContactSection";
+import Sidebar from "@/components/ui/landing/Sidebar";
+import SkillsSection from "@/components/ui/landing/SkillsSection";
+import ProjectsSection from "@/components/ui/landing/ProjectsSection";
+import NetworkSection from "@/components/ui/landing/NetworkSection";
+import CertificationsSection from "@/components/ui/landing/CertificationsSection";
+import LanguagesSection from "@/components/ui/landing/LanguagesSection";
+import ContactSection from "@/components/ui/landing/ContactSection";
 import { ResumeData } from "@/Interfaces/portfolio";
 
 export default function PageLanding({
