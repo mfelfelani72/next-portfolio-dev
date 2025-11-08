@@ -1,3 +1,4 @@
+// sidebar-content.tsx - با استایل جدید
 "use client"
 
 import * as React from "react"
@@ -34,18 +35,19 @@ export function SidebarContent({ initialItems }: SidebarContentProps) {
 
   // سایدبار دسکتاپ
   const desktopSidebar = (
-    <div className={`
-      hidden md:flex flex-col h-full bg-background border-r transition-all duration-300
+    <aside className={`
+      hidden md:flex flex-col h-[calc(100vh-16px)] m-2 shadow-2xl bg-white rounded-lg transition-all duration-300
       ${isCollapsed ? "w-16" : "w-64"}
     `}>
       {/* هدر سایدبار */}
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="p-4 border-b border-gray-200">
         {!isCollapsed && (
-          <h2 className="text-lg font-semibold">داشبورد</h2>
+          <span className="text-xl font-bold text-indigo-600">داشبورد</span>
         )}
         <Button
           variant="ghost"
           size="icon"
+          className="h-8 w-8 p-0 hover:bg-gray-100 float-left"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
           {isCollapsed ? "→" : "←"}
@@ -65,21 +67,26 @@ export function SidebarContent({ initialItems }: SidebarContentProps) {
           />
         ))}
       </nav>
-    </div>
+
+      {/* Footer */}
+      <div className="p-4 text-xs text-gray-500 text-center border-t border-gray-200">
+        Build Smarter, Ship Faster
+      </div>
+    </aside>
   )
 
   // سایدبار موبایل
   const mobileSidebar = (
     <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden bg-white shadow-lg rounded-lg">
           ☰
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-64 p-0">
+      <SheetContent side="left" className="w-64 p-0 bg-white">
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-lg font-semibold">داشبورد</h2>
+          <div className="p-4 border-b border-gray-200">
+            <span className="text-xl font-bold text-indigo-600">داشبورد</span>
           </div>
           <nav className="flex-1 overflow-y-auto p-2">
             {menuItems.map((item) => (
@@ -96,6 +103,9 @@ export function SidebarContent({ initialItems }: SidebarContentProps) {
               />
             ))}
           </nav>
+          <div className="p-4 text-xs text-gray-500 text-center border-t border-gray-200">
+            Build Smarter, Ship Faster
+          </div>
         </div>
       </SheetContent>
     </Sheet>

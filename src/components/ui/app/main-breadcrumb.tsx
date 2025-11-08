@@ -11,37 +11,56 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/app/breadcrumb"
 
-interface BreadcrumbItem {
+// تغییر نام interface به BreadcrumbItemType
+interface BreadcrumbItemType {
   title: string
   href: string
   isCurrent?: boolean
 }
 
-export function MainBreadcrumb() {
+interface MainBreadcrumbProps {
+  isAdmin?: boolean
+}
+
+export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
   const pathname = usePathname()
-  const [items, setItems] = React.useState<BreadcrumbItem[]>([])
+  const [items, setItems] = React.useState<BreadcrumbItemType[]>([])
   const [showOverflow, setShowOverflow] = React.useState(false)
 
   // تابع برای تبدیل مسیر به آیتم‌های بردکرامب
-  const generateBreadcrumbItems = React.useCallback((): BreadcrumbItem[] => {
+  const generateBreadcrumbItems = React.useCallback((): BreadcrumbItemType[] => {
     const paths = pathname.split('/').filter(Boolean)
     
-    const breadcrumbItems: BreadcrumbItem[] = [
-      { title: "خانه", href: "/" }
-    ]
+    // تعیین خانه بر اساس نوع (ادمین یا سایت اصلی)
+    const homeItem: BreadcrumbItemType = isAdmin 
+      ? { title: "داشبورد", href: `/${paths[0]}/admin/` }
+      : { title: "خانه", href: `/${paths[0]}/home/` }
 
-    paths.forEach((path, index) => {
-      const href = '/' + paths.slice(0, index + 1).join('/')
+    const breadcrumbItems: BreadcrumbItemType[] = [homeItem]
+
+    // حذف پارامتر زبان و admin/home از مسیر
+    const filteredPaths = paths.filter((path, index) => {
+      if (index === 0) return false // حذف زبان
+      if (index === 1 && (path === 'admin' || path === 'home')) return false // حذف admin/home
+      return true
+    })
+
+    // ساخت مسیرهای بردکرامب
+    let currentHref = `/${paths[0]}${isAdmin ? '/admin' : '/home'}`
+    
+    filteredPaths.forEach((path, index) => {
+      currentHref += `/${path}`
       const title = path.charAt(0).toUpperCase() + path.slice(1)
+      
       breadcrumbItems.push({
         title,
-        href,
-        isCurrent: index === paths.length - 1
+        href: currentHref,
+        isCurrent: index === filteredPaths.length - 1
       })
     })
 
     return breadcrumbItems
-  }, [pathname])
+  }, [pathname, isAdmin])
 
   React.useEffect(() => {
     setItems(generateBreadcrumbItems())
@@ -59,7 +78,7 @@ export function MainBreadcrumb() {
     : []
 
   return (
-    <div className="flex items-center gap-2 py-4 px-6 border-b">
+    <div className="bg-white rounded-b-lg mx-1 mt-0.5 shadow-2xl px-6 py-3">
       <Breadcrumb>
         <BreadcrumbList>
           {visibleItems.map((item, index) => (
@@ -77,18 +96,18 @@ export function MainBreadcrumb() {
                   <BreadcrumbItem>
                     <button
                       onClick={() => setShowOverflow(!showOverflow)}
-                      className="px-2 py-1 text-sm text-muted-foreground hover:text-foreground"
+                      className="px-2 py-1 text-sm text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                     >
                       ...
                     </button>
                   </BreadcrumbItem>
                   {showOverflow && (
-                    <div className="absolute mt-2 bg-background border rounded-md shadow-lg z-10">
+                    <div className="absolute mt-2 bg-white border border-gray-200 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] z-10 min-w-32">
                       {hiddenItems.map((hiddenItem) => (
                         <BreadcrumbLink
                           key={hiddenItem.href}
                           href={hiddenItem.href}
-                          className="block px-4 py-2 hover:bg-muted"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors first:rounded-t-lg last:rounded-b-lg"
                         >
                           {hiddenItem.title}
                         </BreadcrumbLink>
@@ -99,19 +118,21 @@ export function MainBreadcrumb() {
                 </>
               )}
 
-              {!item.isCurrent ? (
-                <BreadcrumbItem>
-                  <BreadcrumbLink href={item.href}>
-                    {item.title}
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-              ) : (
-                <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    {item.title}
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              )}
+              {!shouldShowOverflow || index > 0 ? (
+                !item.isCurrent ? (
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={item.href}>
+                      {item.title}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                ) : (
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>
+                      {item.title}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                )
+              ) : null}
             </React.Fragment>
           ))}
         </BreadcrumbList>

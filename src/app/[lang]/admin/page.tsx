@@ -1,3 +1,5 @@
+// Components
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/app/card"
 
 export default function Home() {
@@ -59,7 +61,7 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* نمودار نمونه */}
+    
       <Card className="col-span-4">
         <CardHeader>
           <CardTitle>نمایش عملکرد</CardTitle>

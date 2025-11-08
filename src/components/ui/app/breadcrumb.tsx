@@ -1,3 +1,4 @@
+// components/ui/app/breadcrumb.tsx
 import * as React from "react"
 import { cn } from "@/libs/cn"
 
@@ -21,7 +22,7 @@ const BreadcrumbList = React.forwardRef<HTMLOListElement, BreadcrumbListProps>(
     <ol
       ref={ref}
       className={cn(
-        "flex flex-wrap items-center gap-2 break-words",
+        "flex flex-wrap items-center gap-2 break-words text-sm",
         className
       )}
       {...props}
@@ -54,7 +55,10 @@ const BreadcrumbLink = React.forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
     return (
       <Comp
         ref={ref as any}
-        className={cn("transition-colors hover:text-foreground", className)}
+        className={cn(
+          "text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium text-sm",
+          className
+        )}
         {...props}
       />
     )
@@ -71,7 +75,10 @@ const BreadcrumbPage = React.forwardRef<HTMLSpanElement, BreadcrumbPageProps>(
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("font-normal text-foreground", className)}
+      className={cn(
+        "font-semibold text-blue-600 text-sm",
+        className
+      )}
       {...props}
     />
   )
@@ -91,7 +98,7 @@ const BreadcrumbSeparator = ({
   <span
     role="presentation"
     aria-hidden="true"
-    className={cn("text-muted-foreground", className)}
+    className={cn("text-gray-400 text-sm", className)}
     {...props}
   >
     {children || "/"}

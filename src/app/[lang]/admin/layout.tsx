@@ -1,38 +1,43 @@
-import React from "react"
-import { Sidebar } from "@/components/ui/admin/sidebar/sidebar"
-import { Header } from "@/components/ui/admin/header/header"
-import { MainBreadcrumb } from "@/components/ui/app/main-breadcrumb"
+import React from "react";
+
+// Components
+
+import { Sidebar } from "@/components/ui/admin/sidebar/sidebar";
+import { Header } from "@/components/ui/admin/header/header";
+import { MainBreadcrumb } from "@/components/ui/app/main-breadcrumb";
+import Footer from "@/components/ui/admin/footer/footer";
+
+// Interfaces
 
 interface AdminLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
   params: {
-    lang: string
-  }
+    lang: string;
+  };
 }
 
-// این باید default export باشه
 export default function AdminLayout({ children, params }: AdminLayoutProps) {
   return (
-    <div className="flex h-screen bg-background">
-      {/* سایدبار */}
+    <div className="flex h-screen bg-gray-50">
       <Sidebar />
-      
-      {/* بخش اصلی */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* هدر */}
+
+      <div className="flex-1 flex flex-col min-h-0">
         <Header />
-        
-        {/* بردکرامب */}
-        <MainBreadcrumb />
-        
-        {/* محتوای اصلی */}
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
+
+        <MainBreadcrumb isAdmin={true} />
+
+        <div className="flex-1 flex flex-col min-h-0 pt-3">
+          <main className="flex-1 overflow-auto px-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200/70 min-h-full p-6">
+              {children}
+            </div>
+          </main>
+
+          <div className="flex-shrink-0">
+            <Footer />
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }
-
-// اگر می‌خوای named export هم داشته باشی می‌تونی اینطور بنویسی:
-// export { AdminLayout as default }

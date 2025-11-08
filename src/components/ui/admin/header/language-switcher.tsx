@@ -1,3 +1,4 @@
+// language-switcher.tsx - با استایل جدید
 "use client"
 
 import * as React from "react"
@@ -21,21 +22,26 @@ export function LanguageSwitcher({ languages }: LanguageSwitcherProps) {
   const handleLanguageChange = (language: Language) => {
     setCurrentLanguage(language)
     setIsOpen(false)
-    // اینجا می‌تونی منطق تغییر زبان رو اضافه کنی
-    // مثلاً ذخیره در localStorage یا ارسال به API
     localStorage.setItem("preferred-language", language.code)
   }
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg"
+        >
           <span className="text-lg">{currentLanguage.flag}</span>
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent align="end" className="w-48">
-        <div className="px-2 py-1.5 text-sm font-semibold border-b">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-48 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-gray-200"
+      >
+        <div className="px-3 py-2 text-sm font-semibold border-b border-gray-200 text-gray-800">
           انتخاب زبان
         </div>
         
@@ -44,12 +50,15 @@ export function LanguageSwitcher({ languages }: LanguageSwitcherProps) {
             key={language.code}
             onClick={() => handleLanguageChange(language)}
             className={`
-              flex items-center gap-3 p-3 cursor-pointer
-              ${currentLanguage.code === language.code ? "bg-accent" : ""}
+              flex items-center gap-3 p-3 cursor-pointer text-sm
+              ${currentLanguage.code === language.code ? 
+                "bg-blue-50 text-blue-600" : 
+                "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+              }
             `}
           >
             <span className="text-lg">{language.flag}</span>
-            <span className="flex-1">{language.name}</span>
+            <span className="flex-1 text-right">{language.name}</span>
             
             {currentLanguage.code === language.code && (
               <svg 
@@ -61,6 +70,7 @@ export function LanguageSwitcher({ languages }: LanguageSwitcherProps) {
                 strokeWidth="2" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
+                className="text-blue-600"
               >
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>

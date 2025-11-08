@@ -1,3 +1,4 @@
+// sidebar-item.tsx - با استایل جدید
 "use client"
 
 import * as React from "react"
@@ -25,7 +26,7 @@ export function SidebarItem({
   onItemClick 
 }: SidebarItemProps) {
   const hasChildren = item.children && item.children.length > 0
-  const paddingLeft = level * 20 + 16 // 16px پایه + 20px برای هر سطح
+  const paddingLeft = level * 16 + 8 // 8px پایه + 16px برای هر سطح
 
   const handleClick = () => {
     if (hasChildren) {
@@ -48,31 +49,30 @@ export function SidebarItem({
   // آیتم بدون فرزند
   if (!hasChildren) {
     return (
-      <div className="mb-1">
+      <div className="mb-0">
         <Link href={item.url || "#"} passHref>
-          <Button
-            variant={isActive ? "secondary" : "ghost"}
+          <div
             className={`
-              w-full justify-start h-10 px-3 font-normal
-              ${isCollapsed ? "px-2" : ""}
+              flex items-center justify-between py-2 px-3 rounded cursor-pointer transition-colors
+              ${isActive ? "text-indigo-600" : "text-gray-800 hover:text-indigo-600"}
             `}
-            style={{ paddingLeft: isCollapsed ? "0.5rem" : `${paddingLeft}px` }}
+            style={{ paddingLeft: `${paddingLeft}px` }}
             onClick={handleClick}
           >
-            <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
+            <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center w-full" : ""}`}>
               {renderIcon()}
               {!isCollapsed && (
                 <>
-                  <span className="flex-1 text-right">{item.title}</span>
+                  <span className="text-sm font-medium flex-1 text-right">{item.title}</span>
                   {item.badge && (
-                    <Badge variant="default" className="mr-auto">
+                    <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 mr-2">
                       {item.badge}
                     </Badge>
                   )}
                 </>
               )}
             </div>
-          </Button>
+          </div>
         </Link>
       </div>
     )
@@ -80,14 +80,13 @@ export function SidebarItem({
 
   // آیتم با فرزند
   return (
-    <div className="mb-1">
-      <Button
-        variant="ghost"
+    <div className="mb-0">
+      <div
         className={`
-          w-full justify-start h-10 px-3 font-normal
-          ${isCollapsed ? "px-2" : ""}
+          flex items-center justify-between py-2 px-3 rounded cursor-pointer transition-colors
+          text-gray-800 hover:text-indigo-600
         `}
-        style={{ paddingLeft: isCollapsed ? "0.5rem" : `${paddingLeft}px` }}
+        style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleClick}
       >
         <div className={`flex items-center gap-3 w-full ${isCollapsed ? "justify-center" : ""}`}>
@@ -95,38 +94,55 @@ export function SidebarItem({
           
           {!isCollapsed && (
             <>
-              <span className="flex-1 text-right">{item.title}</span>
+              <span className="text-sm font-medium flex-1 text-right">{item.title}</span>
               
               {/* فلش جهت */}
-              <div className={`transition-transform duration-200 ${item.isOpen ? "rotate-90" : ""}`}>
-                <svg 
-                  width="16" 
-                  height="16" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </div>
+              <span className="ml-1 flex-shrink-0 cursor-pointer">
+                {item.isOpen ? (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 15l7-7 7 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                )}
+              </span>
 
               {item.badge && (
-                <Badge variant="default" className="mr-2">
+                <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 mr-2">
                   {item.badge}
                 </Badge>
               )}
             </>
           )}
         </div>
-      </Button>
+      </div>
 
       {/* فرزندان */}
       {!isCollapsed && item.children && (
         <Collapse isOpen={!!item.isOpen}>
-          <div className="mt-1">
+          <div className="border-r border-gray-300 mr-2">
             {item.children.map((child) => (
               <SidebarItem
                 key={child.id}
