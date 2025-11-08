@@ -1,110 +1,75 @@
-/*
- * @Author: Mohammad Felfelani
- * @Email: mfelfelani72@gmail.com
- * @Team:
- * @Date: 2025-10-18 08:37:33
- * @Description:
- */
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/app/card"
 
-"use client"
-
-import { type ChangeEvent, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from 'lucide-react'
-import { Button } from '@/components/ui/admin/kit/button'
-import { Input } from '@/components/ui/admin/kit/input'
-import { Separator } from '@/components/ui/admin/kit/separator'
-import { Header } from '@/components/ui/admin/layout/header'
-import { ProfileDropdown } from '@/components/ui/admin/profile-dropdown'
-import { Search } from '@/components/ui/admin/search'
-import { ThemeSwitch } from '@/components/ui/admin/theme-switch'
-import { ConfigDrawer } from '@/components/ui/admin/config-drawer'
-
-// Import all providers
-import { SearchProvider } from '@/context/admin/search-provider'
-import { LayoutProvider } from '@/context/admin/layout-provider'
-import { DirectionProvider } from '@/context/admin/direction-provider'
-import { ThemeProvider } from '@/context/admin/theme-provider'
-import { SidebarProvider } from '@/components/ui/admin/kit/sidebar'
-
-type AppType = 'all' | 'connected' | 'notConnected'
-
-const appText = new Map<AppType, string>([
-  ['all', 'All Apps'],
-  ['connected', 'Connected'],
-  ['notConnected', 'Not Connected'],
-])
-
-export default function AppsPage({ children, params }: any) {
+export default function Home() {
   return (
-    <DirectionProvider>
-      <ThemeProvider>
-        <LayoutProvider>
-          <SidebarProvider>
-            <SearchProvider>
-              <AppsContent />
-            </SearchProvider>
-          </SidebarProvider>
-        </LayoutProvider>
-      </ThemeProvider>
-    </DirectionProvider>
-  )
-}
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">کل کاربران</CardTitle>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1,234</div>
+            <p className="text-xs text-muted-foreground">+20.1% از ماه گذشته</p>
+          </CardContent>
+        </Card>
 
-function AppsContent() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">فروش کل</CardTitle>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">۱۲,۳۴۵,۰۰۰</div>
+            <p className="text-xs text-muted-foreground">+15% از ماه گذشته</p>
+          </CardContent>
+        </Card>
 
-  const filter = searchParams.get('filter') || ''
-  const type = (searchParams.get('type') as AppType) || 'all'
-  const sort = (searchParams.get('sort') as 'asc' | 'desc') || 'asc'
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">سفارشات فعال</CardTitle>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground">
+              <rect width="20" height="14" x="2" y="5" rx="2" />
+              <path d="M2 10h20" />
+            </svg>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">۵۶</div>
+            <p className="text-xs text-muted-foreground">+2 از دیروز</p>
+          </CardContent>
+        </Card>
 
-  const [appType, setAppType] = useState<AppType>(type)
-  const [searchTerm, setSearchTerm] = useState(filter)
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">نرخ تبدیل</CardTitle>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">۴۵.۲%</div>
+            <p className="text-xs text-muted-foreground">+5% از ماه گذشته</p>
+          </CardContent>
+        </Card>
+      </div>
 
-  const updateSearchParams = (updates: Record<string, string | undefined>) => {
-    const params = new URLSearchParams(searchParams.toString())
-    
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === undefined || value === '') {
-        params.delete(key)
-      } else {
-        params.set(key, value)
-      }
-    })
-
-    router.push(`?${params.toString()}`, { scroll: false })
-  }
-
-  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSearchTerm(value)
-    updateSearchParams({ filter: value || undefined })
-  }
-
-  const handleTypeChange = (value: AppType) => {
-    setAppType(value)
-    updateSearchParams({ type: value === 'all' ? undefined : value })
-  }
-
-  const handleSortChange = (sort: 'asc' | 'desc') => {
-    updateSearchParams({ sort })
-  }
-
-  return (
-    <>
-      {/* ===== Top Heading ===== */}
-      <Header>
-        <Search />
-        <div className='ms-auto flex items-center gap-4'>
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
-        </div>
-      </Header>
-
-      {/* ===== Content ===== */}
-      {/* محتوای اصلی صفحه اینجا قرار می‌گیرد */}
-    </>
+      {/* نمودار نمونه */}
+      <Card className="col-span-4">
+        <CardHeader>
+          <CardTitle>نمایش عملکرد</CardTitle>
+        </CardHeader>
+        <CardContent className="pl-2">
+          <div className="h-80 flex items-center justify-center text-muted-foreground">
+            اینجا نمودار قرار می‌گیرد
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
