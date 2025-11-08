@@ -78,7 +78,7 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
     : []
 
   return (
-    <div className="bg-white rounded-b-lg mx-1 mt-0.5 shadow-2xl px-6 py-3">
+    <div className="bg-white dark:bg-gray-800 rounded-b-lg mx-1 mt-0.5 shadow-2xl px-6 py-3 transition-colors duration-200">
       <Breadcrumb>
         <BreadcrumbList>
           {visibleItems.map((item, index) => (
@@ -88,7 +88,7 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
               {shouldShowOverflow && index === 0 && (
                 <>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={item.href}>
+                    <BreadcrumbLink href={item.href} className="dark:text-gray-300 dark:hover:text-blue-400">
                       {item.title}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -96,18 +96,18 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
                   <BreadcrumbItem>
                     <button
                       onClick={() => setShowOverflow(!showOverflow)}
-                      className="px-2 py-1 text-sm text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                      className="px-2 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 rounded-md transition-colors duration-200"
                     >
                       ...
                     </button>
                   </BreadcrumbItem>
                   {showOverflow && (
-                    <div className="absolute mt-2 bg-white border border-gray-200 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] z-10 min-w-32">
+                    <div className="absolute mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] z-10 min-w-32 transition-colors duration-200">
                       {hiddenItems.map((hiddenItem) => (
                         <BreadcrumbLink
                           key={hiddenItem.href}
                           href={hiddenItem.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg"
                         >
                           {hiddenItem.title}
                         </BreadcrumbLink>
@@ -121,13 +121,13 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
               {!shouldShowOverflow || index > 0 ? (
                 !item.isCurrent ? (
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={item.href}>
+                    <BreadcrumbLink href={item.href} className="dark:text-gray-300 dark:hover:text-blue-400">
                       {item.title}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                 ) : (
                   <BreadcrumbItem>
-                    <BreadcrumbPage>
+                    <BreadcrumbPage className="dark:text-white">
                       {item.title}
                     </BreadcrumbPage>
                   </BreadcrumbItem>

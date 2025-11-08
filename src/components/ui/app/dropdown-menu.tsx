@@ -93,9 +93,10 @@ const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
       className={cn(
         "absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none",
         {
-          "right-0": align === "end",
-          "left-0": align === "start",
-          "left-1/2 transform -translate-x-1/2": align === "center",
+          // برای RTL و LTR موقعیت‌دهی هوشمند
+          "right-0 rtl:right-auto rtl:left-0": align === "end",
+          "left-0 rtl:left-auto rtl:right-0": align === "start",
+          "left-1/2 transform -translate-x-1/2 rtl:translate-x-1/2": align === "center",
         },
         className
       )}
@@ -164,7 +165,7 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
 export {
   DropdownMenu,
   DropdownMenuTrigger,
-  DropdownMenuContent, // اینجا درست شد!
+  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,

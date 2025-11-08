@@ -1,7 +1,7 @@
-// user-menu.tsx - با استایل جدید
-"use client"
+// components/admin/user-menu.tsx
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,92 +9,95 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/app/dropdown-menu"
-import { Button } from "@/components/ui/app/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/app/avatar"
+} from "@/components/ui/app/dropdown-menu";
+import { Button } from "@/components/ui/app/button";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/app/avatar";
 
 interface User {
-  name: string
-  email: string
-  avatar?: string
+  name: string;
+  email: string;
+  avatar?: string;
 }
 
 interface UserMenuProps {
-  user: User
+  user: User;
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const getInitials = (name: string) => {
     return name
       .split(" ")
-      .map(word => word[0])
+      .map((word) => word[0])
       .join("")
       .toUpperCase()
-      .slice(0, 2)
-  }
+      .slice(0, 2);
+  };
 
   const handleSignOut = () => {
-    console.log("خروج از سیستم")
-    setIsOpen(false)
-  }
+    console.log("خروج از سیستم");
+    setIsOpen(false);
+  };
 
   const handleProfile = () => {
-    console.log("رفتن به پروفایل")
-    setIsOpen(false)
-  }
+    console.log("رفتن به پروفایل");
+    setIsOpen(false);
+  };
 
   const handleSettings = () => {
-    console.log("رفتن به تنظیمات")
-    setIsOpen(false)
-  }
+    console.log("رفتن به تنظیمات");
+    setIsOpen(false);
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          className="relative h-10 w-10 rounded-full border-2 border-transparent hover:border-blue-100 transition-colors"
+        <Button
+          variant="ghost"
+          className="relative h-9 w-9 rounded-full border-2 border-transparent hover:border-blue-100 dark:hover:border-blue-900 transition-colors"
         >
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-7 w-7">
             <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback className="bg-blue-100 text-blue-600 font-medium">
+            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      
-      <DropdownMenuContent 
-        align="end" 
-        className="w-56 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-gray-200"
-      >
+
+      <DropdownMenuContent className="w-56 bg-white dark:bg-gray-900 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-gray-200 dark:border-gray-700 transition-colors">
         {/* اطلاعات کاربر */}
         <DropdownMenuLabel className="font-normal p-3">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none text-gray-800">{user.name}</p>
-            <p className="text-xs leading-none text-gray-500">
+            <p className="text-sm font-medium leading-none text-gray-800 dark:text-gray-200">
+              {user.name}
+            </p>
+            <p className="text-xs leading-none text-gray-500 dark:text-gray-400">
               {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
 
-        <DropdownMenuSeparator className="bg-gray-200" />
+        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
 
         {/* آیتم‌های منو */}
-        <DropdownMenuItem 
-          onClick={handleProfile} 
-          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+        <DropdownMenuItem
+          onClick={handleProfile}
+          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
           >
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -103,18 +106,18 @@ export function UserMenu({ user }: UserMenuProps) {
           پروفایل من
         </DropdownMenuItem>
 
-        <DropdownMenuItem 
-          onClick={handleSettings} 
-          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+        <DropdownMenuItem
+          onClick={handleSettings}
+          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
           >
             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
@@ -123,21 +126,21 @@ export function UserMenu({ user }: UserMenuProps) {
           تنظیمات
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-gray-200" />
+        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
 
         {/* خروج */}
-        <DropdownMenuItem 
-          onClick={handleSignOut} 
-          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
         >
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
           >
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -148,5 +151,5 @@ export function UserMenu({ user }: UserMenuProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
