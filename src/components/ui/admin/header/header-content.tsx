@@ -1,40 +1,38 @@
 // header-content.tsx - با استایل جدید
-"use client"
+"use client";
 
-import * as React from "react"
-import { SearchCommand } from "./search-command"
-import { LanguageSwitcher } from "./language-switcher"
-import { ThemeSwitcher } from "./theme-switcher"
-import { UserMenu } from "./user-menu"
-import { Button } from "@/components/ui/app/button"
-import { Input } from "@/components/ui/app/input"
+import * as React from "react";
+import { SearchCommand } from "./search-command";
+import LanguageSwitcher from "@/components/base/LanguageSwitcher";
+import  ThemeSwitcher  from "@/components/base/ThemeSwitcher";
+import { UserMenu } from "./user-menu";
+import { Button } from "@/components/ui/app/button";
+import { Input } from "@/components/ui/app/input";
 
 interface HeaderContentProps {
-  languages: any[]
-  user: any
+  user: any;
 }
 
-export function HeaderContent({ languages, user }: HeaderContentProps) {
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false)
+export function HeaderContent({ user }: HeaderContentProps) {
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
   // مدیریت کلید Ctrl+K برای جستجو
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-        event.preventDefault()
-        setIsSearchOpen(true)
+      if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+        event.preventDefault();
+        setIsSearchOpen(true);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <>
       <header className="bg-white rounded-t-lg mx-1 mt-2 shadow-[5px_-50px_30px_rgba(0,0,0,0.10)] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          
           {/* Logo */}
           <div>
             <span className="text-2xl font-bold text-blue-600 cursor-pointer">
@@ -42,10 +40,9 @@ export function HeaderContent({ languages, user }: HeaderContentProps) {
             </span>
           </div>
 
-          {/* جستجو و ابزارها */}
+         
           <div className="flex items-center space-x-6">
-            
-            {/* جستجو */}
+          
             <div className="relative">
               <Input
                 type="text"
@@ -61,36 +58,47 @@ export function HeaderContent({ languages, user }: HeaderContentProps) {
               </div>
             </div>
 
-            {/* ابزارها */}
+          
             <div className="flex items-center space-x-4">
               
-              {/* تغییر تم */}
               <ThemeSwitcher />
 
-              {/* تغییر زبان */}
-              <LanguageSwitcher languages={languages} />
+              <LanguageSwitcher />
 
-              {/* نوتیفیکیشن */}
-              <Button variant="ghost" size="icon" className="text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
-                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                 </svg>
               </Button>
 
               {/* منوی کاربر */}
               <UserMenu user={user} />
-
             </div>
           </div>
         </div>
       </header>
 
       {/* جستجوی سراسری */}
-      <SearchCommand 
+      <SearchCommand
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
     </>
-  )
+  );
 }

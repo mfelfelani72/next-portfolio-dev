@@ -1,11 +1,7 @@
 import { Language } from "@/Interfaces/admin/header"
 import { HeaderContent } from "./header-content"
 
-// داده‌های نمونه
-const languages: Language[] = [
-  { code: "fa", name: "فارسی", flag: "🇮🇷" },
-  { code: "en", name: "English", flag: "🇺🇸" },
-]
+
 
 const user = {
   name: "امین رضایی",
@@ -13,14 +9,11 @@ const user = {
   avatar: "/avatar.png"
 }
 
-interface HeaderProps {
-  initialLanguages?: Language[]
-}
 
-export function Header({ initialLanguages = languages }: HeaderProps) {
+
+export function Header() {
   return (
     <HeaderContent 
-      languages={initialLanguages}
       user={user}
     />
   )

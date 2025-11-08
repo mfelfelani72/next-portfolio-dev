@@ -1,12 +1,11 @@
-// sidebar-item.tsx - با استایل جدید
+// sidebar-item.tsx - کاملاً بازنویسی شده
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
+
 import { MenuItem } from "@/Interfaces/admin/menu"
-import { Button } from "@/components/ui/app/button"
 import { Badge } from "@/components/ui/app/badge"
-import { Collapse } from "@/components/ui/app/collapse"
+import LocalizedLink from "@/components/base/LocalizedLink"
 
 interface SidebarItemProps {
   item: MenuItem
@@ -26,7 +25,7 @@ export function SidebarItem({
   onItemClick 
 }: SidebarItemProps) {
   const hasChildren = item.children && item.children.length > 0
-  const paddingLeft = level * 16 + 8 // 8px پایه + 16px برای هر سطح
+  const paddingRight = level * 20 + 12 // برای RTL
 
   const handleClick = () => {
     if (hasChildren) {
@@ -46,26 +45,45 @@ export function SidebarItem({
     )
   }
 
+  // استایل‌های مشترک
+  const baseStyles = `
+    flex items-center justify-between py-3 px-4 rounded-lg cursor-pointer transition-all duration-200
+    ${isActive 
+      ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-r-2 border-indigo-600 dark:border-indigo-400' 
+      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400'
+    }
+  `
+
   // آیتم بدون فرزند
   if (!hasChildren) {
     return (
-      <div className="mb-0">
-        <Link href={item.url || "#"} passHref>
+      <div className="mb-1">
+        <LocalizedLink href={item.url || "#"} passHref>
           <div
-            className={`
-              flex items-center justify-between py-2 px-3 rounded cursor-pointer transition-colors
-              ${isActive ? "text-indigo-600" : "text-gray-800 hover:text-indigo-600"}
-            `}
-            style={{ paddingLeft: `${paddingLeft}px` }}
+            className={baseStyles}
+            style={{ paddingRight: `${paddingRight}px` }}
             onClick={handleClick}
           >
             <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center w-full" : ""}`}>
-              {renderIcon()}
+              <div className={`
+                transition-colors
+                ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'}
+              `}>
+                {renderIcon()}
+              </div>
               {!isCollapsed && (
                 <>
-                  <span className="text-sm font-medium flex-1 text-right">{item.title}</span>
+                  <span className="text-sm font-medium flex-1 text-right">
+                    {item.title}
+                  </span>
                   {item.badge && (
-                    <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 mr-2">
+                    <Badge className={`
+                      mr-2
+                      ${isActive 
+                        ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-200' 
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                      }
+                    `}>
                       {item.badge}
                     </Badge>
                   )}
@@ -73,64 +91,52 @@ export function SidebarItem({
               )}
             </div>
           </div>
-        </Link>
+        </LocalizedLink>
       </div>
     )
   }
 
   // آیتم با فرزند
   return (
-    <div className="mb-0">
+    <div className="mb-1">
       <div
-        className={`
-          flex items-center justify-between py-2 px-3 rounded cursor-pointer transition-colors
-          text-gray-800 hover:text-indigo-600
-        `}
-        style={{ paddingLeft: `${paddingLeft}px` }}
+        className={baseStyles}
+        style={{ paddingRight: `${paddingRight}px` }}
         onClick={handleClick}
       >
         <div className={`flex items-center gap-3 w-full ${isCollapsed ? "justify-center" : ""}`}>
-          {renderIcon()}
+          <div className={`
+            transition-colors
+            ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'}
+          `}>
+            {renderIcon()}
+          </div>
           
           {!isCollapsed && (
             <>
-              <span className="text-sm font-medium flex-1 text-right">{item.title}</span>
+              <span className="text-sm font-medium flex-1 text-right">
+                {item.title}
+              </span>
               
-              {/* فلش جهت */}
-              <span className="ml-1 flex-shrink-0 cursor-pointer">
-                {item.isOpen ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 15l7-7 7 7"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                )}
+              {/* فلش جهت برای RTL */}
+              <span className={`
+                transition-transform duration-200 ml-2
+                ${item.isOpen ? 'rotate-90' : 'rotate-0'}
+                ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500'}
+              `}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </span>
 
               {item.badge && (
-                <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 mr-2">
+                <Badge className={`
+                  mr-2
+                  ${isActive 
+                    ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-200' 
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                  }
+                `}>
                   {item.badge}
                 </Badge>
               )}
@@ -140,22 +146,23 @@ export function SidebarItem({
       </div>
 
       {/* فرزندان */}
-      {!isCollapsed && item.children && (
-        <Collapse isOpen={!!item.isOpen}>
-          <div className="border-r border-gray-300 mr-2">
-            {item.children.map((child) => (
-              <SidebarItem
-                key={child.id}
-                item={child}
-                level={level + 1}
-                isCollapsed={isCollapsed}
-                isActive={isActive}
-                onToggle={onToggle}
-                onItemClick={onItemClick}
-              />
-            ))}
-          </div>
-        </Collapse>
+      {!isCollapsed && item.children && item.isOpen && (
+        <div 
+          className="border-r-2 border-gray-200 dark:border-gray-700 mr-4 mt-1 transition-all duration-300"
+          style={{ marginRight: `${paddingRight - 8}px` }}
+        >
+          {item.children.map((child) => (
+            <SidebarItem
+              key={child.id}
+              item={child}
+              level={level + 1}
+              isCollapsed={isCollapsed}
+              isActive={isActive}
+              onToggle={onToggle}
+              onItemClick={onItemClick}
+            />
+          ))}
+        </div>
       )}
     </div>
   )

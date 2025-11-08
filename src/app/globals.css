@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 .skill-grad-1 {
   background: linear-gradient(90deg, #2dd4bf, #06b6d4);
 }
