@@ -8,7 +8,7 @@ import ThemeSwitcher from "@/components/base/ThemeSwitcher";
 import { UserMenu } from "./user-menu";
 import { Button } from "@/components/ui/app/button";
 import { Input } from "@/components/ui/app/input";
-import { useAppStore } from "@/app/[lang]/stores/AppStore";
+import { useAppAdminStore } from "@/app/[lang]/stores/admin/AppAdminStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +29,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
     toggleSidebar,
     toggleMobileSidebar,
     isMobileSidebarOpen,
-  } = useAppStore();
+  } = useAppAdminStore();
 
   // مدیریت کلید Ctrl+K برای جستجو
   React.useEffect(() => {
@@ -46,7 +46,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
 
   return (
     <>
-      <header className="bg-white dark:bg-gray-900 rounded-t-lg mx-1 mt-2 shadow-[5px_-50px_30px_rgba(0,0,0,0.10)] dark:shadow-[5px_-50px_30px_rgba(0,0,0,0.30)] sticky top-0 z-50 transition-colors duration-200">
+      <header className="bg-white dark:bg-gray-800 rounded-t-lg mx-1 mt-2 shadow-[5px_-50px_30px_rgba(0,0,0,0.10)] dark:shadow-[5px_-50px_30px_rgba(0,0,0,0.30)] sticky top-0 z-50 transition-colors duration-200">
         <div className="w-full px-3 sm:px-4 md:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-4">
             {/* سمت راست: دکمه سایدبار و لوگو */}
@@ -59,7 +59,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
                 className="md:hidden bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 h-9 w-9 sm:h-10 sm:w-10 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5 dark:text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -82,7 +82,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
               >
                 {isSidebarCollapsed ? (
                   <svg
-                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    className="w-4 h-4 lg:w-5 lg:h-5 dark:text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -96,7 +96,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
                   </svg>
                 ) : (
                   <svg
-                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    className="w-4 h-4 lg:w-5 lg:h-5 dark:text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -144,7 +144,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
                   className="sm:hidden bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 dark:text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

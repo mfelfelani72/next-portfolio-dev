@@ -4,7 +4,7 @@ import * as React from "react"
 import { usePathname } from "next/navigation"
 import { MenuItem } from "@/Interfaces/admin/menu"
 import { SidebarItem } from "./sidebar-item"
-import { useAppStore } from "@/app/[lang]/stores/AppStore"; 
+import { useAppAdminStore } from "@/app/[lang]/stores/admin/AppAdminStore"; 
 import { Button } from "@/components/ui/app/button"
 
 interface SidebarContentProps {
@@ -20,7 +20,7 @@ export function SidebarContent({ initialItems }: SidebarContentProps) {
     isSidebarCollapsed, 
     isMobileSidebarOpen, 
     setMobileSidebarOpen 
-  } = useAppStore()
+  } = useAppAdminStore()
 
   // تابع برای باز/بسته کردن منوها
   const toggleMenuItem = (itemId: string) => {
@@ -53,7 +53,7 @@ export function SidebarContent({ initialItems }: SidebarContentProps) {
     <aside 
       className={`
         hidden md:flex flex-col h-[calc(100vh-16px)] m-2 
-        bg-white dark:bg-gray-900 
+        bg-white dark:bg-gray-800 
         border border-gray-200 dark:border-gray-700
         shadow-xl dark:shadow-gray-900/50 
         rounded-lg transition-all duration-300 ease-in-out
@@ -129,7 +129,7 @@ export function SidebarContent({ initialItems }: SidebarContentProps) {
               onClick={() => setMobileSidebarOpen(false)}
               className="h-8 w-8 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </Button>
