@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/ui/admin/sidebar/sidebar";
 import { Header } from "@/components/ui/admin/header/header";
 import { MainBreadcrumb } from "@/components/ui/app/main-breadcrumb";
 import Footer from "@/components/ui/admin/footer/footer";
+import AuthGuard from "@/components/ui/auth/AuthGuard";
 
 // Interfaces
 
@@ -18,29 +19,31 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, params }: AdminLayoutProps) {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <Sidebar />
+    <AuthGuard>
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <Sidebar />
 
-      <div className="flex-1 flex flex-col min-h-0 w-full">
-        <Header />
+        <div className="flex-1 flex flex-col min-h-0 w-full">
+          <Header />
 
-        {/* <div className="hidden sm:block"> */}
-        <div className="">
-          <MainBreadcrumb isAdmin={true} />
-        </div>
+          {/* <div className="hidden sm:block"> */}
+          <div className="">
+            <MainBreadcrumb isAdmin={true} />
+          </div>
 
-        <div className="flex-1 flex flex-col min-h-0 pt-1 sm:pt-3">
-          <main className="flex-1 overflow-auto px-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200/70 dark:border-gray-700/70 min-h-full p-3 sm:p-6 transition-colors duration-200">
-              {children}
+          <div className="flex-1 flex flex-col min-h-0 pt-1 sm:pt-3">
+            <main className="flex-1 overflow-auto px-1">
+              <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200/70 dark:border-gray-700/70 min-h-full p-3 sm:p-6 transition-colors duration-200">
+                {children}
+              </div>
+            </main>
+
+            <div className="flex-shrink-0">
+              <Footer />
             </div>
-          </main>
-
-          <div className="flex-shrink-0">
-            <Footer />
           </div>
         </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

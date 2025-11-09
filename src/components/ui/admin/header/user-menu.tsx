@@ -20,6 +20,10 @@ import {
   AvatarImage,
 } from "@/components/ui/app/avatar";
 
+// Functions
+
+import { logout } from "@/libs/auth/auth";
+
 // Zustand
 
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
@@ -48,7 +52,7 @@ export function UserMenu() {
   };
 
   const handleSignOut = () => {
-    console.log("log out");
+    logout();
     setIsOpen(false);
   };
 
