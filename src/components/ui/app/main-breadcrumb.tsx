@@ -1,7 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { usePathname } from "next/navigation"
+import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+
+// Components
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,73 +13,77 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/app/breadcrumb"
+} from "@/components/ui/app/breadcrumb";
+import { useTranslation } from "@/hooks/useTranslation";
 
-// تغییر نام interface به BreadcrumbItemType
+// Interfaces
+
 interface BreadcrumbItemType {
-  title: string
-  href: string
-  isCurrent?: boolean
+  title: string;
+  href: string;
+  isCurrent?: boolean;
 }
 
 interface MainBreadcrumbProps {
-  isAdmin?: boolean
+  isAdmin?: boolean;
 }
 
 export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
-  const pathname = usePathname()
-  const [items, setItems] = React.useState<BreadcrumbItemType[]>([])
-  const [showOverflow, setShowOverflow] = React.useState(false)
+  // Hooks
 
-  // تابع برای تبدیل مسیر به آیتم‌های بردکرامب
-  const generateBreadcrumbItems = React.useCallback((): BreadcrumbItemType[] => {
-    const paths = pathname.split('/').filter(Boolean)
-    
-    // تعیین خانه بر اساس نوع (ادمین یا سایت اصلی)
-    const homeItem: BreadcrumbItemType = isAdmin 
-      ? { title: "داشبورد", href: `/${paths[0]}/admin/` }
-      : { title: "خانه", href: `/${paths[0]}/home/` }
+  const pathname = usePathname();
+  const { t } = useTranslation();
 
-    const breadcrumbItems: BreadcrumbItemType[] = [homeItem]
+  // States
 
-    // حذف پارامتر زبان و admin/home از مسیر
-    const filteredPaths = paths.filter((path, index) => {
-      if (index === 0) return false // حذف زبان
-      if (index === 1 && (path === 'admin' || path === 'home')) return false // حذف admin/home
-      return true
-    })
+  const [items, setItems] = useState<BreadcrumbItemType[]>([]);
+  const [showOverflow, setShowOverflow] = useState(false);
 
-    // ساخت مسیرهای بردکرامب
-    let currentHref = `/${paths[0]}${isAdmin ? '/admin' : '/home'}`
-    
-    filteredPaths.forEach((path, index) => {
-      currentHref += `/${path}`
-      const title = path.charAt(0).toUpperCase() + path.slice(1)
-      
-      breadcrumbItems.push({
-        title,
-        href: currentHref,
-        isCurrent: index === filteredPaths.length - 1
-      })
-    })
+  // Functions
 
-    return breadcrumbItems
-  }, [pathname, isAdmin])
+  const generateBreadcrumbItems =
+    React.useCallback((): BreadcrumbItemType[] => {
+      const paths = pathname.split("/").filter(Boolean);
+
+      const homeItem: BreadcrumbItemType = isAdmin
+        ? { title: t("dashboard"), href: `/${paths[0]}/admin/` }
+        : { title: t("home"), href: `/${paths[0]}/home/` };
+
+      const breadcrumbItems: BreadcrumbItemType[] = [homeItem];
+
+      const filteredPaths = paths.filter((path, index) => {
+        if (index === 0) return false;
+        if (index === 1 && (path === "admin" || path === "home")) return false;
+        return true;
+      });
+
+      let currentHref = `/${paths[0]}${isAdmin ? "/admin" : "/home"}`;
+
+      filteredPaths.forEach((path, index) => {
+        currentHref += `/${path}`;
+        const title = path.slice(0);
+
+        breadcrumbItems.push({
+          title,
+          href: currentHref,
+          isCurrent: index === filteredPaths.length - 1,
+        });
+      });
+
+      return breadcrumbItems;
+    }, [pathname, isAdmin]);
 
   React.useEffect(() => {
-    setItems(generateBreadcrumbItems())
-  }, [generateBreadcrumbItems])
+    setItems(generateBreadcrumbItems());
+  }, [generateBreadcrumbItems]);
 
-  // منطق برای مخفی‌سازی در موبایل
-  const shouldShowOverflow = items.length > 3
+  const shouldShowOverflow = items.length > 3;
 
-  const visibleItems = shouldShowOverflow 
+  const visibleItems = shouldShowOverflow
     ? [items[0], items[items.length - 1]]
-    : items
+    : items;
 
-  const hiddenItems = shouldShowOverflow 
-    ? items.slice(1, -1)
-    : []
+  const hiddenItems = shouldShowOverflow ? items.slice(1, -1) : [];
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-b-lg mx-1 mt-0.5 shadow-2xl px-6 py-3 transition-colors duration-200">
@@ -84,13 +92,15 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
           {visibleItems.map((item, index) => (
             <React.Fragment key={item.href}>
               {index > 0 && <BreadcrumbSeparator />}
-              
+
               {shouldShowOverflow && index === 0 && (
                 <>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={item.href} className="dark:text-gray-300 dark:hover:text-blue-400">
-                      {item.title}
-                    </BreadcrumbLink>
+                    <Link href={item.href} passHref>
+                      <BreadcrumbLink className="dark:text-gray-300 dark:hover:text-blue-400">
+                        {item.title}
+                      </BreadcrumbLink>
+                    </Link>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
@@ -104,13 +114,15 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
                   {showOverflow && (
                     <div className="absolute mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] z-10 min-w-32 transition-colors duration-200">
                       {hiddenItems.map((hiddenItem) => (
-                        <BreadcrumbLink
+                        <Link
                           key={hiddenItem.href}
                           href={hiddenItem.href}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg"
+                          passHref
                         >
-                          {hiddenItem.title}
-                        </BreadcrumbLink>
+                          <BreadcrumbLink className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg">
+                            {hiddenItem.title}
+                          </BreadcrumbLink>
+                        </Link>
                       ))}
                     </div>
                   )}
@@ -121,9 +133,11 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
               {!shouldShowOverflow || index > 0 ? (
                 !item.isCurrent ? (
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={item.href} className="dark:text-gray-300 dark:hover:text-blue-400">
-                      {item.title}
-                    </BreadcrumbLink>
+                    <Link href={item.href} passHref>
+                      <BreadcrumbLink className="dark:text-gray-300 dark:hover:text-blue-400">
+                        {item.title}
+                      </BreadcrumbLink>
+                    </Link>
                   </BreadcrumbItem>
                 ) : (
                   <BreadcrumbItem>
@@ -138,5 +152,5 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
         </BreadcrumbList>
       </Breadcrumb>
     </div>
-  )
+  );
 }

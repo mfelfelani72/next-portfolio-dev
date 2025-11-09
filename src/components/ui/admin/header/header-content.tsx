@@ -207,7 +207,7 @@ export function HeaderContent() {
                       </Button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent className="w-52 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                    <DropdownMenuContent className="w-58 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
                       <div
                         className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                         onClick={(e) => e.stopPropagation()}

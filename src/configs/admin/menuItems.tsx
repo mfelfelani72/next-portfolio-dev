@@ -31,7 +31,7 @@ export const menuItems: MenuItem[] = [
         icon: <DangerSquareIcon />,
         description: "user_profile",
         category: "pages",
-        url: "/admin/user/profile",
+        url: "/admin/user-profile",
         isOpen: false,
       },
     ],

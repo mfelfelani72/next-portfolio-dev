@@ -24,7 +24,8 @@ export default function AdminLayout({ children, params }: AdminLayoutProps) {
       <div className="flex-1 flex flex-col min-h-0 w-full">
         <Header />
 
-        <div className="hidden sm:block">
+        {/* <div className="hidden sm:block"> */}
+        <div className="">
           <MainBreadcrumb isAdmin={true} />
         </div>
 
