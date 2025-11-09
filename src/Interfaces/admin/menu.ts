@@ -3,6 +3,8 @@ export interface MenuItem {
   title: string;
   icon: React.ReactNode | string;
   url?: string;
+  description:string;
+  category:string;
   children?: MenuItem[];
   badge?: number;
   isOpen?: boolean;

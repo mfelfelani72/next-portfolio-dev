@@ -13,6 +13,10 @@ import type { Metadata } from "next";
 import LangWrapper from "@/app/[lang]/LangWrapper";
 import DetectDevice from "@/app/[lang]/DetectDevice";
 
+// Containers
+
+import GetUserInfo from "@/containers/landing/GetUserInfo";
+
 // Functions
 
 import { getDictionary } from "@/locale";
@@ -53,8 +57,9 @@ export default async function LangLayout({
 
   return (
     <>
+      <GetUserInfo params={{ lang }} />
       <LangWrapper langFromUrl={lang} dictionary={dictionary}>
-      <DetectDevice />
+        <DetectDevice />
         {children}
       </LangWrapper>
     </>

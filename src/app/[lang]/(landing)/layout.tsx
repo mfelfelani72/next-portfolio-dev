@@ -13,10 +13,6 @@ import { generateWebsiteSchema } from "@/configs/metadata";
 import { SchemaMarkup } from "@/app/[lang]/ShemaMarkup";
 import Header from "@/components/ui/landing/header/HeaderLanding";
 
-// Containers
-
-import GetUserInfo from "@/containers/landing/GetUserInfo";
-
 // Interfaces
 
 import { LangLayoutProps } from "@/Interfaces/global";
@@ -37,7 +33,10 @@ export async function generateMetadata({
 
 // Page component
 
-export default async function landingLayout({ children, params }: LangLayoutProps) {
+export default async function landingLayout({
+  children,
+  params,
+}: LangLayoutProps) {
   const resolvedParams = await params;
   const lang =
     resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
@@ -46,8 +45,6 @@ export default async function landingLayout({ children, params }: LangLayoutProp
   return (
     <>
       <SchemaMarkup schema={websiteSchema} />
-
-      <GetUserInfo params={{ lang }} />
 
       <div className="relative min-w-screen h-screen">
         <div className="text-slate-900 text-sm h-full flex flex-col">

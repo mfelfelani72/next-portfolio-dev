@@ -1,82 +1,130 @@
-// components/admin/search-command.tsx
-"use client"
+"use client";
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
-import { SearchResult } from "@/Interfaces/admin/header"
-import { Input } from "@/components/ui/app/input"
-import { Button } from "@/components/ui/app/button"
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useRouter } from "next/navigation";
+
+// Components
+
+import { Input } from "@/components/ui/app/input";
+import { Button } from "@/components/ui/app/button";
+
+// Constants
+
+import { menuItems } from "@/configs/admin/menuItems";
+
+// Interfaces
+
+import { MenuItem } from "@/Interfaces/admin/menu";
 
 interface SearchCommandProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const searchData: SearchResult[] = [
-  // داده‌های نمونه
-  {
-    id: "1",
-    title: "داشبورد",
-    description: "صفحه اصلی مدیریت",
-    category: "صفحات",
-    url: "/admin",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>`
-  }
-]
+// Hooks
+
+import { useLocalizedLink } from "@/hooks/useLocalizedLink";
+
+const flattenMenuItems = (items: MenuItem[]): MenuItem[] => {
+  if (!items || !Array.isArray(items)) return [];
+
+  const results: MenuItem[] = [];
+
+  const processItem = (item: MenuItem) => {
+    if (item.url) {
+      results.push(item);
+    }
+
+    if (item.children && Array.isArray(item.children)) {
+      item.children.forEach(processItem);
+    }
+  };
+
+  items.forEach(processItem);
+  return results;
+};
 
 export function SearchCommand({ isOpen, onClose }: SearchCommandProps) {
-  const router = useRouter()
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const [selectedIndex, setSelectedIndex] = React.useState(0)
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  // Hooks
 
-  const filteredResults = searchData.filter(item =>
-    item.title.includes(searchQuery) ||
-    item.description.includes(searchQuery) ||
-    item.category.includes(searchQuery)
-  )
+  const { t } = useTranslation();
+  const router = useRouter();
+  const localizedUrl = useLocalizedLink();
+
+  // States and Refs and Memos
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const flattenedItems = useMemo(() => flattenMenuItems(menuItems), []);
+
+  // Functions
+
+  const filteredResults = flattenedItems.filter(
+    (item) =>
+      item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.description &&
+        item.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.category &&
+        item.category.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
-      onClose()
+      onClose();
     } else if (e.key === "ArrowDown") {
-      e.preventDefault()
-      setSelectedIndex(prev => 
+      e.preventDefault();
+      setSelectedIndex((prev) =>
         prev < filteredResults.length - 1 ? prev + 1 : prev
-      )
+      );
     } else if (e.key === "ArrowUp") {
-      e.preventDefault()
-      setSelectedIndex(prev => prev > 0 ? prev - 1 : prev)
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
     } else if (e.key === "Enter" && filteredResults[selectedIndex]) {
-      handleSelectResult(filteredResults[selectedIndex])
+      handleSelectResult(filteredResults[selectedIndex]);
     }
-  }
+  };
 
-  const handleSelectResult = (result: SearchResult) => {
-    router.push(result.url)
-    onClose()
-    setSearchQuery("")
-    setSelectedIndex(0)
-  }
+  const handleSelectResult = (result: MenuItem) => {
+    if (result.url) {
+      const url = localizedUrl(result.url);
+      router.push(typeof url === "string" ? url : url.pathname || "/");
+      onClose();
+      setSearchQuery("");
+      setSelectedIndex(0);
+    }
+  };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen && inputRef.current) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
-  }, [isOpen])
+  }, [isOpen]);
 
-  if (!isOpen) return null
+  const renderIcon = (icon: React.ReactNode) => {
+    if (typeof icon === "string") {
+      return (
+        <div
+          className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5"
+          dangerouslySetInnerHTML={{ __html: icon }}
+        />
+      );
+    }
+    return <div className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5">{icon}</div>;
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50 flex items-start justify-center pt-16 sm:pt-20 backdrop-blur-sm"> {/* z-index بالاتر */}
+    <div className="fixed inset-0 z-[100] bg-black/50 flex items-start justify-center pt-16 sm:pt-20 backdrop-blur-sm">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.25)] w-full max-w-2xl mx-3 sm:mx-4 border border-gray-200 dark:border-gray-700 transition-colors">
-        
-        {/* هدر جستجو */}
         <div className="flex items-center border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4">
           <Input
             ref={inputRef}
             type="text"
-            placeholder="جستجو در بین صفحات، کاربران، تنظیمات..."
+            placeholder={t("search_pages")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -92,11 +140,10 @@ export function SearchCommand({ isOpen, onClose }: SearchCommandProps) {
           </Button>
         </div>
 
-        {/* نتایج جستجو */}
         <div className="max-h-60 sm:max-h-80 overflow-y-auto p-2">
           {filteredResults.length === 0 ? (
             <div className="text-center py-6 sm:py-8 text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-              نتیجه‌ای یافت نشد
+              {t("no_result_found")}
             </div>
           ) : (
             <div className="space-y-1">
@@ -105,26 +152,26 @@ export function SearchCommand({ isOpen, onClose }: SearchCommandProps) {
                   key={result.id}
                   className={`
                     flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer text-xs sm:text-sm transition-colors
-                    ${index === selectedIndex ? 
-                      "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : 
-                      "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    ${
+                      index === selectedIndex
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                     }
                   `}
                   onClick={() => handleSelectResult(result)}
                   onMouseEnter={() => setSelectedIndex(index)}
                 >
-                  <div 
-                    className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5"
-                    dangerouslySetInnerHTML={{ __html: result.icon }}
-                  />
+                  {renderIcon(result.icon)}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{result.title}</div>
+                    <div className="font-medium truncate">
+                      {t(result.title)}
+                    </div>
                     <div className="text-gray-500 dark:text-gray-400 truncate text-xs">
-                      {result.description}
+                      {t(result.description) || t(result.title)}
                     </div>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded transition-colors whitespace-nowrap">
-                    {result.category}
+                    {t(result.category) || t("public")}
                   </div>
                 </div>
               ))}
@@ -132,15 +179,14 @@ export function SearchCommand({ isOpen, onClose }: SearchCommandProps) {
           )}
         </div>
 
-        {/* راهنمای کیبورد */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-3 sm:px-4 py-2 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 transition-colors gap-1 sm:gap-0">
           <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-            <span>↑↓ برای ناوبری</span>
-            <span>↵ برای انتخاب</span>
+            <span>↑↓ {t("for_nav")} </span>
+            <span>↵ {t("for_select")} </span>
           </div>
-          <span>ESC برای بستن</span>
+          <span>ESC {t("for_close")} </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

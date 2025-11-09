@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 
 import { SidebarItem } from "./sidebar-item";
 import { Button } from "@/components/ui/app/button";
+import { CategoryIcon } from "forma-ui";
 
 // Interfaces
 
@@ -20,7 +21,6 @@ interface SidebarContentProps {
 // Zustand
 
 import { useAppAdminStore } from "@/app/[lang]/stores/admin/AppAdminStore";
-import { CategoryIcon } from "forma-ui";
 
 export function SidebarContent({ initialItems }: SidebarContentProps) {
   // Hooks

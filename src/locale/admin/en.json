@@ -4,8 +4,18 @@
    "home_page": "Home Page",
    "portfolio": "Portfolio",
    "user_profile": "User Profile",
+   "pages": "Pages",
 
    "search_ck": "Search...ctrl+k",
+   "search_pages": "Search in Pages...",
+   "no_result_found": "No results found",
+   "public": "Public",
+   "for_nav": "For Navigation",
+   "for_select": "For Select",
+   "for_close": "For Close",
+   "change_theme": "Change Theme",
+   "change_lang": "Change Language",
+   "log_out": "Log Out",
 
   "sidebar_header_title": "Sky Teach",
    "sidebar_footer_title": "Senior Full Stack Developer"

@@ -3,8 +3,18 @@
   "home_page": "Startseite",
   "portfolio": "Portfolio",
   "user_profile": "Benutzerprofil",
+  "pages": "Seiten",
 
   "search_ck": "Suchen...ctrl+k",
+  "search_pages": "In Seiten suchen...",
+  "no_result_found": "Keine Ergebnisse gefunden",
+  "public": "öffentlich",
+  "for_nav": "Zur Navigation",
+  "for_select": "Für Auswählen",
+  "for_close": "Für schließen",
+  "change_theme": "Thema ändern",
+  "change_lang": "Sprache ändern",
+  "log_out": "Abmelden",
 
   "sidebar_header_title": "Sky Teach",
   "sidebar_footer_title": "Senior Full-Stack-Entwickler"

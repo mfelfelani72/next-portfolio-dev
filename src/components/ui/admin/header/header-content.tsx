@@ -213,34 +213,33 @@ export function HeaderContent() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ThemeSwitcher />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          تغییر تم
+                        <span className="text-sm whitespace-nowrap pl-1 text-gray-700 dark:text-gray-300">
+                          {t("change_theme")}
                         </span>
                       </div>
 
-                      {/* تغییر زبان در dropdown */}
                       <div
                         className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <LanguageSwitcher />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          تغییر زبان
+                        <span className="text-sm whitespace-nowrap pl-1 text-gray-700 dark:text-gray-300">
+                          {t("change_lang")}
                         </span>
                       </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
 
-                {/* منوی کاربر */}
-                <div className="relative">{/* <UserMenu user={user} /> */}</div>
+                <div className="relative">
+                  <UserMenu />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* جستجوی سراسری */}
       <SearchCommand
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}

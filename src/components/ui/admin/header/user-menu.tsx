@@ -1,7 +1,10 @@
-// components/admin/user-menu.tsx
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
+
+// Components
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,18 +20,23 @@ import {
   AvatarImage,
 } from "@/components/ui/app/avatar";
 
-interface User {
-  name: string;
-  email: string;
-  avatar?: string;
-}
+// Zustand
 
-interface UserMenuProps {
-  user: User;
-}
+import { useUserStore } from "@/app/[lang]/stores/UserStore";
+import { LogoutIcon } from "forma-ui";
 
-export function UserMenu({ user }: UserMenuProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+export function UserMenu() {
+  // Hooks
+
+  const { t } = useTranslation();
+
+  // States
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { user } = useUserStore();
+
+  // Functions
 
   const getInitials = (name: string) => {
     return name
@@ -40,116 +48,58 @@ export function UserMenu({ user }: UserMenuProps) {
   };
 
   const handleSignOut = () => {
-    console.log("خروج از سیستم");
-    setIsOpen(false);
-  };
-
-  const handleProfile = () => {
-    console.log("رفتن به پروفایل");
-    setIsOpen(false);
-  };
-
-  const handleSettings = () => {
-    console.log("رفتن به تنظیمات");
+    console.log("log out");
     setIsOpen(false);
   };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="relative h-9 w-9 rounded-full border-2 border-transparent hover:border-blue-100 dark:hover:border-blue-900 transition-colors"
-        >
-          <Avatar className="h-7 w-7">
-            <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
+    <>
+      {user && (
+        <>
+          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="relative h-9 w-9 rounded-full border-2 border-transparent hover:border-blue-100 dark:hover:border-blue-900 transition-colors"
+              >
+                <Avatar className="h-7 w-7">
+                  {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+                  <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-56 bg-white dark:bg-gray-900 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-gray-200 dark:border-gray-700 transition-colors">
-        {/* اطلاعات کاربر */}
-        <DropdownMenuLabel className="font-normal p-3">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none text-gray-800 dark:text-gray-200">
-              {user.name}
-            </p>
-            <p className="text-xs leading-none text-gray-500 dark:text-gray-400">
-              {user.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
+            <DropdownMenuContent className="w-56 bg-white dark:bg-gray-900 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-gray-200 dark:border-gray-700 transition-colors">
+              <DropdownMenuLabel className="font-normal p-3">
+                <div className="flex flex-col rtl:items-start space-y-1">
+                  <p className="text-sm font-medium leading-none text-gray-800 dark:text-gray-200">
+                    {user.name}
+                  </p>
+                  <p className="text-xs leading-none text-gray-500 dark:text-gray-400">
+                    {user.title}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
 
-        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+              <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
 
-        {/* آیتم‌های منو */}
-        <DropdownMenuItem
-          onClick={handleProfile}
-          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          پروفایل من
-        </DropdownMenuItem>
+              {/* heir to add something */}
 
-        <DropdownMenuItem
-          onClick={handleSettings}
-          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          تنظیمات
-        </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
 
-        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
-
-        {/* خروج */}
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className="flex items-center gap-2 p-3 cursor-pointer text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          خروج از سیستم
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <DropdownMenuItem
+                onClick={handleSignOut}
+                className="flex items-center gap-2 p-3 cursor-pointer text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              >
+                <LogoutIcon className={"ltr:rotate-180"} />
+                {t("log_out")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      )}
+    </>
   );
 }

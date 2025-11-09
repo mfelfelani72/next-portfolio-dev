@@ -3,8 +3,18 @@
   "home_page": "صفحه اصلی",
   "portfolio": "پورتفولیو",
   "user_profile": "پروفایل کاربری",
+  "pages": "صفحات",
 
   "search_ck": "جستجو....کنترل+k",
+  "search_pages": "جستجو در صفحات...",
+  "no_result_found": "نتیجه ای یافت نشد",
+  "public": "عمومی",
+  "for_nav": "برای ناوبری",
+  "for_select": "برای انتخاب",
+  "for_close": "برای بستن",
+  "change_theme": "تغییر پوسته",
+  "change_lang": "تغییر زبان",
+  "log_out": "خروج از حساب",
 
   "sidebar_header_title": "Sky Teach",
   "sidebar_footer_title": "توسعه‌دهنده ارشد فول‌استک"
