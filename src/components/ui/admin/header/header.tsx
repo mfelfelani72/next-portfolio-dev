@@ -1,17 +1,7 @@
-// components/admin/header.tsx
-import { Language } from "@/Interfaces/admin/header"
-import { HeaderContent } from "./header-content"
+// Components
 
-const user = {
-  name: "امین رضایی",
-  email: "amin.rezaei@example.com",
-  avatar: "/avatar.png"
-}
+import { HeaderContent } from "@/components/ui/admin/header/header-content";
 
 export function Header() {
-  return (
-    <HeaderContent 
-      user={user}
-    />
-  )
+  return <HeaderContent />;
 }

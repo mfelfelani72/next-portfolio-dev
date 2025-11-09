@@ -14,7 +14,7 @@ interface SidebarProps {
   initialItems?: MenuItem[];
 }
 
-const initialMenuItems: MenuItem[] = menuItems
+const initialMenuItems: MenuItem[] = menuItems;
 
 
 export function Sidebar({ initialItems = initialMenuItems }: SidebarProps) {

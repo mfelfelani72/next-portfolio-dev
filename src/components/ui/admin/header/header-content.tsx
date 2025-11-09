@@ -1,38 +1,38 @@
-// components/admin/header-content.tsx
 "use client";
 
-import * as React from "react";
-import { SearchCommand } from "./search-command";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
+
+// Components
+
+import { SearchCommand } from "@/components/ui/admin/header/search-command";
 import LanguageSwitcher from "@/components/base/LanguageSwitcher";
 import ThemeSwitcher from "@/components/base/ThemeSwitcher";
-import { UserMenu } from "./user-menu";
+import { UserMenu } from "@/components/ui/admin/header/user-menu";
 import { Button } from "@/components/ui/app/button";
 import { Input } from "@/components/ui/app/input";
-import { useAppAdminStore } from "@/app/[lang]/stores/admin/AppAdminStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/app/dropdown-menu";
 
-interface HeaderContentProps {
-  user: any;
-}
+// Zustand
 
-export function HeaderContent({ user }: HeaderContentProps) {
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+import { useAppAdminStore } from "@/app/[lang]/stores/admin/AppAdminStore";
 
-  // استفاده از app store برای مدیریت state سایدبار
-  const {
-    isSidebarCollapsed,
-    toggleSidebar,
-    toggleMobileSidebar,
-    isMobileSidebarOpen,
-  } = useAppAdminStore();
+export function HeaderContent() {
+  const { t } = useTranslation();
+  // States
 
-  // مدیریت کلید Ctrl+K برای جستجو
-  React.useEffect(() => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const { isSidebarCollapsed, toggleSidebar, toggleMobileSidebar } =
+    useAppAdminStore();
+
+  // Functions
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "k") {
         event.preventDefault();
@@ -49,9 +49,7 @@ export function HeaderContent({ user }: HeaderContentProps) {
       <header className="bg-white dark:bg-gray-800 rounded-t-lg mx-1 mt-2 shadow-[5px_-50px_30px_rgba(0,0,0,0.10)] dark:shadow-[5px_-50px_30px_rgba(0,0,0,0.30)] sticky top-0 z-50 transition-colors duration-200">
         <div className="w-full px-3 sm:px-4 md:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-4">
-            {/* سمت راست: دکمه سایدبار و لوگو */}
             <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-              {/* دکمه سایدبار موبایل */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -73,7 +71,6 @@ export function HeaderContent({ user }: HeaderContentProps) {
                 </svg>
               </Button>
 
-              {/* دکمه تاگل سایدبار دسکتاپ */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -111,32 +108,28 @@ export function HeaderContent({ user }: HeaderContentProps) {
                 )}
               </Button>
 
-              {/* لوگو */}
               <span className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 cursor-pointer whitespace-nowrap">
-                Brand
+                MF
               </span>
             </div>
 
-            {/* سمت چپ: جستجو و آیکون‌ها */}
             <div className="flex items-center gap-2 sm:gap-3 md:gap-4 rtl:space-x-reverse">
-              {/* جستجو */}
               <div className="relative">
                 <div className="hidden sm:block">
                   <Input
                     type="text"
-                    placeholder="جستجو... (Ctrl+K)"
-                    className="pr-10 cursor-pointer w-48 md:w-56 lg:w-64 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors text-sm"
+                    placeholder={t("search_ck")}
+                    className="ltr:pl-4 rtl:pr-4 cursor-pointer w-48 md:w-56 lg:w-64 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors text-sm"
                     onClick={() => setIsSearchOpen(true)}
                     readOnly
                   />
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <div className="absolute ltr:right-3 rtl:left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-white dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium text-gray-500 dark:text-gray-300">
                       <span className="text-xs">⌘</span>K
                     </kbd>
                   </div>
                 </div>
 
-                {/* آیکون جستجو برای موبایل */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -159,19 +152,15 @@ export function HeaderContent({ user }: HeaderContentProps) {
                 </Button>
               </div>
 
-              {/* آیکون‌ها */}
               <div className="flex items-center gap-1 sm:gap-2 md:gap-3 rtl:space-x-reverse">
-                {/* تم - نمایش در دسکتاپ */}
                 <div className="hidden sm:block">
                   <ThemeSwitcher />
                 </div>
 
-                {/* زبان - نمایش در دسکتاپ */}
                 <div className="hidden sm:block">
                   <LanguageSwitcher />
                 </div>
 
-                {/* نوتیفیکیشن - نمایش در همه دستگاه‌ها */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -193,7 +182,6 @@ export function HeaderContent({ user }: HeaderContentProps) {
                   </svg>
                 </Button>
 
-                {/* Dropdown برای موبایل - فقط تغییر تم و زبان */}
                 <div className="sm:hidden">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -218,20 +206,16 @@ export function HeaderContent({ user }: HeaderContentProps) {
                         </svg>
                       </Button>
                     </DropdownMenuTrigger>
-                 
-                    <DropdownMenuContent
-                      
-                      className="w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg"
-                    >
-                      {/* تغییر تم در dropdown */}
+
+                    <DropdownMenuContent className="w-52 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
                       <div
                         className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        <ThemeSwitcher />
                         <span className="text-sm text-gray-700 dark:text-gray-300">
                           تغییر تم
                         </span>
-                        <ThemeSwitcher />
                       </div>
 
                       {/* تغییر زبان در dropdown */}
@@ -239,19 +223,17 @@ export function HeaderContent({ user }: HeaderContentProps) {
                         className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        <LanguageSwitcher />
                         <span className="text-sm text-gray-700 dark:text-gray-300">
                           تغییر زبان
                         </span>
-                        <LanguageSwitcher />
                       </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
 
                 {/* منوی کاربر */}
-                <div className="relative">
-                  <UserMenu user={user} />
-                </div>
+                <div className="relative">{/* <UserMenu user={user} /> */}</div>
               </div>
             </div>
           </div>

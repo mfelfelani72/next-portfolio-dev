@@ -10,12 +10,14 @@ import meta_de from "./meta/de.json";
 import meta_home_landing_de from "./meta/home/landing/de.json";
 
 import home_de from "./home/de.json";
+import admin_de from "./admin/de.json";
 
 const en = {
   meta: meta_de,
   meta_home_landing: meta_home_landing_de,
 
   ...home_de,
+  ...admin_de,
 };
 
 export default en;
