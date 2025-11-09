@@ -1,6 +1,7 @@
 // components/ui/app/breadcrumb.tsx
 import * as React from "react"
 import { cn } from "@/libs/cn"
+import Link from "next/link"
 
 interface BreadcrumbProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -51,12 +52,13 @@ interface BreadcrumbLinkProps
 
 const BreadcrumbLink = React.forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
   ({ asChild, className, ...props }, ref) => {
-    const Comp = asChild ? React.Fragment : "a"
+    const Comp = asChild ? "span" : "a"
     return (
       <Comp
         ref={ref as any}
         className={cn(
           "text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium text-sm",
+          asChild && "cursor-pointer", // برای span حالت pointer نشان دهد
           className
         )}
         {...props}

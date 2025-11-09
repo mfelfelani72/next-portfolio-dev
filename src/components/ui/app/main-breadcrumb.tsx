@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 // Components
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,7 +16,6 @@ import {
 import { useTranslation } from "@/hooks/useTranslation";
 
 // Interfaces
-
 interface BreadcrumbItemType {
   title: string;
   href: string;
@@ -30,59 +28,54 @@ interface MainBreadcrumbProps {
 
 export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
   // Hooks
-
   const pathname = usePathname();
   const { t } = useTranslation();
 
   // States
-
   const [items, setItems] = useState<BreadcrumbItemType[]>([]);
   const [showOverflow, setShowOverflow] = useState(false);
 
-  // Functions
+  // Generate breadcrumb items directly without useCallback
+  const generateBreadcrumbItems = (): BreadcrumbItemType[] => {
+    const paths = pathname.split("/").filter(Boolean);
 
-  const generateBreadcrumbItems =
-    React.useCallback((): BreadcrumbItemType[] => {
-      const paths = pathname.split("/").filter(Boolean);
+    const homeItem: BreadcrumbItemType = isAdmin
+      ? { title: t("dashboard"), href: `/${paths[0]}/admin/` }
+      : { title: t("home"), href: `/${paths[0]}/home/` };
 
-      const homeItem: BreadcrumbItemType = isAdmin
-        ? { title: t("dashboard"), href: `/${paths[0]}/admin/` }
-        : { title: t("home"), href: `/${paths[0]}/home/` };
+    const breadcrumbItems: BreadcrumbItemType[] = [homeItem];
 
-      const breadcrumbItems: BreadcrumbItemType[] = [homeItem];
+    const filteredPaths = paths.filter((path, index) => {
+      if (index === 0) return false;
+      if (index === 1 && (path === "admin" || path === "home")) return false;
+      return true;
+    });
 
-      const filteredPaths = paths.filter((path, index) => {
-        if (index === 0) return false;
-        if (index === 1 && (path === "admin" || path === "home")) return false;
-        return true;
+    let currentHref = `/${paths[0]}${isAdmin ? "/admin" : "/home"}`;
+
+    filteredPaths.forEach((path, index) => {
+      currentHref += `/${path}`;
+      const title = path.slice(0);
+
+      breadcrumbItems.push({
+        title,
+        href: currentHref,
+        isCurrent: index === filteredPaths.length - 1,
       });
+    });
 
-      let currentHref = `/${paths[0]}${isAdmin ? "/admin" : "/home"}`;
+    return breadcrumbItems;
+  };
 
-      filteredPaths.forEach((path, index) => {
-        currentHref += `/${path}`;
-        const title = path.slice(0);
-
-        breadcrumbItems.push({
-          title,
-          href: currentHref,
-          isCurrent: index === filteredPaths.length - 1,
-        });
-      });
-
-      return breadcrumbItems;
-    }, [pathname, isAdmin]);
-
-  React.useEffect(() => {
+  // Use useEffect with proper dependencies
+  useEffect(() => {
     setItems(generateBreadcrumbItems());
-  }, [generateBreadcrumbItems]);
+  }, [pathname, isAdmin]); // فقط pathname و isAdmin وابستگی هستند
 
   const shouldShowOverflow = items.length > 3;
-
   const visibleItems = shouldShowOverflow
     ? [items[0], items[items.length - 1]]
     : items;
-
   const hiddenItems = shouldShowOverflow ? items.slice(1, -1) : [];
 
   return (
@@ -96,8 +89,8 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
               {shouldShowOverflow && index === 0 && (
                 <>
                   <BreadcrumbItem>
-                    <Link href={item.href} passHref>
-                      <BreadcrumbLink className="dark:text-gray-300 dark:hover:text-blue-400">
+                    <Link href={item.href}>
+                      <BreadcrumbLink asChild className="dark:text-gray-300 dark:hover:text-blue-400">
                         {item.title}
                       </BreadcrumbLink>
                     </Link>
@@ -117,9 +110,8 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
                         <Link
                           key={hiddenItem.href}
                           href={hiddenItem.href}
-                          passHref
                         >
-                          <BreadcrumbLink className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg">
+                          <BreadcrumbLink asChild className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg">
                             {hiddenItem.title}
                           </BreadcrumbLink>
                         </Link>
@@ -133,8 +125,8 @@ export function MainBreadcrumb({ isAdmin = false }: MainBreadcrumbProps) {
               {!shouldShowOverflow || index > 0 ? (
                 !item.isCurrent ? (
                   <BreadcrumbItem>
-                    <Link href={item.href} passHref>
-                      <BreadcrumbLink className="dark:text-gray-300 dark:hover:text-blue-400">
+                    <Link href={item.href}>
+                      <BreadcrumbLink asChild className="dark:text-gray-300 dark:hover:text-blue-400">
                         {item.title}
                       </BreadcrumbLink>
                     </Link>
