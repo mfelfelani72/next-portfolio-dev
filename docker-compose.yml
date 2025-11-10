@@ -10,7 +10,7 @@ services:
         NEXT_PUBLIC_BASE_URL: "http://79.175.177.113:"
         NEXT_PUBLIC_BASE_PORT: "30800"
         NEXT_PUBLIC_DATABASE_NAME: "portfolio"
-        NEXT_PUBLIC_TABLE_NAMES: "user,resume,settings"
+        NEXT_PUBLIC_TABLE_NAMES: "resume,settings"
         NEXT_PUBLIC_REDIS_URL: redis://localhost:6379
         NEXT_PUBLIC_ADMIN_USER: "admin"
         NEXT_PUBLIC_ADMIN_PASS: "mohammad"

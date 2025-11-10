@@ -27,7 +27,7 @@ export class RedisManager {
     }
   }
 
-  async getResumeByLanguage(
+  async getDataByLanguage(
     lang: string,
     table: string
   ): Promise<ResumeData | null> {
@@ -53,8 +53,8 @@ export class RedisManager {
 export const redisManager = new RedisManager();
 
 export const getData = (table: string) => redisManager.getData(table);
-export const getResumeByLanguage = (lang: string, table: string) =>
-  redisManager.getResumeByLanguage(lang, table);
+export const getDataByLanguage = (lang: string, table: string) =>
+  redisManager.getDataByLanguage(lang, table);
 export const setData = (table: string, data: MultiLanguageResume) =>
   redisManager.setData(table, data);
 export const initializeDefaultData = () => redisManager.initializeDefaultData();

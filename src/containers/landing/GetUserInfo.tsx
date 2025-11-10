@@ -1,22 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Functions
 
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
+import { saveResumeSection } from "@/libs/cache/indexDB/helper";
 
 // Interfaces
 
 import { ResumeData } from "@/Interfaces/portfolio";
 import { type Lang } from "@/configs/language";
-
-interface CachedResume {
-  id: string;
-  language: string;
-  data: ResumeData;
-  timestamp: number;
-}
 
 // Hooks
 
@@ -27,37 +21,35 @@ import { useFetch } from "@/libs/api/useFetch";
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
 const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
-  // States
+  // States ans Consts and Refs
 
+  const [manual, setManual] = useState(true);
   const setUser = useUserStore((state) => state.setUser);
+
+  const lang = params.lang;
+
+  const hasFetchedFromAPI = useRef(false);
 
   // Functions
 
   const { mutate } = useFetch<ResumeData>(
-    "post",
+    "get",
+    { endPoint: `/api/resume/${lang}/profile/` },
     {
-      endPoint: `/api/resume/${params.lang}`,
-      body: {},
-    },
-    {
+      manual: manual,
       onSuccess: async (res) => {
         if (!res) {
           console.error("API request failed");
           return;
         }
 
-        const result = await indexDB.update<CachedResume>("user", params.lang, {
-          id: params.lang,
-          language: params.lang,
-          data: res,
-          timestamp: Date.now(),
-        });
-
-        if (result.success) {
-          setUser(res);
-        } else {
-          console.error("Error in IndexedDB:", result.error);
+        if (!hasFetchedFromAPI.current) {
+          await saveResumeSection("resume", "profile", res, lang);
+          hasFetchedFromAPI.current = true;
+          console.log("Updated IndexedDB from API");
         }
+
+        setUser(res);
       },
     }
   );
@@ -67,27 +59,28 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
       try {
         await indexDB.connect();
 
-        const cached = await indexDB.read<CachedResume>("user", params.lang);
+        const key = `resume:profile:${lang}`;
+        const cached = await indexDB.read<{ data: ResumeData }>("resume", key);
 
-        if (cached.success && cached.data) {
+        if (cached.success && cached.data?.data) {
+          console.log("Using cached profile for:", lang);
+          setManual(true);
           setUser(cached.data.data);
-          console.log("Using cached data for language:", params.lang);
         } else {
-          console.log(
-            "No cached data for language:",
-            params.lang,
-            "fetching from API"
-          );
+          console.log("No cached data for", lang, "fetching from API");
           mutate();
+          setManual(false);
         }
       } catch (error) {
-        console.error("Error checking cache:", error);
+        console.error("IndexedDB error:", error);
         mutate();
+        setManual(false);
       }
     };
 
     checkCacheFirst();
-  }, [mutate, params.lang]);
+  }, [lang, setUser, mutate, manual]);
+
   return null;
 };
 
