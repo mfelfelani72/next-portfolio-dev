@@ -32,6 +32,14 @@ export async function PUT(
   const lang =
     resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
   const body = await req.json();
+
   await redisManager.setData(`resume:profile:${lang}:user`, { [lang]: body });
-  return NextResponse.json({ success: true });
+
+  const response = NextResponse.json({ success: true });
+  response.cookies.set(`resume_refresh_${lang}`, "1", {
+    path: "/",
+    httpOnly: false,
+  });
+
+  return response;
 }

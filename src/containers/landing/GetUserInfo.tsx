@@ -1,61 +1,44 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-// Functions
-
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
 import { saveResumeSection } from "@/libs/cache/indexDB/helper";
-
-// Interfaces
-
 import { ResumeData } from "@/Interfaces/portfolio";
 import { type Lang } from "@/configs/language";
-
-// Hooks
-
 import { useFetch } from "@/libs/api/useFetch";
-
-// Zustand
-
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
 const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
-  // States ans Consts and Refs
-
-  const [manual, setManual] = useState(true);
   const setUser = useUserStore((state) => state.setUser);
-
   const lang = params.lang;
 
   const hasFetchedFromAPI = useRef(false);
 
-  // Functions
+  const [manualFetch, setManualFetch] = useState(true);
 
   const { mutate } = useFetch<ResumeData>(
     "get",
     { endPoint: `/api/resume/${lang}/profile/` },
     {
-      manual: manual,
+      manual: manualFetch,
       onSuccess: async (res) => {
-        if (!res) {
-          console.error("API request failed");
-          return;
-        }
+        if (!res) return;
 
         if (!hasFetchedFromAPI.current) {
           await saveResumeSection("resume", "profile", res, lang);
           hasFetchedFromAPI.current = true;
-          console.log("Updated IndexedDB from API");
+          console.log("💾 IndexedDB updated from API");
         }
 
         setUser(res);
+
+        document.cookie = `resume_refresh_${lang}=; path=/; max-age=0`;
       },
     }
   );
 
   useEffect(() => {
-    const checkCacheFirst = async () => {
+    const loadUserProfile = async () => {
       try {
         await indexDB.connect();
 
@@ -63,23 +46,35 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
         const cached = await indexDB.read<{ data: ResumeData }>("resume", key);
 
         if (cached.success && cached.data?.data) {
-          console.log("Using cached profile for:", lang);
-          setManual(true);
+          console.log("✅ Using cached profile for:", lang);
           setUser(cached.data.data);
+          setManualFetch(true); // بعد از استفاده از کش، fetch دستی
         } else {
-          console.log("No cached data for", lang, "fetching from API");
+          console.log("🌀 No cache → fetching from API...");
+          setManualFetch(false); // fetch خودکار
           mutate();
-          setManual(false);
+        }
+
+        // بررسی کوکی مخصوص زبان
+        const cookie = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(`resume_refresh_${lang}=`))
+          ?.split("=")[1];
+
+        if (cookie === "1") {
+          console.log("🔄 Cookie changed → refetching...");
+          setManualFetch(false); // fetch خودکار
+          mutate();
         }
       } catch (error) {
-        console.error("IndexedDB error:", error);
+        console.error("💥 IndexedDB error:", error);
+        setManualFetch(false);
         mutate();
-        setManual(false);
       }
     };
 
-    checkCacheFirst();
-  }, [lang, setUser, mutate, manual]);
+    loadUserProfile();
+  }, [lang, setUser, mutate, manualFetch]);
 
   return null;
 };
