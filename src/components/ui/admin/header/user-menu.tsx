@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useRouter } from "next/navigation";
 
 // Components
 
@@ -19,20 +20,26 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/app/avatar";
+import { LogoutIcon } from "forma-ui";
 
 // Functions
 
 import { logout } from "@/libs/auth/auth";
 
+// Hooks
+
+import { useLocalizedLink } from "@/hooks/useLocalizedLink";
+
 // Zustand
 
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
-import { LogoutIcon } from "forma-ui";
 
 export function UserMenu() {
   // Hooks
 
   const { t } = useTranslation();
+  const localizedUrl = useLocalizedLink();
+  const router = useRouter();
 
   // States
 
@@ -54,6 +61,8 @@ export function UserMenu() {
   const handleSignOut = () => {
     logout();
     setIsOpen(false);
+    const url = localizedUrl("/auth/login");
+    router.push(typeof url === "string" ? url : url.pathname || "/");
   };
 
   return (

@@ -1,0 +1,14 @@
+{
+  "welcome_back": "Willkommen zurück",
+  "description_auth_login": "Greifen Sie einfach auf Ihr Dashboard zu und verwalten Sie Ihre Inhalte",
+  "admin_login": "Admin-Login",
+  "login_to_continue": "Melden Sie sich an, um fortzufahren",
+  "username": "Benutzername",
+  "enter_your_username": "Geben Sie Ihren Benutzernamen ein",
+  "password": "Passwort",
+  "enter_your_password": "Geben Sie Ihr Passwort ein",
+  "please_fill_all": "Bitte füllen Sie alle Felder aus",
+  "invalid_username_password": "Ungültiger Benutzername oder ungültiges Passwort",
+  "login": "Anmelden",
+  "logging_in": "Wird angemeldet..."
+}

@@ -1,0 +1,14 @@
+{
+  "welcome_back": "Welcome Back",
+  "description_auth_login": "Access your dashboard and manage your content easily",
+  "admin_login": "Admin Login",
+  "login_to_continue": "Login to continue",
+  "username": "Username",
+  "enter_your_username": "Enter Your Username",
+  "password": "Password",
+  "enter_your_password": "Enter Your Password",
+  "please_fill_all": "Please fill in all fields",
+  "invalid_username_password": "Invalid username or password",
+  "login": "Login",
+  "logging_in": "Logging in..."
+}

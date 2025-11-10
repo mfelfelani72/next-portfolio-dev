@@ -1,0 +1,14 @@
+{
+  "welcome_back": "خوش آمدید",
+  "description_auth_login": "به داشبورد خود دسترسی پیدا کنید و محتوای خود را به راحتی مدیریت کنید",
+  "admin_login": "ورود مدیر",
+  "login_to_continue": "برای ادامه وارد شوید",
+  "username": "نام کاربری",
+  "enter_your_username": "نام کاربری خود را وارد کنید",
+  "password": "کلمه عبور",
+  "enter_your_password": "کلمه عبور را وارد کنید",
+  "please_fill_all": "لطفا همه فیلد هارا پر کنید",
+  "invalid_username_password": "نام کاربری یا کلمه عبور اشتباه است",
+  "login": "ورود",
+  "logging_in": "در حال ورود..."
+}
