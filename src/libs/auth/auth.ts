@@ -1,20 +1,36 @@
-const HARDCODED_USER = {
-  username: "admin",
-  password: "123456"
-};
 
-export function login(username: string, password: string): boolean {
-  if (username === HARDCODED_USER.username && password === HARDCODED_USER.password) {
-    document.cookie = "isLoggedIn=true; path=/";
-    return true;
+export async function login(username: string, password: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.error("Login error:", err);
+    return false;
   }
-  return false;
 }
 
-export function isAuthenticated(): boolean {
-  return document.cookie.includes("isLoggedIn=true");
+export async function logout(): Promise<boolean> {
+  try {
+    const res = await fetch("/api/auth/logout", { method: "POST" });
+    return res.ok;
+  } catch (err) {
+    console.error("Logout error:", err);
+    return false;
+  }
 }
 
-export function logout(): void {
-  document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+export async function isAuthenticated(): Promise<boolean> {
+  try {
+    const res = await fetch("/api/auth/me");
+    if (!res.ok) return false;
+    const json = await res.json();
+    return !!json.isLoggedIn;
+  } catch (err) {
+    console.error("isAuthenticated error:", err);
+    return false;
+  }
 }

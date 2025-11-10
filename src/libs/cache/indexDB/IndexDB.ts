@@ -251,6 +251,8 @@ class IndexedDBManager {
 const config = getDatabaseConfig();
 export const indexDB = new IndexedDBManager(config);
 
-indexDB.connect().catch(console.error);
+if (typeof window !== "undefined") {
+  indexDB.connect().catch(console.error);
+}
 
 export default IndexedDBManager;

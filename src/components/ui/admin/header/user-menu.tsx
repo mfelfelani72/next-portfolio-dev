@@ -58,11 +58,15 @@ export function UserMenu() {
       .slice(0, 2);
   };
 
-  const handleSignOut = () => {
-    logout();
+  const handleSignOut = async () => {
+    await logout();
     setIsOpen(false);
+
     const url = localizedUrl("/auth/login");
-    router.push(typeof url === "string" ? url : url.pathname || "/");
+    const targetPath =
+      typeof url === "string" ? url : url?.pathname ? url.pathname : "/";
+
+    router.push(targetPath);
   };
 
   return (

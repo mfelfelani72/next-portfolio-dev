@@ -32,23 +32,24 @@ export default function LoginPage() {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username || !password) {
-      setError(t("please_fill_all"));
-      return;
-    }
-    setIsLoading(true);
-    setError("");
-    setTimeout(() => {
-      if (login(username, password)) {
-        router.push(`/${params.lang}/admin`);
-      } else {
-        setError(t("invalid_username_password"));
-      }
-      setIsLoading(false);
-    }, 800);
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!username || !password) {
+    setError("Please fill in all fields");
+    return;
+  }
+  setIsLoading(true);
+  setError("");
+
+  const ok = await login(username, password);
+  if (ok) {
+    router.push(`/${params.lang}/admin`);
+  } else {
+    setError("Invalid username or password");
+  }
+  setIsLoading(false);
+};
+
 
   return (
     <>
@@ -124,6 +125,7 @@ export default function LoginPage() {
                         : ""
                     }`}
                     placeholder={t("enter_your_username")}
+                    autoComplete="username"
                   />
                 </div>
 
@@ -144,6 +146,7 @@ export default function LoginPage() {
                         : ""
                     }`}
                     placeholder={t("enter_your_password")}
+                    autoComplete="current-password" 
                   />
                 </div>
 
