@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 import { redisManager } from "@/libs/cache/redis/redis";
 
-const DEFAULT_CONTACT = { email: "", linkedin: "", github: "" };
+const userId = "user";
 
-export async function GET(req: Request, { params }: { params: { lang: string } }) {
-  const lang = params.lang || "en";
-  const data = await redisManager.getResumeByLanguage(lang, `resume:contact:${lang}:user`);
-  return NextResponse.json(data || DEFAULT_CONTACT);
+export async function GET() {
+  try {
+    const data = await redisManager.getData(`resume:contact:${userId}`);
+    return NextResponse.json(data || { email: "", linkedin: "", github: "" });
+  } catch (error) {
+    console.error("Error fetching contact:", error);
+    return NextResponse.json({ error: "Failed to fetch contact" }, { status: 500 });
+  }
 }
 
-export async function PUT(req: Request, { params }: { params: { lang: string } }) {
-  const lang = params.lang || "en";
-  const body = await req.json();
-  await redisManager.setData(`resume:contact:${lang}:user`, { [lang]: body });
-  return NextResponse.json({ success: true });
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    await redisManager.setData(`resume:contact:${userId}`, body);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error saving contact:", error);
+    return NextResponse.json({ error: "Failed to save contact" }, { status: 500 });
+  }
 }

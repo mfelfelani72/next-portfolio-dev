@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
+
+// Functions
+
 import { redisManager } from "@/libs/cache/redis/redis";
+
+// Interfaces
+
 import { languages, type Lang } from "@/configs/language";
 
 const DEFAULT_PROFILE = { name: "", title: "", summary: "", avatar: "" };

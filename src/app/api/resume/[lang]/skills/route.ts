@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 import { redisManager } from "@/libs/cache/redis/redis";
 
-const DEFAULT_SKILLS = { skills: [] };
+const userId = "user";
 
-export async function GET(req: Request, { params }: { params: { lang: string } }) {
-  const lang = params.lang || "en";
-  const data = await redisManager.getResumeByLanguage(lang, `resume:skills:${lang}:user`);
-  return NextResponse.json(data || DEFAULT_SKILLS);
+export async function GET() {
+  try {
+    const data = await redisManager.getData(`resume:skills:${userId}`);
+    return NextResponse.json(data || { skills: [] });
+  } catch (error) {
+    console.error("Error fetching skills:", error);
+    return NextResponse.json({ error: "Failed to fetch skills" }, { status: 500 });
+  }
 }
 
-export async function PUT(req: Request, { params }: { params: { lang: string } }) {
-  const lang = params.lang || "en";
-  const body = await req.json();
-  await redisManager.setData(`resume:skills:${lang}:user`, { [lang]: body });
-  return NextResponse.json({ success: true });
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    await redisManager.setData(`resume:skills:${userId}`, body);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error saving skills:", error);
+    return NextResponse.json({ error: "Failed to save skills" }, { status: 500 });
+  }
 }

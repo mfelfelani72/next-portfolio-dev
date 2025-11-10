@@ -7,7 +7,7 @@ interface Contact { email: string; linkedin: string; github: string; }
 interface ContactTabProps { lang: string; }
 
 export default function ContactTab({ lang }: ContactTabProps) {
-  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/contact/${lang}` });
+  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/${lang}/contact/` });
   const [contact, setContact] = useState<Contact>({ email: "", linkedin: "", github: "" });
   const [saving, setSaving] = useState(false);
 
@@ -17,7 +17,7 @@ export default function ContactTab({ lang }: ContactTabProps) {
     setSaving(true);
     await mutate(
       async () => {
-        await fetch(`/api/resume/contact/${lang}`, { method: "PUT", body: JSON.stringify(contact) });
+        await fetch(`/api/resume/${lang}/contact/`, { method: "PUT", body: JSON.stringify(contact) });
         return contact;
       },
       { revalidate: true }

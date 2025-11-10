@@ -1,47 +1,152 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useFetch } from "@/libs/api/useFetch";
 
-interface Tool { name: string; type: "tool" | "certification"; }
-interface ToolsTabProps { lang: string; }
+interface Certification {
+  title: string;
+  year: string;
+}
 
-export default function ToolsTab({ lang }: ToolsTabProps) {
-  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/tools/${lang}` });
-  const [tools, setTools] = useState<Tool[]>([]);
+interface ToolsData {
+  tools: string[];
+  certifications: Certification[];
+}
+
+export default function ToolsTab({ lang }: { lang: string }) {
+  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/${lang}/tools/` });
+  const [toolsData, setToolsData] = useState<ToolsData>({ tools: [], certifications: [] });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (data) setTools(data.tools || []); }, [data]);
+  useEffect(() => {
+    if (data) setToolsData(data);
+  }, [data]);
 
   const handleSave = async () => {
     setSaving(true);
     await mutate(
       async () => {
-        await fetch(`/api/resume/tools/${lang}`, { method: "PUT", body: JSON.stringify({ tools }) });
-        return { tools };
+        await fetch(`/api/resume/${lang}/tools/`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(toolsData),
+        });
+        return toolsData;
       },
       { revalidate: true }
     );
     setSaving(false);
   };
 
-  const addTool = () => setTools([...tools, { name: "", type: "tool" }]);
-  const removeTool = (i: number) => setTools(tools.filter((_, index) => index !== i));
+  // 🔧 Tools
+  const addTool = () =>
+    setToolsData((prev) => ({ ...prev, tools: [...prev.tools, ""] }));
+  const removeTool = (index: number) =>
+    setToolsData((prev) => ({
+      ...prev,
+      tools: prev.tools.filter((_, i) => i !== index),
+    }));
+  const updateTool = (index: number, value: string) =>
+    setToolsData((prev) => ({
+      ...prev,
+      tools: prev.tools.map((t, i) => (i === index ? value : t)),
+    }));
+
+  // 🎓 Certifications
+  const addCertification = () =>
+    setToolsData((prev) => ({
+      ...prev,
+      certifications: [...prev.certifications, { title: "", year: "" }],
+    }));
+  const removeCertification = (index: number) =>
+    setToolsData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.filter((_, i) => i !== index),
+    }));
+  const updateCertification = (
+    index: number,
+    field: "title" | "year",
+    value: string
+  ) =>
+    setToolsData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.map((c, i) =>
+        i === index ? { ...c, [field]: value } : c
+      ),
+    }));
 
   return (
-    <div className="space-y-4 max-w-xl">
-      {tools.map((t, i) => (
-        <div key={i} className="flex gap-2 items-center">
-          <input type="text" value={t.name} onChange={e => { const arr = [...tools]; arr[i].name = e.target.value; setTools(arr); }} placeholder="Tool or Certification Name" className="flex-1 p-2 border rounded"/>
-          <select value={t.type} onChange={e => { const arr = [...tools]; arr[i].type = e.target.value as Tool["type"]; setTools(arr); }} className="p-2 border rounded">
-            <option value="tool">Tool</option>
-            <option value="certification">Certification</option>
-          </select>
-          <button onClick={() => removeTool(i)} className="px-2 py-1 bg-red-500 text-white rounded">X</button>
-        </div>
-      ))}
-      <button onClick={addTool} className="px-4 py-2 bg-green-600 text-white rounded">Add Tool/Certification</button>
-      <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded">{saving ? "Saving..." : "Save Tools & Certifications"}</button>
+    <div className="space-y-6 max-w-2xl">
+      <div>
+        <h3 className="font-semibold text-lg">🧰 Tools</h3>
+        <button
+          onClick={addTool}
+          className="px-3 py-1 bg-green-600 text-white rounded mt-2"
+        >
+          Add Tool
+        </button>
+        {toolsData.tools.map((tool, index) => (
+          <div key={index} className="flex gap-2 items-center mt-2">
+            <input
+              type="text"
+              value={tool}
+              onChange={(e) => updateTool(index, e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+            <button
+              onClick={() => removeTool(index)}
+              className="px-2 py-1 bg-red-500 text-white rounded"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <h3 className="font-semibold text-lg">🎓 Certifications</h3>
+        <button
+          onClick={addCertification}
+          className="px-3 py-1 bg-green-600 text-white rounded mt-2"
+        >
+          Add Certification
+        </button>
+        {toolsData.certifications.map((cert, index) => (
+          <div key={index} className="flex gap-2 items-center mt-2">
+            <input
+              type="text"
+              placeholder="Title"
+              value={cert.title}
+              onChange={(e) =>
+                updateCertification(index, "title", e.target.value)
+              }
+              className="flex-1 p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Year"
+              value={cert.year}
+              onChange={(e) =>
+                updateCertification(index, "year", e.target.value)
+              }
+              className="w-24 p-2 border rounded"
+            />
+            <button
+              onClick={() => removeCertification(index)}
+              className="px-2 py-1 bg-red-500 text-white rounded"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="px-4 py-2 bg-blue-600 text-white rounded"
+      >
+        {saving ? "Saving..." : "Save Tools & Certifications"}
+      </button>
     </div>
   );
 }

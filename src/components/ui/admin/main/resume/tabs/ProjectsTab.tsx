@@ -7,7 +7,7 @@ interface Project { title: string; description: string; link: string; technologi
 interface ProjectsTabProps { lang: string; }
 
 export default function ProjectsTab({ lang }: ProjectsTabProps) {
-  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/projects/${lang}` });
+  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/${lang}/projects/` });
   const [projects, setProjects] = useState<Project[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -17,7 +17,7 @@ export default function ProjectsTab({ lang }: ProjectsTabProps) {
     setSaving(true);
     await mutate(
       async () => {
-        await fetch(`/api/resume/projects/${lang}`, { method: "PUT", body: JSON.stringify({ projects }) });
+        await fetch(`/api/resume/${lang}/projects/`, { method: "PUT", body: JSON.stringify({ projects }) });
         return { projects };
       },
       { revalidate: true }
