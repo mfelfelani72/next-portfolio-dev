@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 
@@ -18,6 +18,14 @@ const Bio = ({ params }: { params: { lang: Lang } }) => {
     <>
       {user && (
         <div className="md:col-span-2 bg-white rounded-xl p-5 shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-indigo-600 to-pink-500 flex items-center justify-center font-bold text-white">
+            {user?.name?.includes(" ")
+              ? user.name
+                  .split(" ")
+                  .map((word) => word.charAt(0).toUpperCase())
+                  .join("")
+              : user?.name?.charAt(0).toUpperCase()}
+          </div>
           <h1 className="text-xl font-bold">{user.name}</h1>
           <div className="text-xs text-indigo-600 font-medium mt-1">
             {user.title}

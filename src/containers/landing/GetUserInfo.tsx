@@ -1,20 +1,53 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+
+// Functions
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
 import { saveResumeSection } from "@/libs/cache/indexDB/helper";
+import { useFetch } from "@/libs/api/useFetch";
+
+// Interfaces
 import { ResumeData } from "@/Interfaces/portfolio";
 import { type Lang } from "@/configs/language";
-import { useFetch } from "@/libs/api/useFetch";
+
+// Zustand
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
+interface AvatarData {
+  url: string;
+  updatedAt: string;
+}
+
 const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
-  const setUser = useUserStore((state) => state.setUser);
   const lang = params.lang;
 
-  const hasFetchedFromAPI = useRef(false);
-
   const [manualFetch, setManualFetch] = useState(true);
+  const [manualFetchAvatar, setManualFetchAvatar] = useState(true);
+  const { data: avatarData, mutate: mutateAvatar } = useFetch<AvatarData>(
+    "get",
+    { endPoint: `/api/resume/avatar/` },
+    {
+      manual: manualFetchAvatar,
+      onSuccess: async (res) => {
+        if (!res) return;
+        if (!hasFetchedAvatarFromAPI.current) {
+          await saveResumeSection("resume", "avatar", res, "global");
+          hasFetchedAvatarFromAPI.current = true;
+          console.log("Avatar saved to IndexedDB");
+        }
+
+        const currentUser = useUserStore.getState().user;
+        if (currentUser) {
+          useUserStore.getState().setUser({ ...currentUser, avatar: res.url });
+        } else {
+          useUserStore.getState().setUser({ avatar: res.url } as any);
+        }
+        setManualFetchAvatar(true);
+        document.cookie = `resume_refresh_avatar=; path=/; max-age=0`;
+      },
+    }
+  );
 
   const { mutate } = useFetch<ResumeData>(
     "get",
@@ -23,58 +56,118 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
       manual: manualFetch,
       onSuccess: async (res) => {
         if (!res) return;
-
         if (!hasFetchedFromAPI.current) {
           await saveResumeSection("resume", "profile", res, lang);
           hasFetchedFromAPI.current = true;
-          console.log("💾 IndexedDB updated from API");
+          console.log("IndexedDB updated from API");
         }
 
-        setUser(res);
-
+        const currentUser = useUserStore.getState().user;
+        const currentAvatar = currentUser ? currentUser.avatar : "";
+        useUserStore.getState().setUser({ ...res, avatar: currentAvatar });
         document.cookie = `resume_refresh_${lang}=; path=/; max-age=0`;
+        setManualFetch(true);
       },
     }
   );
 
+  const hasFetchedFromAPI = useRef(false);
+  const hasFetchedAvatarFromAPI = useRef(false);
+
   useEffect(() => {
-    const loadUserProfile = async () => {
+    let mounted = true;
+
+    const loadUserData = async () => {
       try {
         await indexDB.connect();
 
-        const key = `resume:profile:${lang}`;
-        const cached = await indexDB.read<{ data: ResumeData }>("resume", key);
+        // ---- avatar ----
+        const avatarKey = `resume:avatar:global`;
+        const cachedAvatar = await indexDB.read<{ data: AvatarData }>(
+          "resume",
+          avatarKey
+        );
 
-        if (cached.success && cached.data?.data) {
-          console.log("✅ Using cached profile for:", lang);
-          setUser(cached.data.data);
-          setManualFetch(true); // بعد از استفاده از کش، fetch دستی
+        let avatarUrl = "";
+        if (cachedAvatar.success && cachedAvatar.data?.data) {
+          console.log("Using cached avatar");
+          avatarUrl = cachedAvatar.data.data.url;
+
+          const currentUser = useUserStore.getState().user;
+          if (mounted) {
+            if (currentUser) {
+              useUserStore
+                .getState()
+                .setUser({ ...currentUser, avatar: avatarUrl });
+            } else {
+              useUserStore.getState().setUser({ avatar: avatarUrl } as any);
+            }
+          }
         } else {
-          console.log("🌀 No cache → fetching from API...");
-          setManualFetch(false); // fetch خودکار
+          console.log("No avatar cache → fetching from API...");
+          setManualFetchAvatar(false);
+          mutateAvatar();
+        }
+
+        // ---- profile ----
+        const profileKey = `resume:profile:${lang}`;
+        const cachedProfile = await indexDB.read<{ data: ResumeData }>(
+          "resume",
+          profileKey
+        );
+
+        if (cachedProfile.success && cachedProfile.data?.data) {
+          console.log("Using cached profile for:", lang);
+
+          if (mounted) {
+            useUserStore
+              .getState()
+              .setUser({ ...cachedProfile.data.data, avatar: avatarUrl });
+          }
+        } else {
+          console.log("No profile cache → fetching from API...");
+          setManualFetch(false);
           mutate();
         }
 
-        // بررسی کوکی مخصوص زبان
-        const cookie = document.cookie
+        const profileCookie = document.cookie
           .split("; ")
           .find((row) => row.startsWith(`resume_refresh_${lang}=`))
           ?.split("=")[1];
 
-        if (cookie === "1") {
-          console.log("🔄 Cookie changed → refetching...");
-          setManualFetch(false); // fetch خودکار
+        if (profileCookie === "1") {
+          console.log("Profile cookie changed → refetching...");
+          setManualFetch(false);
           mutate();
         }
+
+        const avatarCookie = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(`resume_refresh_avatar=`))
+          ?.split("=")[1];
+
+        if (avatarCookie === "1") {
+          console.log("Avatar cookie changed → refetching...");
+          setManualFetchAvatar(false);
+          mutateAvatar();
+        }
       } catch (error) {
-        console.error("💥 IndexedDB error:", error);
-        setManualFetch(false);
+        console.error("IndexedDB error:", error);
         mutate();
+        mutateAvatar();
+        setManualFetchAvatar(false);
+        setManualFetch(false);
       }
     };
 
-    loadUserProfile();
-  }, [lang, setUser, mutate, manualFetch]);
+    loadUserData();
+
+    return () => {
+      mounted = false;
+    };
+    // مهم: حذف user, manualFetch و manualAvatarFetch از deps برای جلوگیری از loop
+    // نگه‌داشتن lang و mutateها به عنوان deps منطقیست؛ اگر mutateها ثابت باشند می‌توان فقط lang گذاشت.
+  }, [lang, mutate, mutateAvatar, manualFetch, manualFetchAvatar]);
 
   return null;
 };

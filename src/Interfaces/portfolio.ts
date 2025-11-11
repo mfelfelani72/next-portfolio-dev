@@ -41,6 +41,7 @@ export interface ResumeData {
   name: string;
   title: string;
   summary: string;
+  avatar: string;
   skills: Skill[];
   tools: string[];
   networkingExperience: NetworkingExperience[];

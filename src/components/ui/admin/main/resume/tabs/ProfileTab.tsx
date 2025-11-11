@@ -10,7 +10,7 @@ export default function ProfileTab({ lang }: ProfileTabProps) {
     endPoint: `/api/resume/${lang}/profile/`,
   });
 
-  const [profile, setProfile] = useState({ name: "", title: "", summary: "", avatar: "" });
+  const [profile, setProfile] = useState({ name: "", title: "", summary: "" });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => { if (data) setProfile(data); }, [data]);
@@ -35,7 +35,6 @@ export default function ProfileTab({ lang }: ProfileTabProps) {
       <input type="text" value={profile.name} onChange={e => setProfile({ ...profile, name: e.target.value })} placeholder="Full Name" className="w-full p-2 border rounded" />
       <input type="text" value={profile.title} onChange={e => setProfile({ ...profile, title: e.target.value })} placeholder="Title" className="w-full p-2 border rounded" />
       <textarea value={profile.summary} onChange={e => setProfile({ ...profile, summary: e.target.value })} placeholder="Summary" className="w-full p-2 border rounded" />
-      <input type="text" value={profile.avatar} onChange={e => setProfile({ ...profile, avatar: e.target.value })} placeholder="Avatar URL" className="w-full p-2 border rounded" />
       <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded">{saving ? "Saving..." : "Save Profile"}</button>
     </div>
   );

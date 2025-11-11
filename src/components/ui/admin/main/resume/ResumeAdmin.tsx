@@ -7,6 +7,7 @@ import ProjectsTab from "./tabs/ProjectsTab";
 import ToolsTab from "./tabs/ToolsTab";
 import LanguagesTab from "./tabs/LanguagesTab";
 import ContactTab from "./tabs/ContactTab";
+import AvatarTab from "./tabs/AvatarTab"; // جدید
 import { languages } from "@/configs/language";
 
 export default function ResumeAdmin() {
@@ -15,6 +16,7 @@ export default function ResumeAdmin() {
 
   const tabs = [
     { key: "profile", label: "Profile" },
+    { key: "avatar", label: "Avatar" }, // جدید
     { key: "skills", label: "Skills" },
     { key: "projects", label: "Projects" },
     { key: "tools", label: "Tools & Certifications" },
@@ -60,6 +62,7 @@ export default function ResumeAdmin() {
 
       {/* Tab Content */}
       <div className="p-6">
+        {activeTab === "avatar" && <AvatarTab />} 
         {activeTab === "profile" && <ProfileTab lang={activeLang} />}
         {activeTab === "skills" && <SkillsTab lang={activeLang} />}
         {activeTab === "projects" && <ProjectsTab lang={activeLang} />}
