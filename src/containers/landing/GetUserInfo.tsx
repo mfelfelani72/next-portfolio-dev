@@ -3,27 +3,35 @@
 import { useEffect, useRef, useState } from "react";
 
 // Functions
+
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
 import { saveResumeSection } from "@/libs/cache/indexDB/helper";
 import { useFetch } from "@/libs/api/useFetch";
 
 // Interfaces
-import { ResumeData } from "@/Interfaces/portfolio";
+
+import { ResumeData, AvatarData } from "@/Interfaces/portfolio";
 import { type Lang } from "@/configs/language";
 
 // Zustand
+
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
-interface AvatarData {
-  url: string;
-  updatedAt: string;
-}
-
 const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
-  const lang = params.lang;
+  // States and Consts and Refs
 
   const [manualFetch, setManualFetch] = useState(true);
   const [manualFetchAvatar, setManualFetchAvatar] = useState(true);
+
+  const hasFetchedFromAPI = useRef(false);
+  const hasFetchedAvatarFromAPI = useRef(false);
+
+  const lang = params.lang;
+
+  // Functions
+
+  // Get Avatar from Redis
+
   const { data: avatarData, mutate: mutateAvatar } = useFetch<AvatarData>(
     "get",
     { endPoint: `/api/resume/avatar/` },
@@ -38,6 +46,7 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
         }
 
         const currentUser = useUserStore.getState().user;
+
         if (currentUser) {
           useUserStore.getState().setUser({ ...currentUser, avatar: res.url });
         } else {
@@ -48,6 +57,8 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
       },
     }
   );
+
+  // Get Profile from Redis
 
   const { mutate } = useFetch<ResumeData>(
     "get",
@@ -71,8 +82,7 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
     }
   );
 
-  const hasFetchedFromAPI = useRef(false);
-  const hasFetchedAvatarFromAPI = useRef(false);
+  // Functions
 
   useEffect(() => {
     let mounted = true;
@@ -165,8 +175,6 @@ const GetUserInfo = ({ params }: { params: { lang: Lang } }) => {
     return () => {
       mounted = false;
     };
-    // مهم: حذف user, manualFetch و manualAvatarFetch از deps برای جلوگیری از loop
-    // نگه‌داشتن lang و mutateها به عنوان deps منطقیست؛ اگر mutateها ثابت باشند می‌توان فقط lang گذاشت.
   }, [lang, mutate, mutateAvatar, manualFetch, manualFetchAvatar]);
 
   return null;

@@ -7,6 +7,7 @@ import Bio from "@/components/ui/landing/home/Bio";
 // Interfaces
 
 import { languages, type Lang } from "@/configs/language";
+import Skills from "@/components/ui/landing/home/Skills";
 
 export default async function PageLanding({
   params,
@@ -19,8 +20,9 @@ export default async function PageLanding({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col">
-        <Bio params={{ lang }}  />
+      <div className="w-full h-full flex flex-col gap-2">
+        <Bio params={{ lang }} />
+        <Skills />
       </div>
     </>
   );

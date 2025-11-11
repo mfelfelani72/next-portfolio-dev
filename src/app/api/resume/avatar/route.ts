@@ -1,6 +1,10 @@
-// app/api/resume/avatar/route.ts
 import { NextResponse } from "next/server";
+
+// Functions
+
 import { redisManager } from "@/libs/cache/redis/redis";
+
+// Constants
 
 const DEFAULT_AVATAR = { url: "", updatedAt: "" };
 
@@ -21,7 +25,7 @@ export async function POST(req: Request) {
     await redisManager.setData("resume:avatar:user", {
       url: body.url,
       updatedAt: new Date().toISOString(),
-    });
+    }as any);
 
     const response = NextResponse.json({ success: true });
     response.cookies.set("resume_refresh_avatar", "1", {
@@ -32,6 +36,6 @@ export async function POST(req: Request) {
     return response;
   } catch (error) {
     console.error("Error saving avatar:", error);
-    return NextResponse.json({ error: "خطا در ذخیره آواتار" }, { status: 500 });
+    return NextResponse.json({ error: "Error in sava Avatar" }, { status: 500 });
   }
 }

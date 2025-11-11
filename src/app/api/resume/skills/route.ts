@@ -9,7 +9,10 @@ export async function GET() {
     return NextResponse.json(data || { skills: [] });
   } catch (error) {
     console.error("Error fetching skills:", error);
-    return NextResponse.json({ error: "Failed to fetch skills" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch skills" },
+      { status: 500 }
+    );
   }
 }
 
@@ -17,9 +20,19 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
     await redisManager.setData(`resume:skills:${userId}`, body);
-    return NextResponse.json({ success: true });
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(`resume_refresh_skills`, "1", {
+      path: "/",
+      httpOnly: false,
+    });
+
+    return response;
   } catch (error) {
     console.error("Error saving skills:", error);
-    return NextResponse.json({ error: "Failed to save skills" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save skills" },
+      { status: 500 }
+    );
   }
 }

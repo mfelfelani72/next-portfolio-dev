@@ -7,7 +7,7 @@ interface Skill { name: string; level: number; }
 interface SkillsTabProps { lang: string; }
 
 export default function SkillsTab({ lang }: SkillsTabProps) {
-  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/${lang}/skills/` });
+  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/skills/` });
   const [skills, setSkills] = useState<Skill[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -17,7 +17,7 @@ export default function SkillsTab({ lang }: SkillsTabProps) {
     setSaving(true);
     await mutate(
       async () => {
-        await fetch(`/api/resume/${lang}/skills/`, { method: "PUT", body: JSON.stringify({ skills }) });
+        await fetch(`/api/resume/skills/`, { method: "PUT", body: JSON.stringify({ skills }) });
         return { skills };
       },
       { revalidate: true }

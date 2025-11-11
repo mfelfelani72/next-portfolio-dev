@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+
+// Zustand
+
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
 const UserInfo = () => {
+  // States
+
   const user = useUserStore((state) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -64,6 +69,8 @@ const UserInfo = () => {
           </div>,
           document.body
         )}
+
+      {/* Javascript */}
 
       <style jsx>{`
         @keyframes scaleFade {

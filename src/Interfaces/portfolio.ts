@@ -59,3 +59,8 @@ export interface UpdateResumeRequest {
   table: string;
   data: MultiLanguageResume;
 }
+
+export interface AvatarData {
+  url: string;
+  updatedAt: string;
+}
