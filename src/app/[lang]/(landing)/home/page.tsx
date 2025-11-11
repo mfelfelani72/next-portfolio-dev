@@ -20,7 +20,7 @@ export default async function PageLanding({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col gap-2">
+      <div className="w-full h-full flex flex-col gap-2 px-5">
         <Bio params={{ lang }} />
         <Skills />
       </div>
