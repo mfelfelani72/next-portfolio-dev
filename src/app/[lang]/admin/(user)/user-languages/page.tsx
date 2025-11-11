@@ -6,8 +6,8 @@ import { useFetch } from "@/libs/api/useFetch";
 interface Language { name: string; level: string; percent: number; }
 interface LanguagesTabProps { lang: string; }
 
-export default function LanguagesTab({ lang }: LanguagesTabProps) {
-  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/${lang}/languages/` });
+export default function page({ lang }: LanguagesTabProps) {
+  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/languages/` });
   const [languagesList, setLanguagesList] = useState<Language[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -17,7 +17,7 @@ export default function LanguagesTab({ lang }: LanguagesTabProps) {
     setSaving(true);
     await mutate(
       async () => {
-        await fetch(`/api/resume/${lang}/languages/`, { method: "PUT", body: JSON.stringify({ languages: languagesList }) });
+        await fetch(`/api/resume/languages/`, { method: "PUT", body: JSON.stringify({ languages: languagesList }) });
         return { languages: languagesList };
       },
       { revalidate: true }

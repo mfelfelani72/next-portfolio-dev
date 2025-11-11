@@ -6,7 +6,7 @@ import { useFetch } from "@/libs/api/useFetch";
 interface Skill { name: string; level: number; }
 interface SkillsTabProps { lang: string; }
 
-export default function SkillsTab({ lang }: SkillsTabProps) {
+export default function page({ lang }: SkillsTabProps) {
   const { data, mutate } = useFetch("get", { endPoint: `/api/resume/skills/` });
   const [skills, setSkills] = useState<Skill[]>([]);
   const [saving, setSaving] = useState(false);

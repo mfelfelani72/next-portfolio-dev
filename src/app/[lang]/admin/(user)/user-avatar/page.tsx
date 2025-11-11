@@ -1,10 +1,10 @@
-// app/admin/resume/tabs/AvatarTab.tsx
+
 "use client";
 
 import { useState, useRef } from "react";
 import { useFetch } from "@/libs/api/useFetch";
 
-export default function AvatarTab() {
+export default function page() {
   const { data: avatarData, mutate } = useFetch("get", {
     endPoint: `/api/resume/avatar/`,
   });

@@ -17,7 +17,7 @@ export async function GET(
   const resolvedParams = await params;
   const lang =
     resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
-  const data = await redisManager.getResumeByLanguage(
+  const data = await redisManager.getDataByLanguage(
     lang,
     `resume:tools:${lang}:user`
   );

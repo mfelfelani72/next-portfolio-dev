@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import ProfileTab from "./tabs/ProfileTab";
-import SkillsTab from "./tabs/SkillsTab";
 import ProjectsTab from "./tabs/ProjectsTab";
 import ToolsTab from "./tabs/ToolsTab";
-import LanguagesTab from "./tabs/LanguagesTab";
 import ContactTab from "./tabs/ContactTab";
-import AvatarTab from "./tabs/AvatarTab"; // جدید
+
 import { languages } from "@/configs/language";
 
 export default function ResumeAdmin() {
@@ -16,11 +14,8 @@ export default function ResumeAdmin() {
 
   const tabs = [
     { key: "profile", label: "Profile" },
-    { key: "avatar", label: "Avatar" }, // جدید
-    { key: "skills", label: "Skills" },
     { key: "projects", label: "Projects" },
     { key: "tools", label: "Tools & Certifications" },
-    { key: "languages", label: "Languages" },
     { key: "contact", label: "Contact" },
   ];
 
@@ -45,7 +40,7 @@ export default function ResumeAdmin() {
 
       {/* Tab Selector */}
       <div className="p-4 flex gap-2 flex-wrap border-b border-gray-300 dark:border-gray-700">
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
@@ -62,12 +57,9 @@ export default function ResumeAdmin() {
 
       {/* Tab Content */}
       <div className="p-6">
-        {activeTab === "avatar" && <AvatarTab />} 
         {activeTab === "profile" && <ProfileTab lang={activeLang} />}
-        {activeTab === "skills" && <SkillsTab lang={activeLang} />}
         {activeTab === "projects" && <ProjectsTab lang={activeLang} />}
         {activeTab === "tools" && <ToolsTab lang={activeLang} />}
-        {activeTab === "languages" && <LanguagesTab lang={activeLang} />}
         {activeTab === "contact" && <ContactTab lang={activeLang} />}
       </div>
     </div>
