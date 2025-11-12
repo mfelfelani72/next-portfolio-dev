@@ -61,6 +61,15 @@ export const menuItems: MenuItem[] = [
         url: "/admin/user-languages",
         isOpen: false,
       },
+      {
+        id: "2-5",
+        title: "user_contact",
+        icon: <DangerSquareIcon />,
+        description: "user_contact",
+        category: "pages",
+        url: "/admin/user-contact",
+        isOpen: false,
+      },
     ],
   },
 ];

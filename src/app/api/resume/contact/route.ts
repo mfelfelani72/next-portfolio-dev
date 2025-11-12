@@ -9,7 +9,10 @@ export async function GET() {
     return NextResponse.json(data || { email: "", linkedin: "", github: "" });
   } catch (error) {
     console.error("Error fetching contact:", error);
-    return NextResponse.json({ error: "Failed to fetch contact" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch contact" },
+      { status: 500 }
+    );
   }
 }
 
@@ -17,9 +20,18 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
     await redisManager.setData(`resume:contact:${userId}`, body);
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(`resume_refresh_contact`, "1", {
+      path: "/",
+      httpOnly: false,
+    });
+
+    return response;
   } catch (error) {
     console.error("Error saving contact:", error);
-    return NextResponse.json({ error: "Failed to save contact" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save contact" },
+      { status: 500 }
+    );
   }
 }

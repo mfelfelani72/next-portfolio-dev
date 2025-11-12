@@ -4,7 +4,6 @@ import { useState } from "react";
 import ProfileTab from "./tabs/ProfileTab";
 import ProjectsTab from "./tabs/ProjectsTab";
 import ToolsTab from "./tabs/ToolsTab";
-import ContactTab from "./tabs/ContactTab";
 
 import { languages } from "@/configs/language";
 
@@ -16,7 +15,6 @@ export default function ResumeAdmin() {
     { key: "profile", label: "Profile" },
     { key: "projects", label: "Projects" },
     { key: "tools", label: "Tools & Certifications" },
-    { key: "contact", label: "Contact" },
   ];
 
   return (
@@ -60,7 +58,6 @@ export default function ResumeAdmin() {
         {activeTab === "profile" && <ProfileTab lang={activeLang} />}
         {activeTab === "projects" && <ProjectsTab lang={activeLang} />}
         {activeTab === "tools" && <ToolsTab lang={activeLang} />}
-        {activeTab === "contact" && <ContactTab lang={activeLang} />}
       </div>
     </div>
   );
