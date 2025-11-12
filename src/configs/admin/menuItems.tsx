@@ -63,6 +63,15 @@ export const menuItems: MenuItem[] = [
       },
       {
         id: "2-5",
+        title: "user_projects",
+        icon: <DangerSquareIcon />,
+        description: "user_projects",
+        category: "pages",
+        url: "/admin/user-projects",
+        isOpen: false,
+      },
+      {
+        id: "2-6",
         title: "user_languages",
         icon: <DangerSquareIcon />,
         description: "user_languages",
@@ -71,7 +80,7 @@ export const menuItems: MenuItem[] = [
         isOpen: false,
       },
       {
-        id: "2-6",
+        id: "2-7",
         title: "user_contact",
         icon: <DangerSquareIcon />,
         description: "user_contact",
