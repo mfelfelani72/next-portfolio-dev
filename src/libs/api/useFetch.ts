@@ -33,8 +33,8 @@ export const useFetch = <T = any>(
 ) => {
   const key =
     method === "get" || method === "delete"
-      ? params.endPoint
-      : [params.endPoint, JSON.stringify(params.body)];
+      ? "next-portfolio"+params.endPoint
+      : ["next-portfolio"+params.endPoint, JSON.stringify(params.body)];
 
   const fetcher = () => cns({ method, ...params });
 
