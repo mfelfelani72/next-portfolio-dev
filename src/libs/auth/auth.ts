@@ -15,7 +15,7 @@ export async function login(username: string, password: string): Promise<boolean
 
 export async function logout(): Promise<boolean> {
   try {
-    const res = await fetch("/api/auth/logout", { method: "POST" });
+    const res = await fetch("/next-portfolio/auth/logout", { method: "POST" });
     return res.ok;
   } catch (err) {
     console.error("Logout error:", err);
@@ -25,7 +25,7 @@ export async function logout(): Promise<boolean> {
 
 export async function isAuthenticated(): Promise<boolean> {
   try {
-    const res = await fetch("/api/auth/me");
+    const res = await fetch("/next-portfolio/auth/me");
     if (!res.ok) return false;
     const json = await res.json();
     return !!json.isLoggedIn;
