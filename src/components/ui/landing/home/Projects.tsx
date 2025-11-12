@@ -140,7 +140,7 @@ export default function Projects() {
                   rel="noreferrer" 
                   className="text-xs px-2 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
                 >
-                  GitHub
+                  Link
                 </a>
               </div>
             </div>
