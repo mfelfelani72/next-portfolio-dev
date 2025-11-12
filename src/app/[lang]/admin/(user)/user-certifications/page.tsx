@@ -103,6 +103,7 @@ export default function Certifications() {
                   </p>
                 </div>
 
+
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
                   <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                     نکات مهم
@@ -135,15 +136,8 @@ export default function Certifications() {
                     </div>
                   </div>
                   
-                  <button
-                    onClick={addCertification}
-                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center font-medium"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    افزودن گواهینامه
-                  </button>
+                
+               
                 </div>
               </div>
 
@@ -235,13 +229,25 @@ export default function Certifications() {
                   </div>
                 )}
 
-                {/* دکمه ذخیره */}
+                {/* دکمه ذخیره و افزودن */}
                 {certificationsData.certifications.length > 0 && (
-                  <div className="flex justify-end pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-end items-stretch sm:items-center pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
+                    {/* دکمه افزودن گواهینامه - سمت چپ */}
+                    <button
+                      onClick={addCertification}
+                      className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center font-medium text-lg order-2 sm:order-1 h-[60px] sm:h-auto"
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      افزودن گواهینامه جدید
+                    </button>
+
+                    {/* دکمه ذخیره - سمت راست */}
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow flex items-center text-lg"
+                      className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow flex items-center justify-center text-lg order-1 sm:order-2 h-[60px] sm:h-auto"
                     >
                       {saving ? (
                         <>
@@ -256,7 +262,7 @@ export default function Certifications() {
                           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
-                          ذخیره گواهینامه‌ها
+                          ذخیره همه تغییرات
                         </>
                       )}
                     </button>
