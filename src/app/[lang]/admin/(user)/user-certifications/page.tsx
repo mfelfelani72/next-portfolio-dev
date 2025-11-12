@@ -12,38 +12,51 @@ interface CertificationsData {
 }
 
 export default function Certifications() {
-  const { data, mutate } = useFetch("get", {
+  const [manualCertification, setManualCertification] = useState(true);
+  const { data } = useFetch("get", {
     endPoint: `/api/resume/certifications/`,
   });
-  const [certificationsData, setCertificationsData] = useState<CertificationsData>({ 
-    certifications: [] 
-  });
+  const [certificationsData, setCertificationsData] =
+    useState<CertificationsData>({
+      certifications: [],
+    });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (data) setCertificationsData(data);
   }, [data]);
 
-  const handleSave = async () => {
+  const { mutate: mutateCertificate } = useFetch(
+    "put",
+    {
+      endPoint: "/api/resume/certifications/",
+      body: JSON.stringify(certificationsData),
+    },
+    {
+      manual: manualCertification,
+    }
+  );
+
+  const handleSave = () => {
     setSaving(true);
-    await mutate(
-      async () => {
-        const response = await fetch(`/api/resume/certifications/`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(certificationsData),
-        });
-        
-        if (!response.ok) {
-          throw new Error('ذخیره ناموفق بود');
-        }
-        
-        return certificationsData;
-      },
-      { revalidate: true }
-    );
-    setSaving(false);
+    setManualCertification(false);
   };
+
+  useEffect(() => {
+    const executeMutation = async () => {
+      try {
+        await mutateCertificate();
+
+        setManualCertification(true);
+      } catch (error) {
+        console.error("Mutation failed:", error);
+      } finally {
+        setSaving(false);
+      }
+    };
+
+    executeMutation();
+  }, [manualCertification]);
 
   const addCertification = () =>
     setCertificationsData((prev) => ({
@@ -87,12 +100,22 @@ export default function Certifications() {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 sticky top-6">
               <h2 className="text-xl font-semibold mb-6 dark:text-white flex items-center justify-center">
-                <svg className="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-6 h-6 mr-2 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 اطلاعات
               </h2>
-              
+
               <div className="space-y-4 text-center">
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                   <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
@@ -103,13 +126,13 @@ export default function Certifications() {
                   </p>
                 </div>
 
-
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
                   <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                     نکات مهم
                   </p>
                   <p className="text-xs text-green-600 dark:text-green-400 mt-2 leading-relaxed">
-                    گواهینامه‌های معتبر و مرتبط با زمینه فعالیت خود را اضافه کنید
+                    گواهینامه‌های معتبر و مرتبط با زمینه فعالیت خود را اضافه
+                    کنید
                   </p>
                 </div>
               </div>
@@ -124,20 +147,29 @@ export default function Certifications() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 mr-4">
-                      <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold dark:text-white">مدیریت گواهینامه‌ها</h2>
+                      <h2 className="text-xl font-bold dark:text-white">
+                        مدیریت گواهینامه‌ها
+                      </h2>
                       <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
                         گواهینامه‌های خود را اضافه، ویرایش یا حذف کنید
                       </p>
                     </div>
                   </div>
-                  
-                
-               
                 </div>
               </div>
 
@@ -146,8 +178,18 @@ export default function Certifications() {
                 {certificationsData.certifications.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <svg
+                        className="w-12 h-12 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
                       </svg>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">
@@ -166,8 +208,8 @@ export default function Certifications() {
                 ) : (
                   <div className="space-y-4">
                     {certificationsData.certifications.map((cert, index) => (
-                      <div 
-                        key={index} 
+                      <div
+                        key={index}
                         className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 group"
                       >
                         <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -189,12 +231,16 @@ export default function Certifications() {
                                 placeholder="مثال: AWS Certified Solutions Architect"
                                 value={cert.title}
                                 onChange={(e) =>
-                                  updateCertification(index, "title", e.target.value)
+                                  updateCertification(
+                                    index,
+                                    "title",
+                                    e.target.value
+                                  )
                                 }
                                 className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium mb-2 dark:text-gray-300">
                                 سال دریافت
@@ -204,7 +250,11 @@ export default function Certifications() {
                                 placeholder="مثال: ۱۴۰۲"
                                 value={cert.year}
                                 onChange={(e) =>
-                                  updateCertification(index, "year", e.target.value)
+                                  updateCertification(
+                                    index,
+                                    "year",
+                                    e.target.value
+                                  )
                                 }
                                 className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                               />
@@ -217,8 +267,18 @@ export default function Certifications() {
                               onClick={() => removeCertification(index)}
                               className="px-4 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center font-medium group-hover:opacity-100 opacity-80"
                             >
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
                               </svg>
                               حذف
                             </button>
@@ -237,8 +297,18 @@ export default function Certifications() {
                       onClick={addCertification}
                       className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center font-medium text-lg order-2 sm:order-1 h-[60px] sm:h-auto"
                     >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
                       </svg>
                       افزودن گواهینامه جدید
                     </button>
@@ -251,16 +321,41 @@ export default function Certifications() {
                     >
                       {saving ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
                           </svg>
                           در حال ذخیره...
                         </>
                       ) : (
                         <>
-                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          <svg
+                            className="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
                           ذخیره همه تغییرات
                         </>

@@ -26,15 +26,26 @@ interface UseFetchConfig extends SWRConfiguration {
   manual?: boolean;
 }
 
+// Function to get base URL based on environment
+const getBaseUrl = () => {
+  // Check if we're in production mode
+  if (process.env.NODE_ENV === 'production') {
+    return "next-portfolio";
+  }
+  return "";
+};
+
 export const useFetch = <T = any>(
   method: "get" | "post" | "put" | "delete",
   params: FetchParams,
   swrConfig?: UseFetchConfig
 ) => {
+  const baseUrl = getBaseUrl();
+  
   const key =
     method === "get" || method === "delete"
-      ? "next-portfolio"+params.endPoint
-      : ["next-portfolio"+params.endPoint, JSON.stringify(params.body)];
+      ? `${baseUrl}${params.endPoint}`
+      : [`${baseUrl}${params.endPoint}`, JSON.stringify(params.body)];
 
   const fetcher = () => cns({ method, ...params });
 
