@@ -1,14 +1,6 @@
-// Functions
+import { DBConfig, OperationResult, getDatabaseConfig } from "@/libs/cache/indexDB/config";
 
-import {
-  DBConfig,
-  OperationResult,
-  getDatabaseConfig,
-} from "@/libs/cache/indexDB/config";
-
-// Classes
-
-class IndexedDBManager {
+export class IndexedDBManager {
   private db: IDBDatabase | null = null;
   private config: DBConfig;
   private isInitialized = false;
@@ -18,18 +10,14 @@ class IndexedDBManager {
     this.config = config;
   }
 
-  // Functions
+  // ---------- CONNECT ----------
   async connect(): Promise<void> {
-    if (this.initPromise) {
-      return this.initPromise;
-    }
+    if (this.initPromise) return this.initPromise;
 
     this.initPromise = new Promise((resolve, reject) => {
       const request = indexedDB.open(this.config.name, this.config.version);
 
-      request.onerror = () => {
-        reject(new Error(`Database error: ${request.error}`));
-      };
+      request.onerror = () => reject(new Error(`Database error: ${request.error}`));
 
       request.onsuccess = () => {
         this.db = request.result;
@@ -39,7 +27,6 @@ class IndexedDBManager {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
-
         this.config.stores.forEach((storeConfig) => {
           if (!db.objectStoreNames.contains(storeConfig.name)) {
             const objectStore = db.createObjectStore(storeConfig.name, {
@@ -62,178 +49,169 @@ class IndexedDBManager {
   }
 
   private async ensureConnected(): Promise<IDBDatabase> {
-    if (!this.isInitialized) {
-      await this.connect();
-    }
-    if (!this.db) {
-      throw new Error("Database not initialized");
-    }
+    if (!this.isInitialized) await this.connect();
+    if (!this.db) throw new Error("Database not initialized");
     return this.db;
   }
 
-  // CREATE
+  // ---------- CREATE ----------
   async create<T>(storeName: string, data: T): Promise<OperationResult<T>> {
     try {
       const db = await this.ensureConnected();
-
-      if (!db.objectStoreNames.contains(storeName)) {
-        return {
-          success: false,
-          error: `Store '${storeName}' not found`,
-        };
-      }
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
 
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], "readwrite");
-        const store = transaction.objectStore(storeName);
+        const tx = db.transaction([storeName], "readwrite");
+        const store = tx.objectStore(storeName);
+        const req = store.add(data);
 
-        const request = store.add(data);
-
-        request.onsuccess = () => {
-          resolve({
-            success: true,
-            data: { ...data, id: request.result } as T,
-          });
-        };
-
-        request.onerror = () => {
-          resolve({
-            success: false,
-            error: `Failed to create: ${request.error}`,
-          });
-        };
-      });
-    } catch (error) {
-      return {
-        success: false,
-        error: `Connection error: ${error}`,
-      };
-    }
-  }
-
-  // READ
-  async read<T>(
-    storeName: string,
-    key: IDBValidKey
-  ): Promise<OperationResult<T>> {
-    try {
-      const db = await this.ensureConnected();
-
-      if (!db.objectStoreNames.contains(storeName)) {
-        return {
-          success: false,
-          error: `Store '${storeName}' not found`,
-        };
-      }
-
-      return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], "readonly");
-        const store = transaction.objectStore(storeName);
-
-        const request = store.get(key);
-
-        request.onsuccess = () => {
-          if (request.result) {
-            resolve({ success: true, data: request.result as T });
-          } else {
-            resolve({ success: false, error: "Record not found" });
-          }
-        };
-
-        request.onerror = () => {
-          resolve({
-            success: false,
-            error: `Failed to read: ${request.error}`,
-          });
-        };
+        req.onsuccess = () =>
+          resolve({ success: true, data: { ...data, id: req.result } as T });
+        req.onerror = () =>
+          resolve({ success: false, error: `Create failed: ${req.error}` });
       });
     } catch (error) {
       return { success: false, error: `Connection error: ${error}` };
     }
   }
 
-  async update<T>(
-    storeName: string,
-    key: IDBValidKey,
-    data: T
-  ): Promise<OperationResult<T>> {
+  // ---------- READ ----------
+  async read<T>(storeName: string, key: IDBValidKey): Promise<OperationResult<T>> {
     try {
       const db = await this.ensureConnected();
-
-      if (!db.objectStoreNames.contains(storeName)) {
-        return {
-          success: false,
-          error: `Store '${storeName}' not found`,
-        };
-      }
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
 
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], "readwrite");
-        const store = transaction.objectStore(storeName);
+        const tx = db.transaction([storeName], "readonly");
+        const store = tx.objectStore(storeName);
+        const req = store.get(key);
 
-        const request = store.put(data);
-
-        request.onsuccess = () => {
-          resolve({
-            success: true,
-            data: data,
-          });
-        };
-
-        request.onerror = () => {
-          resolve({
-            success: false,
-            error: `Failed to update: ${request.error}`,
-          });
-        };
+        req.onsuccess = () =>
+          req.result
+            ? resolve({ success: true, data: req.result as T })
+            : resolve({ success: false, error: "Record not found" });
+        req.onerror = () =>
+          resolve({ success: false, error: `Read failed: ${req.error}` });
       });
     } catch (error) {
-      return {
-        success: false,
-        error: `Connection error: ${error}`,
-      };
+      return { success: false, error: `Connection error: ${error}` };
     }
   }
 
-  // DELETE
+  // ---------- READ ALL ----------
+  async readAll<T>(storeName: string): Promise<OperationResult<T[]>> {
+    try {
+      const db = await this.ensureConnected();
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
+
+      return new Promise((resolve) => {
+        const tx = db.transaction([storeName], "readonly");
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+
+        req.onsuccess = () => resolve({ success: true, data: req.result as T[] });
+        req.onerror = () =>
+          resolve({ success: false, error: `readAll failed: ${req.error}` });
+      });
+    } catch (error) {
+      return { success: false, error: `Connection error: ${error}` };
+    }
+  }
+
+  // ---------- UPDATE ----------
+  async update<T>(storeName: string, key: IDBValidKey, data: T): Promise<OperationResult<T>> {
+    try {
+      const db = await this.ensureConnected();
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
+
+      return new Promise((resolve) => {
+        const tx = db.transaction([storeName], "readwrite");
+        const store = tx.objectStore(storeName);
+        const req = store.put(data);
+
+        req.onsuccess = () => resolve({ success: true, data });
+        req.onerror = () =>
+          resolve({ success: false, error: `Update failed: ${req.error}` });
+      });
+    } catch (error) {
+      return { success: false, error: `Connection error: ${error}` };
+    }
+  }
+
+  // ---------- DELETE ----------
   async delete(storeName: string, key: IDBValidKey): Promise<OperationResult> {
     try {
       const db = await this.ensureConnected();
-
-      if (!db.objectStoreNames.contains(storeName)) {
-        return {
-          success: false,
-          error: `Store '${storeName}' not found`,
-        };
-      }
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
 
       return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], "readwrite");
-        const store = transaction.objectStore(storeName);
+        const tx = db.transaction([storeName], "readwrite");
+        const store = tx.objectStore(storeName);
+        const req = store.delete(key);
 
-        const request = store.delete(key);
-
-        request.onsuccess = () => {
-          resolve({ success: true });
-        };
-
-        request.onerror = () => {
-          resolve({
-            success: false,
-            error: `Failed to delete: ${request.error}`,
-          });
-        };
+        req.onsuccess = () => resolve({ success: true });
+        req.onerror = () =>
+          resolve({ success: false, error: `Delete failed: ${req.error}` });
       });
     } catch (error) {
       return { success: false, error: `Connection error: ${error}` };
     }
   }
 
+  // ---------- QUERY ----------
+  async query<T>(storeName: string, indexName: string, value: any): Promise<OperationResult<T[]>> {
+    try {
+      const db = await this.ensureConnected();
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
+
+      return new Promise((resolve) => {
+        const tx = db.transaction([storeName], "readonly");
+        const store = tx.objectStore(storeName);
+        const index = store.index(indexName);
+        const req = index.getAll(value);
+
+        req.onsuccess = () => resolve({ success: true, data: req.result as T[] });
+        req.onerror = () =>
+          resolve({ success: false, error: `Query failed: ${req.error}` });
+      });
+    } catch (error) {
+      return { success: false, error: `Connection error: ${error}` };
+    }
+  }
+
+  // ---------- CLEAR ----------
+  async clear(storeName: string): Promise<OperationResult> {
+    try {
+      const db = await this.ensureConnected();
+      if (!db.objectStoreNames.contains(storeName))
+        return { success: false, error: `Store '${storeName}' not found` };
+
+      return new Promise((resolve) => {
+        const tx = db.transaction([storeName], "readwrite");
+        const store = tx.objectStore(storeName);
+        const req = store.clear();
+
+        req.onsuccess = () => resolve({ success: true });
+        req.onerror = () =>
+          resolve({ success: false, error: `Clear failed: ${req.error}` });
+      });
+    } catch (error) {
+      return { success: false, error: `Connection error: ${error}` };
+    }
+  }
+
+  // ---------- UTILS ----------
   async storeExists(storeName: string): Promise<boolean> {
     try {
       const db = await this.ensureConnected();
       return db.objectStoreNames.contains(storeName);
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -242,12 +220,13 @@ class IndexedDBManager {
     try {
       const db = await this.ensureConnected();
       return Array.from(db.objectStoreNames);
-    } catch (error) {
+    } catch {
       return [];
     }
   }
 }
 
+// ---------- SINGLETON ----------
 const config = getDatabaseConfig();
 export const indexDB = new IndexedDBManager(config);
 

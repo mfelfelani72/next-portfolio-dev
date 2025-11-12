@@ -1,42 +1,38 @@
-import { NextResponse } from "next/server";
-
-// Functions
-
+import { NextRequest, NextResponse } from "next/server";
 import { redisManager } from "@/libs/cache/redis/redis";
-
-// Interfaces
-
 import { languages, type Lang } from "@/configs/language";
 
 const DEFAULT_PROFILE = { name: "", title: "", summary: "", avatar: "" };
 
 export async function GET(
-  req: Request,
-  { params }: { params: { lang: string } }
+  req: NextRequest,
+  context: { params: Promise<{ lang: string }> }
 ) {
-  const resolvedParams = await params;
-  const lang =
-    resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
+  const { lang } = await context.params;
+  const resolvedLang = lang in languages ? (lang as Lang) : "en";
+
   const data = await redisManager.getDataByLanguage(
-    lang,
-    `resume:profile:${lang}:user`
+    resolvedLang,
+    `resume:profile:${resolvedLang}:user`
   );
+
   return NextResponse.json(data || DEFAULT_PROFILE);
 }
 
 export async function PUT(
-  req: Request,
-  { params }: { params: { lang: string } }
+  req: NextRequest,
+  context: { params: Promise<{ lang: string }> }
 ) {
-  const resolvedParams = await params;
-  const lang =
-    resolvedParams.lang in languages ? (resolvedParams.lang as Lang) : "en";
-  const body = await req.json();
+  const { lang } = await context.params;
+  const resolvedLang = lang in languages ? (lang as Lang) : "en";
 
-  await redisManager.setData(`resume:profile:${lang}:user`, { [lang]: body });
+  const body = await req.json();
+  await redisManager.setData(`resume:profile:${resolvedLang}:user`, {
+    [resolvedLang]: body,
+  });
 
   const response = NextResponse.json({ success: true });
-  response.cookies.set(`resume_refresh_${lang}`, "1", {
+  response.cookies.set(`resume_refresh_${resolvedLang}`, "1", {
     path: "/",
     httpOnly: false,
   });

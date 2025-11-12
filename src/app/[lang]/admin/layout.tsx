@@ -1,23 +1,18 @@
 import React from "react";
-
-// Components
-
 import { Sidebar } from "@/components/ui/admin/sidebar/sidebar";
 import { Header } from "@/components/ui/admin/header/header";
 import { MainBreadcrumb } from "@/components/ui/app/main-breadcrumb";
 import Footer from "@/components/ui/admin/footer/footer";
 import AuthGuard from "@/components/ui/auth/AuthGuard";
 
-// Interfaces
-
 interface AdminLayoutProps {
   children: React.ReactNode;
-  params: {
-    lang: string;
-  };
+  params: Promise<{ lang: string }>;
 }
 
-export default function AdminLayout({ children, params }: AdminLayoutProps) {
+export default async function AdminLayout({ children, params }: AdminLayoutProps) {
+  const { lang } = await params;
+
   return (
     <AuthGuard>
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -26,8 +21,7 @@ export default function AdminLayout({ children, params }: AdminLayoutProps) {
         <div className="flex-1 flex flex-col min-h-0 w-full">
           <Header />
 
-          {/* <div className="hidden sm:block"> */}
-          <div className="">
+          <div>
             <MainBreadcrumb isAdmin={true} />
           </div>
 

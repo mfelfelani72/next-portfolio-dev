@@ -1,11 +1,9 @@
 // components/ui/app/breadcrumb.tsx
 import * as React from "react"
 import { cn } from "@/libs/cn"
-import Link from "next/link"
 
-interface BreadcrumbProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const Breadcrumb = React.forwardRef<HTMLDivElement, BreadcrumbProps>(
+// ---------------- Breadcrumb ----------------
+const Breadcrumb = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
@@ -16,9 +14,8 @@ const Breadcrumb = React.forwardRef<HTMLDivElement, BreadcrumbProps>(
 )
 Breadcrumb.displayName = "Breadcrumb"
 
-interface BreadcrumbListProps extends React.OlHTMLAttributes<HTMLOListElement> {}
-
-const BreadcrumbList = React.forwardRef<HTMLOListElement, BreadcrumbListProps>(
+// ---------------- BreadcrumbList ----------------
+const BreadcrumbList = React.forwardRef<HTMLOListElement, React.OlHTMLAttributes<HTMLOListElement>>(
   ({ className, ...props }, ref) => (
     <ol
       ref={ref}
@@ -32,9 +29,8 @@ const BreadcrumbList = React.forwardRef<HTMLOListElement, BreadcrumbListProps>(
 )
 BreadcrumbList.displayName = "BreadcrumbList"
 
-interface BreadcrumbItemProps extends React.LiHTMLAttributes<HTMLLIElement> {}
-
-const BreadcrumbItem = React.forwardRef<HTMLLIElement, BreadcrumbItemProps>(
+// ---------------- BreadcrumbItem ----------------
+const BreadcrumbItem = React.forwardRef<HTMLLIElement, React.LiHTMLAttributes<HTMLLIElement>>(
   ({ className, ...props }, ref) => (
     <li
       ref={ref}
@@ -45,8 +41,8 @@ const BreadcrumbItem = React.forwardRef<HTMLLIElement, BreadcrumbItemProps>(
 )
 BreadcrumbItem.displayName = "BreadcrumbItem"
 
-interface BreadcrumbLinkProps 
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+// ---------------- BreadcrumbLink ----------------
+interface BreadcrumbLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   asChild?: boolean
 }
 
@@ -58,7 +54,7 @@ const BreadcrumbLink = React.forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
         ref={ref as any}
         className={cn(
           "text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium text-sm",
-          asChild && "cursor-pointer", // برای span حالت pointer نشان دهد
+          asChild && "cursor-pointer",
           className
         )}
         {...props}
@@ -68,9 +64,8 @@ const BreadcrumbLink = React.forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
 )
 BreadcrumbLink.displayName = "BreadcrumbLink"
 
-interface BreadcrumbPageProps extends React.HTMLAttributes<HTMLSpanElement> {}
-
-const BreadcrumbPage = React.forwardRef<HTMLSpanElement, BreadcrumbPageProps>(
+// ---------------- BreadcrumbPage ----------------
+const BreadcrumbPage = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(
   ({ className, ...props }, ref) => (
     <span
       ref={ref}
@@ -87,8 +82,8 @@ const BreadcrumbPage = React.forwardRef<HTMLSpanElement, BreadcrumbPageProps>(
 )
 BreadcrumbPage.displayName = "BreadcrumbPage"
 
-interface BreadcrumbSeparatorProps 
-  extends React.HTMLAttributes<HTMLSpanElement> {
+// ---------------- BreadcrumbSeparator ----------------
+interface BreadcrumbSeparatorProps extends React.HTMLAttributes<HTMLSpanElement> {
   children?: React.ReactNode
 }
 

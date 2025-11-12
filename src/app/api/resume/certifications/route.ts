@@ -1,27 +1,21 @@
-import { NextResponse } from "next/server";
-
-// Functions
-
+import { NextRequest, NextResponse } from "next/server";
 import { redisManager } from "@/libs/cache/redis/redis";
 
 const certifications = { certifications: [] };
-
 const userId = "user";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { lang: string } }
-) {
+export async function GET(req: NextRequest) {
   const data = await redisManager.getData(`resume:certifications:${userId}`);
   return NextResponse.json(data || certifications);
 }
 
-export async function PUT(request: Request) {
+export async function PUT(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     await redisManager.setData(`resume:certifications:${userId}`, body);
+
     const response = NextResponse.json({ success: true });
-    response.cookies.set(`resume_refresh_certifications`, "1", {
+    response.cookies.set("resume_refresh_certifications", "1", {
       path: "/",
       httpOnly: false,
     });

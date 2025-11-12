@@ -1,9 +1,8 @@
 import * as React from "react"
 import { cn } from "@/libs/cn"
 
-interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
+// ---------------- Avatar ----------------
+const Avatar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
@@ -17,22 +16,21 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 )
 Avatar.displayName = "Avatar"
 
-interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
-
-const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(
-  ({ className, ...props }, ref) => (
+// ---------------- AvatarImage ----------------
+const AvatarImage = React.forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
+  ({ className, alt = "", ...props }, ref) => (
     <img
       ref={ref}
       className={cn("aspect-square h-full w-full", className)}
+      alt={alt} // اضافه کردن alt الزامی برای accessibility
       {...props}
     />
   )
 )
 AvatarImage.displayName = "AvatarImage"
 
-interface AvatarFallbackProps extends React.HTMLAttributes<HTMLSpanElement> {}
-
-const AvatarFallback = React.forwardRef<HTMLSpanElement, AvatarFallbackProps>(
+// ---------------- AvatarFallback ----------------
+const AvatarFallback = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(
   ({ className, ...props }, ref) => (
     <span
       ref={ref}
