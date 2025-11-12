@@ -3,7 +3,6 @@
 import { useState } from "react";
 import ProfileTab from "./tabs/ProfileTab";
 import ProjectsTab from "./tabs/ProjectsTab";
-import ToolsTab from "./tabs/ToolsTab";
 
 import { languages } from "@/configs/language";
 
@@ -14,7 +13,6 @@ export default function ResumeAdmin() {
   const tabs = [
     { key: "profile", label: "Profile" },
     { key: "projects", label: "Projects" },
-    { key: "tools", label: "Tools & Certifications" },
   ];
 
   return (
@@ -57,7 +55,6 @@ export default function ResumeAdmin() {
       <div className="p-6">
         {activeTab === "profile" && <ProfileTab lang={activeLang} />}
         {activeTab === "projects" && <ProjectsTab lang={activeLang} />}
-        {activeTab === "tools" && <ToolsTab lang={activeLang} />}
       </div>
     </div>
   );

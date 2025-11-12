@@ -45,6 +45,15 @@ export const menuItems: MenuItem[] = [
       },
       {
         id: "2-3",
+        title: "user_certifications",
+        icon: <DangerSquareIcon />,
+        description: "user_certifications",
+        category: "pages",
+        url: "/admin/user-certifications",
+        isOpen: false,
+      },
+      {
+        id: "2-4",
         title: "user_skills",
         icon: <DangerSquareIcon />,
         description: "user_skills",
@@ -53,7 +62,7 @@ export const menuItems: MenuItem[] = [
         isOpen: false,
       },
       {
-        id: "2-4",
+        id: "2-5",
         title: "user_languages",
         icon: <DangerSquareIcon />,
         description: "user_languages",
@@ -62,7 +71,7 @@ export const menuItems: MenuItem[] = [
         isOpen: false,
       },
       {
-        id: "2-5",
+        id: "2-6",
         title: "user_contact",
         icon: <DangerSquareIcon />,
         description: "user_contact",

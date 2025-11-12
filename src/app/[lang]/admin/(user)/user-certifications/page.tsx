@@ -7,58 +7,46 @@ interface Certification {
   year: string;
 }
 
-interface ToolsData {
-  tools: string[];
+interface CertificationsData {
   certifications: Certification[];
 }
 
-export default function ToolsTab({ lang }: { lang: string }) {
-  const { data, mutate } = useFetch("get", { endPoint: `/api/resume/${lang}/tools/` });
-  const [toolsData, setToolsData] = useState<ToolsData>({ tools: [], certifications: [] });
+export default function Certifications() {
+  const { data, mutate } = useFetch("get", {
+    endPoint: `/api/resume/certifications/`,
+  });
+  const [CertificationsData, setCertificationsData] =
+    useState<CertificationsData>({ certifications: [] });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (data) setToolsData(data);
+    if (data) setCertificationsData(data);
   }, [data]);
 
   const handleSave = async () => {
     setSaving(true);
     await mutate(
       async () => {
-        await fetch(`/api/resume/${lang}/tools/`, {
+        await fetch(`/api/resume/certifications/`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(toolsData),
+          body: JSON.stringify(CertificationsData),
         });
-        return toolsData;
+        return CertificationsData;
       },
       { revalidate: true }
     );
     setSaving(false);
   };
 
-  // 🔧 Tools
-  const addTool = () =>
-    setToolsData((prev) => ({ ...prev, tools: [...prev.tools, ""] }));
-  const removeTool = (index: number) =>
-    setToolsData((prev) => ({
-      ...prev,
-      tools: prev.tools.filter((_, i) => i !== index),
-    }));
-  const updateTool = (index: number, value: string) =>
-    setToolsData((prev) => ({
-      ...prev,
-      tools: prev.tools.map((t, i) => (i === index ? value : t)),
-    }));
-
   // 🎓 Certifications
   const addCertification = () =>
-    setToolsData((prev) => ({
+    setCertificationsData((prev) => ({
       ...prev,
       certifications: [...prev.certifications, { title: "", year: "" }],
     }));
   const removeCertification = (index: number) =>
-    setToolsData((prev) => ({
+    setCertificationsData((prev) => ({
       ...prev,
       certifications: prev.certifications.filter((_, i) => i !== index),
     }));
@@ -67,7 +55,7 @@ export default function ToolsTab({ lang }: { lang: string }) {
     field: "title" | "year",
     value: string
   ) =>
-    setToolsData((prev) => ({
+    setCertificationsData((prev) => ({
       ...prev,
       certifications: prev.certifications.map((c, i) =>
         i === index ? { ...c, [field]: value } : c
@@ -76,32 +64,7 @@ export default function ToolsTab({ lang }: { lang: string }) {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div>
-        <h3 className="font-semibold text-lg">🧰 Tools</h3>
-        <button
-          onClick={addTool}
-          className="px-3 py-1 bg-green-600 text-white rounded mt-2"
-        >
-          Add Tool
-        </button>
-        {toolsData.tools.map((tool, index) => (
-          <div key={index} className="flex gap-2 items-center mt-2">
-            <input
-              type="text"
-              value={tool}
-              onChange={(e) => updateTool(index, e.target.value)}
-              className="flex-1 p-2 border rounded"
-            />
-            <button
-              onClick={() => removeTool(index)}
-              className="px-2 py-1 bg-red-500 text-white rounded"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-      </div>
-
+     
       <div>
         <h3 className="font-semibold text-lg">🎓 Certifications</h3>
         <button
@@ -110,7 +73,7 @@ export default function ToolsTab({ lang }: { lang: string }) {
         >
           Add Certification
         </button>
-        {toolsData.certifications.map((cert, index) => (
+        {CertificationsData.certifications.map((cert, index) => (
           <div key={index} className="flex gap-2 items-center mt-2">
             <input
               type="text"
@@ -145,7 +108,7 @@ export default function ToolsTab({ lang }: { lang: string }) {
         disabled={saving}
         className="px-4 py-2 bg-blue-600 text-white rounded"
       >
-        {saving ? "Saving..." : "Save Tools & Certifications"}
+        {saving ? "Saving..." : "Save certifications"}
       </button>
     </div>
   );
