@@ -1,11 +1,8 @@
-import { createClient } from 'redis';
+import { createClient } from "redis";
 
 // Interfaces
-import { MultiLanguageResume, ResumeData } from "@/Interfaces/portfolio";
 
-// لاگ کردن URL برای دیباگ
-const redisUrl = `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${process.env.NEXT_PUBLIC_REDIS_HOST}:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
-console.log('🔗 Redis URL:', redisUrl);
+import { MultiLanguageResume, ResumeData } from "@/Interfaces/portfolio";
 
 export class RedisManager {
   private client: any = null;
@@ -17,48 +14,34 @@ export class RedisManager {
 
   private async initializeRedis() {
     try {
-      console.log('🔧 Initializing Redis connection...');
-
       this.client = createClient({
         socket: {
-          host: process.env.NEXT_PUBLIC_REDIS_HOST || '172.17.0.1',
-          port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT || '6380'),
+          host: process.env.NEXT_PUBLIC_REDIS_HOST!,
+          port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT!),
           connectTimeout: 5000,
         },
-        password: process.env.NEXT_PUBLIC_REDIS_PASSWORD || '1@123456',
+        password: process.env.NEXT_PUBLIC_REDIS_PASSWORD,
       });
 
-      this.client.on('error', (error: Error) => {
-        console.error('❌ Redis error:', error.message);
+      this.client.on("error", (error: Error) => {
         this.isConnected = false;
       });
 
-      this.client.on('connect', () => {
-        console.log('🔌 Redis connected');
-      });
-
-      this.client.on('ready', () => {
-        console.log('✅ Redis ready');
+      this.client.on("ready", () => {
         this.isConnected = true;
       });
 
       await this.client.connect();
-      
-      // تست اتصال
+
       const pingResult = await this.client.ping();
-      console.log('✅ Redis test PING:', pingResult);
-      
     } catch (error) {
-      console.error('❌ Redis initialization failed:', error);
       this.isConnected = false;
     }
   }
 
-  // --- Base CRUD Functions ---
-
   async getData(table: string): Promise<any | null> {
     if (!this.isConnected || !this.client) {
-      console.log('⚠️ Redis not connected, returning null');
+      console.log("Redis not connected, returning null");
       return null;
     }
 
@@ -66,7 +49,7 @@ export class RedisManager {
       const data = await this.client.get(table);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error("❌ Error getting data from Redis:", error);
+      console.error("Error getting data from Redis:", error);
       return null;
     }
   }
@@ -81,7 +64,6 @@ export class RedisManager {
 
   async setData(table: string, data: any): Promise<boolean> {
     if (!this.isConnected || !this.client) {
-      console.log('⚠️ Redis not connected, not saving');
       return false;
     }
 
@@ -89,16 +71,13 @@ export class RedisManager {
       await this.client.set(table, JSON.stringify(data));
       return true;
     } catch (error) {
-      console.error("❌ Error setting data to Redis:", error);
       return false;
     }
   }
 
   async initializeDefaultData(): Promise<void> {
-    console.log("ℹ️ No default data initialized - set data manually if needed");
+    console.log("No default data initialized - set data manually if needed");
   }
-
-  // --- UnifiedCache Support Methods ---
 
   async getTableItem(
     tableName: string,
@@ -114,7 +93,7 @@ export class RedisManager {
 
       return allData[id] || null;
     } catch (error) {
-      console.error(`❌ Error getting item ${id} from ${tableName}:`, error);
+      console.error(`Error getting item ${id} from ${tableName}:`, error);
       return null;
     }
   }
@@ -126,7 +105,7 @@ export class RedisManager {
 
       return Array.isArray(data) ? data : Object.values(data);
     } catch (error) {
-      console.error(`❌ Error getting all data from ${tableName}:`, error);
+      console.error(`Error getting all data from ${tableName}:`, error);
       return null;
     }
   }
@@ -136,16 +115,14 @@ export class RedisManager {
       await this.setData(tableName, data);
       return true;
     } catch (error) {
-      console.error(`❌ Error setting table data for ${tableName}:`, error);
+      console.error(`Error setting table data for ${tableName}:`, error);
       return false;
     }
   }
 }
 
-// --- Singleton Export ---
 export const redisManager = new RedisManager();
 
-// Optional short helpers
 export const getData = (table: string) => redisManager.getData(table);
 export const getDataByLanguage = (lang: string, table: string) =>
   redisManager.getDataByLanguage(lang, table);
