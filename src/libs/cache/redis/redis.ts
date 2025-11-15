@@ -1,27 +1,69 @@
-import Redis from "ioredis";
+import { createClient } from 'redis';
 
 // Interfaces
 import { MultiLanguageResume, ResumeData } from "@/Interfaces/portfolio";
-const redisUrl = `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${process.env.NEXT_PUBLIC_REDIS_HOST}:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
 
-console.log(redisUrl);
+// لاگ کردن URL برای دیباگ
+const redisUrl = `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${process.env.NEXT_PUBLIC_REDIS_HOST}:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
+console.log('🔗 Redis URL:', redisUrl);
 
 export class RedisManager {
-  private redis: Redis;
+  private client: any = null;
+  private isConnected: boolean = false;
 
   constructor() {
-    const redisUrl = `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${process.env.NEXT_PUBLIC_REDIS_HOST}:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
+    this.initializeRedis();
+  }
 
-    console.log(redisUrl);
+  private async initializeRedis() {
+    try {
+      console.log('🔧 Initializing Redis connection...');
 
-    this.redis = new Redis(redisUrl);
+      this.client = createClient({
+        socket: {
+          host: process.env.NEXT_PUBLIC_REDIS_HOST || '172.17.0.1',
+          port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT || '6380'),
+          connectTimeout: 5000,
+        },
+        password: process.env.NEXT_PUBLIC_REDIS_PASSWORD || '1@123456',
+      });
+
+      this.client.on('error', (error: Error) => {
+        console.error('❌ Redis error:', error.message);
+        this.isConnected = false;
+      });
+
+      this.client.on('connect', () => {
+        console.log('🔌 Redis connected');
+      });
+
+      this.client.on('ready', () => {
+        console.log('✅ Redis ready');
+        this.isConnected = true;
+      });
+
+      await this.client.connect();
+      
+      // تست اتصال
+      const pingResult = await this.client.ping();
+      console.log('✅ Redis test PING:', pingResult);
+      
+    } catch (error) {
+      console.error('❌ Redis initialization failed:', error);
+      this.isConnected = false;
+    }
   }
 
   // --- Base CRUD Functions ---
 
   async getData(table: string): Promise<any | null> {
+    if (!this.isConnected || !this.client) {
+      console.log('⚠️ Redis not connected, returning null');
+      return null;
+    }
+
     try {
-      const data = await this.redis.get(table);
+      const data = await this.client.get(table);
       return data ? JSON.parse(data) : null;
     } catch (error) {
       console.error("❌ Error getting data from Redis:", error);
@@ -38,8 +80,13 @@ export class RedisManager {
   }
 
   async setData(table: string, data: any): Promise<boolean> {
+    if (!this.isConnected || !this.client) {
+      console.log('⚠️ Redis not connected, not saving');
+      return false;
+    }
+
     try {
-      await this.redis.set(table, JSON.stringify(data));
+      await this.client.set(table, JSON.stringify(data));
       return true;
     } catch (error) {
       console.error("❌ Error setting data to Redis:", error);
@@ -61,12 +108,10 @@ export class RedisManager {
       const allData = await this.getData(tableName);
       if (!allData) return null;
 
-      // در صورتی که داده‌ها آرایه باشند
       if (Array.isArray(allData)) {
         return allData.find((item: any) => item.id === id) || null;
       }
 
-      // در صورتی که داده‌ها آبجکت باشند
       return allData[id] || null;
     } catch (error) {
       console.error(`❌ Error getting item ${id} from ${tableName}:`, error);
