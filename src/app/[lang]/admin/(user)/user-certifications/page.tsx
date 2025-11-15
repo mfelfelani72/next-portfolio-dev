@@ -16,7 +16,7 @@ interface Certification {
 interface CertificationsData {
   certifications: Certification[];
 }
-
+   
 export default function Certifications() {
   const [manualCertification, setManualCertification] = useState(true);
   const { data } = useFetch("get", {
