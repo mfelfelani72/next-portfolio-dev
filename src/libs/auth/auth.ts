@@ -1,21 +1,26 @@
-const getBaseUrl = () => {
-  // Check if we're in production mode
-  if (process.env.NODE_ENV === "production") {
-    return "/next-portfolio";
-  }
-  return "";
-};
+// Functions
+
+import { cns } from "../api/cns";
+
 export async function login(
   username: string,
   password: string
 ): Promise<boolean> {
   try {
-    const res = await fetch(getBaseUrl() + "/api/auth/login", {
-      method: "POST",
+    const res = await cns<{
+      token?: string;
+      user?: any;
+      username?: string;
+      password?: string;
+    }>({
+      method: "post",
+      endPoint: "/api/auth/login",
+      body: { username, password },
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      route: "login",
     });
-    return res.ok;
+
+    return res !== false;
   } catch (err) {
     console.error("Login error:", err);
     return false;
@@ -24,10 +29,13 @@ export async function login(
 
 export async function logout(): Promise<boolean> {
   try {
-    const res = await fetch(getBaseUrl() + "/api/auth/logout", {
-      method: "POST",
+    const res = await cns({
+      method: "post",
+      endPoint: "/api/auth/logout",
+      route: "logout",
     });
-    return res.ok;
+
+    return res !== false;
   } catch (err) {
     console.error("Logout error:", err);
     return false;
@@ -36,10 +44,17 @@ export async function logout(): Promise<boolean> {
 
 export async function isAuthenticated(): Promise<boolean> {
   try {
-    const res = await fetch(getBaseUrl() + "/api/auth/me");
-    if (!res.ok) return false;
-    const json = await res.json();
-    return !!json.isLoggedIn;
+    const res = await cns<{
+      isLoggedIn?: boolean;
+    }>({
+      method: "get",
+      endPoint: "/api/auth/me",
+      route: "isAuthenticated",
+    });
+
+    if (res === false) return false;
+
+    return !!res?.isLoggedIn;
   } catch (err) {
     console.error("isAuthenticated error:", err);
     return false;
