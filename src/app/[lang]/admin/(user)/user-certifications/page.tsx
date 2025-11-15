@@ -2,6 +2,10 @@
 import { useState, useEffect } from "react";
 import { useFetch } from "@/libs/api/useFetch";
 
+console.log(process.env.NEXT_PUBLIC_REDIS_HOST)
+console.log(process.env.NEXT_PUBLIC_REDIS_PASSWORD)
+console.log(process.env.NEXT_PUBLIC_REDIS_PORT)
+
 interface Certification {
   title: string;
   year: string;
