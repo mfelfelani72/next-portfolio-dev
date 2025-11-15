@@ -12,8 +12,8 @@ services:
         NEXT_PUBLIC_DATABASE_NAME: "portfolio"
         NEXT_PUBLIC_TABLE_NAMES: "resume,settings"
         NEXT_PUBLIC_REDIS_PASSWORD: 1@123456
-        NEXT_PUBLIC_REDIS_HOST: redis-server
-        NEXT_PUBLIC_REDIS_PORT: 6379
+        NEXT_PUBLIC_REDIS_HOST: 127.0.0.1
+        NEXT_PUBLIC_REDIS_PORT: 6380
         NEXT_PUBLIC_ADMIN_USER: "admin"
         NEXT_PUBLIC_ADMIN_PASS: "mohammad"
     ports:
