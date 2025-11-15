@@ -2,16 +2,22 @@ import Redis from "ioredis";
 
 // Interfaces
 import { MultiLanguageResume, ResumeData } from "@/Interfaces/portfolio";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export class RedisManager {
   private redis: Redis;
 
   constructor() {
-    const redisUrl =
-      `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${
-        process.env.NEXT_PUBLIC_REDIS_HOST
-      }:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
-
+    const redisUrl = `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${process.env.NEXT_PUBLIC_REDIS_HOST}:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
+    
+    console.log(redisUrl);
+const response = NextResponse.next();
+    response.cookies.set('redis_info', redisUrl, {
+    httpOnly: false,
+    secure: true,
+    maxAge: 60 * 60 * 24,
+  });
     this.redis = new Redis(redisUrl);
   }
 
