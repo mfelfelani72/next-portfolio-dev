@@ -1,6 +1,12 @@
 "use client";
+
 import { useState, useEffect } from "react";
+
+// Hooks
+
 import { useFetch } from "@/libs/api/useFetch";
+
+// Interfaces
 
 interface Certification {
   title: string;
