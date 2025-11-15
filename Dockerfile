@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm@10.18.1 && pnpm install --frozen-lockfile
 
+RUN pnpm add redis
+
 COPY . .
 
 
