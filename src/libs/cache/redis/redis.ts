@@ -9,8 +9,8 @@ export class RedisManager {
   constructor() {
     const redisUrl =
       `redis://:${process.env.NEXT_PUBLIC_REDIS_PASSWORD}@${
-        process.env.NEXT_PUBLIC_REDIS_HOST || "localhost"
-      }:${process.env.NEXT_PUBLIC_REDIS_PORT || 6379}`;
+        process.env.NEXT_PUBLIC_REDIS_HOST
+      }:${process.env.NEXT_PUBLIC_REDIS_PORT}`;
 
     this.redis = new Redis(redisUrl);
   }
