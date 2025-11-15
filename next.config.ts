@@ -17,9 +17,9 @@ const nextConfig: NextConfig = {
     domains: ["localhost"],
     formats: ["image/webp", "image/avif"],
   },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
-  },
+  // compiler: {
+  //   removeConsole: process.env.NODE_ENV === "production",
+  // },
   ...(isProd ? { output: "standalone" } : {}),
   basePath: isProd ? process.env.NEXT_PUBLIC_BASE_PATH : "",
   assetPrefix: isProd ? process.env.NEXT_PUBLIC_BASE_PATH : "",
