@@ -12,7 +12,7 @@ services:
         NEXT_PUBLIC_DATABASE_NAME: "portfolio"
         NEXT_PUBLIC_TABLE_NAMES: "resume,settings"
         NEXT_PUBLIC_REDIS_PASSWORD: 1@123456
-        NEXT_PUBLIC_REDIS_HOST: localhost
+        NEXT_PUBLIC_REDIS_HOST: "host.docker.internal"
         NEXT_PUBLIC_REDIS_PORT: 6380
         NEXT_PUBLIC_ADMIN_USER: "admin"
         NEXT_PUBLIC_ADMIN_PASS: "mohammad"
