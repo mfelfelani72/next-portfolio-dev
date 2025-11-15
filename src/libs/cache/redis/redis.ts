@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient } from "redis";
 
 // Interfaces
 
@@ -14,38 +14,36 @@ export class RedisManager {
 
   private async initializeRedis() {
     try {
-     
       this.client = createClient({
         socket: {
-          host: process.env.NEXT_PUBLIC_REDIS_HOST,
-          port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT!),
+          host: "172.17.0.1",
+          port: parseInt("6380"),
           connectTimeout: 5000,
         },
-        password: process.env.NEXT_PUBLIC_REDIS_PASSWORD,
+        password: "1@123456",
       });
 
-      this.client.on('error', (error: Error) => {
-        console.error('❌ Redis error:', error.message);
+      this.client.on("error", (error: Error) => {
+        console.error("❌ Redis error:", error.message);
         this.isConnected = false;
       });
 
-      this.client.on('connect', () => {
-        console.log('🔌 Redis connected');
+      this.client.on("connect", () => {
+        console.log("🔌 Redis connected");
       });
 
-      this.client.on('ready', () => {
-        console.log('✅ Redis ready');
+      this.client.on("ready", () => {
+        console.log("✅ Redis ready");
         this.isConnected = true;
       });
 
       await this.client.connect();
-      
+
       // تست اتصال
       const pingResult = await this.client.ping();
-      console.log('✅ Redis test PING:', pingResult);
-      
+      console.log("✅ Redis test PING:", pingResult);
     } catch (error) {
-      console.error('❌ Redis initialization failed:', error);
+      console.error("❌ Redis initialization failed:", error);
       this.isConnected = false;
     }
   }
@@ -54,7 +52,7 @@ export class RedisManager {
 
   async getData(table: string): Promise<any | null> {
     if (!this.isConnected || !this.client) {
-      console.log('⚠️ Redis not connected, returning null');
+      console.log("⚠️ Redis not connected, returning null");
       return null;
     }
 
@@ -77,7 +75,7 @@ export class RedisManager {
 
   async setData(table: string, data: any): Promise<boolean> {
     if (!this.isConnected || !this.client) {
-      console.log('⚠️ Redis not connected, not saving');
+      console.log("⚠️ Redis not connected, not saving");
       return false;
     }
 
