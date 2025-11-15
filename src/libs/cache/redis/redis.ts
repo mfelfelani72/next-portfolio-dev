@@ -7,9 +7,13 @@ export class RedisManager {
   private redis: Redis;
 
   constructor() {
-    this.redis = new Redis(
-      process.env.NEXT_PUBLIC_REDIS_URL || "redis://localhost:6379"
-    );
+    const redisUrl =
+      process.env.NEXT_PUBLIC_REDIS_URL ||
+      `redis://:${process.env.REDIS_PASSWORD}@${
+        process.env.REDIS_HOST || "localhost"
+      }:${process.env.REDIS_PORT || 6379}`;
+
+    this.redis = new Redis(redisUrl);
   }
 
   // --- Base CRUD Functions ---
@@ -48,7 +52,10 @@ export class RedisManager {
 
   // --- UnifiedCache Support Methods ---
 
-  async getTableItem(tableName: string, id: string | number): Promise<any | null> {
+  async getTableItem(
+    tableName: string,
+    id: string | number
+  ): Promise<any | null> {
     try {
       const allData = await this.getData(tableName);
       if (!allData) return null;
