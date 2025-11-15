@@ -17,7 +17,7 @@ export class RedisManager {
      
       this.client = createClient({
         socket: {
-          host: process.env.NEXT_PUBLIC_REDIS_HOST || 'localhost',
+          host: process.env.NEXT_PUBLIC_REDIS_HOST || '172.17.0.1',
           port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT || '6380'),
           connectTimeout: 5000,
         },
