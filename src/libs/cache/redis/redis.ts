@@ -17,11 +17,11 @@ export class RedisManager {
      
       this.client = createClient({
         socket: {
-          host: process.env.NEXT_PUBLIC_REDIS_HOST || '172.17.0.1',
-          port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT || '6380'),
+          host: process.env.NEXT_PUBLIC_REDIS_HOST,
+          port: parseInt(process.env.NEXT_PUBLIC_REDIS_PORT!),
           connectTimeout: 5000,
         },
-        password: process.env.NEXT_PUBLIC_REDIS_PASSWORD || '1@123456',
+        password: process.env.NEXT_PUBLIC_REDIS_PASSWORD,
       });
 
       this.client.on('error', (error: Error) => {
