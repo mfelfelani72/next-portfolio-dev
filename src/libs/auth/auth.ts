@@ -1,6 +1,6 @@
 // Functions
 
-import { cns } from "../api/cns";
+import { cns } from "@/libs/api/cns";
 
 export async function login(
   username: string,
