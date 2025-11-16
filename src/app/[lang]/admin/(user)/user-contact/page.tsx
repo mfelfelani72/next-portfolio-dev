@@ -258,7 +258,12 @@ export default function Contact() {
                   </div>
                 </div>
               </div>
-
+              {/* Error Message */}
+              {error && (
+                <div className="px-6 py-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm font-medium border-b border-red-200 dark:border-red-700">
+                  {error}
+                </div>
+              )}
               {/* فرم اطلاعات تماس */}
               <div className="p-6 md:p-8">
                 <div className="space-y-6">
