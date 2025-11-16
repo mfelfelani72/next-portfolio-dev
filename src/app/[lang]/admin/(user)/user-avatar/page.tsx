@@ -1,75 +1,29 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+
+// Hooks
+
 import { useFetch } from "@/libs/api/useFetch";
 
 export default function AvatarPage() {
-  /**
-   * Fetch current avatar
-   * - Uses GET to load existing avatar
-   * - mutate() will be used later to update avatar
-   */
-  const { data: avatarData, mutate: saveAvatar } = useFetch("get", {
-    endPoint: `/api/resume/avatar/`,
-  });
+  // States and Refs
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // UI States
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  // Selected image preview (Base64)
+  const [manualAvatar, setManualAvatar] = useState(true);
+  const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  /**
-   * Convert File → Base64 string
-   */
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (err) => reject(err);
-    });
-  };
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * Validate + load image file
-   */
-  const handleFileSelect = async (file: File) => {
-    if (!file) return;
+  // Hooks
 
-    if (!file.type.startsWith("image/")) {
-      alert("لطفاً یک فایل تصویری انتخاب کنید");
-      return;
-    }
+  const { data: avatarData } = useFetch("get", {
+    endPoint: `/api/resume/avatar/`,
+  });
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("حجم فایل باید کمتر از ۵ مگابایت باشد");
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const base64 = await fileToBase64(file);
-      setSelectedImage(base64);
-    } catch {
-      alert("خطا در تبدیل فایل");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const [manualAvatar, setManualAvatar] = useState(true);
-
-  /**
-   * PUT → Save avatar
-   * Uses mutate() from useFetch to update server + refresh GET cache
-   */
-
-  // Mutation hook
   const { mutate: mutateAvatar } = useFetch(
     "post",
     {
@@ -82,51 +36,77 @@ export default function AvatarPage() {
       manual: manualAvatar,
     }
   );
+
+  // Functions
+  
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const handleFileSelect = async (file: File) => {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("لطفاً یک فایل تصویری انتخاب کنید");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("حجم فایل باید کمتر از ۵ مگابایت باشد");
+      return;
+    }
+
+    setError("");
+    setUploading(true);
+
+    try {
+      const base64 = await fileToBase64(file);
+      setSelectedImage(base64);
+    } catch {
+      setError("خطا در تبدیل فایل");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const executeMutation = async () => {
     try {
       await mutateAvatar();
       setManualAvatar(true);
 
       if (fileInputRef.current) fileInputRef.current.value = "";
+      setError("");
     } catch (error) {
-      console.log("Error :" + error);
+      setError("خطا در ذخیره‌سازی");
     } finally {
       setSaving(false);
     }
   };
 
-  // Execute mutation when manualCertification changes
-  useEffect(() => {
-    if (!manualAvatar) executeMutation();
-  }, [manualAvatar]);
-
   const handleSave = async () => {
-    console.log("hand");
     if (!selectedImage) return;
 
     setSaving(true);
+    setError("");
     setManualAvatar(false);
   };
 
-  /**
-   * Reset selected image
-   */
   const handleCancel = () => {
     setSelectedImage(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    setError("");
   };
 
-  /**
-   * Input file handler
-   */
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleFileSelect(file);
   };
 
-  /**
-   * Drag & Drop Events
-   */
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragOver(false);
@@ -144,30 +124,34 @@ export default function AvatarPage() {
     setDragOver(false);
   };
 
+  useEffect(() => {
+    if (!manualAvatar) executeMutation();
+  }, [manualAvatar]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-3 md:p-6">
+      <div className="max-w-7xl mx-auto scale-[0.88] origin-top">
         {/* ===== Page Header ===== */}
-        <div className="mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+        <div className="mb-6 md:mb-10">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             آواتار پروفایل
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
+          <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg max-w-xl">
             تصویر شخصی خود را برای ایجاد تاثیر اولیه حرفه‌ای انتخاب کنید
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ===== Left Panel: Preview ===== */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 sticky top-6">
-              <h2 className="text-xl font-semibold mb-6 dark:text-white flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-5 sticky top-4">
+              <h2 className="text-lg font-semibold mb-4 dark:text-white text-center">
                 پیش‌نمایش
               </h2>
 
               {/* Avatar Preview */}
-              <div className="relative mb-6">
-                <div className="relative mx-auto w-48 h-48 rounded-2xl overflow-hidden shadow-2xl border-8 border-white dark:border-gray-700 bg-gray-200 dark:bg-gray-700">
+              <div className="relative mb-5">
+                <div className="relative mx-auto w-36 h-36 rounded-xl overflow-hidden shadow-xl border-4 border-white dark:border-gray-700 bg-gray-200 dark:bg-gray-700">
                   {selectedImage ? (
                     <img
                       src={selectedImage}
@@ -179,13 +163,13 @@ export default function AvatarPage() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 text-sm">
                       بدون تصویر
                     </div>
                   )}
 
                   {uploading && (
-                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-white text-sm">
+                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-white text-xs">
                       در حال پردازش...
                     </div>
                   )}
@@ -193,11 +177,11 @@ export default function AvatarPage() {
 
                 {/* Save / Cancel buttons */}
                 {selectedImage && (
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className="px-4 py-2 bg-green-600 text-white rounded-full text-sm shadow"
+                      className="px-3 py-1.5 bg-green-600 text-white rounded-full text-xs shadow"
                     >
                       {saving ? "ذخیره..." : "تأیید"}
                     </button>
@@ -205,7 +189,7 @@ export default function AvatarPage() {
                     <button
                       onClick={handleCancel}
                       disabled={saving}
-                      className="px-4 py-2 bg-gray-600 text-white rounded-full text-sm shadow"
+                      className="px-3 py-1.5 bg-gray-600 text-white rounded-full text-xs shadow"
                     >
                       انصراف
                     </button>
@@ -214,9 +198,9 @@ export default function AvatarPage() {
               </div>
 
               {/* Additional Info */}
-              <div className="space-y-3 text-center">
+              <div className="space-y-2 text-center text-sm">
                 {avatarData?.updatedAt && !selectedImage && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-sm">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-xs">
                     آخرین بروزرسانی:{" "}
                     {new Date(avatarData.updatedAt).toLocaleDateString("fa-IR")}
                   </div>
@@ -227,20 +211,20 @@ export default function AvatarPage() {
 
           {/* ===== Right Panel: Uploader ===== */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-xl font-bold dark:text-white">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-bold dark:text-white">
                   آپلود آواتار جدید
                 </h2>
               </div>
 
               {/* Drag Area */}
-              <div className="p-6 md:p-8">
+              <div className="p-6 md:p-7">
                 <div
-                  className={`rounded-2xl border-2 border-dashed p-8 text-center transition-all ${
+                  className={`rounded-xl border-2 border-dashed p-6 text-center transition-all ${
                     dragOver
                       ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                      : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50"
+                      : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/40"
                   }`}
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
@@ -254,27 +238,36 @@ export default function AvatarPage() {
                     className="hidden"
                   />
 
-                  <p className="text-lg font-semibold mb-2 dark:text-gray-200">
+                  <p className="text-base font-semibold mb-1 dark:text-gray-200">
                     عکس جدید را اینجا رها کنید
                   </p>
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">یا</p>
+                  <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">
+                    یا
+                  </p>
 
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-xl shadow"
+                    className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm shadow"
                   >
                     انتخاب فایل
                   </button>
 
-                  <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
-                    فرمت‌های مجاز: JPG, PNG, GIF, WEBP – حداکثر ۵ مگابایت
+                  <p className="mt-4 text-xs text-gray-600 dark:text-gray-400">
+                    فرمت‌های مجاز: JPG, PNG, GIF, WEBP — حداکثر ۵ مگابایت
                   </p>
                 </div>
 
                 {/* Note */}
-                <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 text-sm text-blue-700 dark:text-blue-300">
+                <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-5 text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
                   این آواتار برای تمام زبان‌ها یکسان نمایش داده می‌شود.
                 </div>
+
+                {/* Error under uploader */}
+                {error && (
+                  <div className="mt-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-3 py-2 rounded-lg text-xs text-center">
+                    {error}
+                  </div>
+                )}
               </div>
             </div>
           </div>

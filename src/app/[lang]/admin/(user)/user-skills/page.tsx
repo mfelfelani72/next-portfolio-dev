@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+// Hooks
+
 import { useFetch } from "@/libs/api/useFetch";
+
+// Interfaces
 
 interface Skill {
   name: string;
@@ -13,38 +18,48 @@ interface SkillsTabProps {
 }
 
 export default function SkillsPage({ lang }: SkillsTabProps) {
-  const { data, mutate } = useFetch("get", {
-    endPoint: `/api/resume/skills/`,
-  });
+  // States
 
   const [skills, setSkills] = useState<Skill[]>([]);
   const [saving, setSaving] = useState(false);
+  const [manualSkills, setManualSkills] = useState(true);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (data) setSkills(data.skills || []);
-  }, [data]);
+  // Hooks
+
+  const { data } = useFetch("get", {
+    endPoint: `/api/resume/skills/`,
+  });
+
+  const { mutate: mutateSkills } = useFetch(
+    "put",
+    {
+      endPoint: `/api/resume/skills/`,
+      body: JSON.stringify({ skills }),
+    },
+    {
+      manual: manualSkills,
+    }
+  );
+
+  // Functions
+
+  const executeMutation = async () => {
+    try {
+      await mutateSkills();
+      setManualSkills(true);
+      setError("");
+      return { skills };
+    } catch {
+      setError("خطا در ذخیره‌سازی");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
-    await mutate(
-      async () => {
-        const response = await fetch(`/api/resume/skills/`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ skills }),
-        });
-
-        if (!response.ok) {
-          throw new Error("ذخیره ناموفق بود");
-        }
-
-        return { skills };
-      },
-      { revalidate: true }
-    );
-    setSaving(false);
+    setManualSkills(false);
   };
 
   const addSkill = () => setSkills([...skills, { name: "", level: 50 }]);
@@ -57,7 +72,7 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
     arr[i].name = value;
     setSkills(arr);
   };
-
+  
   const updateSkillLevel = (i: number, value: number) => {
     const arr = [...skills];
     arr[i].level = value;
@@ -77,6 +92,14 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
     if (level >= 40) return "متوسط";
     return "مقدماتی";
   };
+
+  useEffect(() => {
+    if (data) setSkills(data.skills || []);
+  }, [data]);
+
+  useEffect(() => {
+    if (!manualSkills) executeMutation();
+  }, [manualSkills]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-8">
@@ -177,6 +200,13 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
                 </div>
               </div>
 
+              {/* نمایش خطای ذخیره‌سازی */}
+              {error && (
+                <div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 text-center text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* لیست مهارت‌ها */}
               <div className="p-6 md:p-8">
                 {skills.length === 0 ? (
@@ -214,115 +244,106 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
                     {skills.map((skill, index) => (
                       <div
                         key={index}
-                        className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 group"
+                        className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 group flex flex-col lg:flex-row gap-6"
                       >
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                          {/* شماره مهارت */}
-                          <div className="flex-shrink-0">
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                              {index + 1}
-                            </div>
+                        {/* شماره مهارت */}
+                        <div className="flex-shrink-0 flex justify-center lg:block">
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                            {index + 1}
+                          </div>
+                        </div>
+
+                        {/* محتوای مهارت */}
+                        <div className="flex-1 space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                              نام مهارت
+                            </label>
+                            <input
+                              type="text"
+                              value={skill.name}
+                              onChange={(e) =>
+                                updateSkillName(index, e.target.value)
+                              }
+                              placeholder="مثال: React.js, Python"
+                              className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
+                            />
                           </div>
 
-                          {/* محتوای مهارت */}
-                          <div className="flex-1 space-y-4">
-                            {/* نام مهارت */}
-                            <div>
-                              <label className="block text-sm font-medium mb-2 dark:text-gray-300">
-                                نام مهارت
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <label className="block text-sm font-medium dark:text-gray-300">
+                                سطح تسلط
                               </label>
-                              <input
-                                type="text"
-                                value={skill.name}
-                                onChange={(e) =>
-                                  updateSkillName(index, e.target.value)
-                                }
-                                placeholder="مثال: React.js, Python, Project Management"
-                                className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                  {getSkillLevelText(skill.level)}
+                                </span>
+                                <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                  {skill.level}%
+                                </span>
+                              </div>
+                            </div>
+
+                            <input
+                              type="range"
+                              min={0}
+                              max={100}
+                              step={5}
+                              value={skill.level}
+                              onChange={(e) =>
+                                updateSkillLevel(index, parseInt(e.target.value))
+                              }
+                              className="w-full h-3 bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gray-300"
+                            />
+
+                            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                              <span>مقدماتی</span>
+                              <span>متوسط</span>
+                              <span>پیشرفته</span>
+                              <span>حرفه‌ای</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* نوار پیشرفت */}
+                        <div className="flex-shrink-0 w-full lg:w-48">
+                          <div className="space-y-2">
+                            <div className="text-center text-sm font-medium text-gray-600 dark:text-gray-400">
+                              سطح فعلی
+                            </div>
+                            <div className="w-full h-4 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full bg-gradient-to-r ${getSkillLevelColor(
+                                  skill.level
+                                )} rounded-full transition-all duration-500 ease-out`}
+                                style={{ width: `${skill.level}%` }}
                               />
                             </div>
-
-                            {/* سطح مهارت */}
-                            <div className="space-y-3">
-                              <div className="flex justify-between items-center">
-                                <label className="block text-sm font-medium dark:text-gray-300">
-                                  سطح تسلط
-                                </label>
-                                <div className="flex items-center gap-3">
-                                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    {getSkillLevelText(skill.level)}
-                                  </span>
-                                  <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                    {skill.level}%
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <input
-                                  type="range"
-                                  min={0}
-                                  max={100}
-                                  step={5}
-                                  value={skill.level}
-                                  onChange={(e) =>
-                                    updateSkillLevel(
-                                      index,
-                                      parseInt(e.target.value)
-                                    )
-                                  }
-                                  className="w-full h-3 bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gray-300"
-                                />
-
-                                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                                  <span>مقدماتی</span>
-                                  <span>متوسط</span>
-                                  <span>پیشرفته</span>
-                                  <span>حرفه‌ای</span>
-                                </div>
-                              </div>
-                            </div>
                           </div>
+                        </div>
 
-                          {/* نوار پیشرفت */}
-                          <div className="flex-shrink-0 w-full lg:w-48">
-                            <div className="space-y-2">
-                              <div className="text-center text-sm font-medium text-gray-600 dark:text-gray-400">
-                                سطح فعلی
-                              </div>
-                              <div className="w-full h-4 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full bg-gradient-to-r ${getSkillLevelColor(
-                                    skill.level
-                                  )} rounded-full transition-all duration-500 ease-out`}
-                                  style={{ width: `${skill.level}%` }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* دکمه حذف */}
-                          <div className="flex-shrink-0">
-                            <button
-                              onClick={() => removeSkill(index)}
-                              className="px-4 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center font-medium w-full justify-center"
+                        {/* دکمه حذف */}
+                        <div className="flex-shrink-0 flex justify-center lg:block">
+                          <button
+                            onClick={() => removeSkill(index)}
+                            className="px-4 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center font-medium w-full justify-center"
+                          >
+                            <svg
+                              className="w-4 h-4 mr-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
-                              <svg
-                                className="w-4 h-4 mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                              حذف
-                            </button>
-                          </div>
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                            حذف
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -332,7 +353,6 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
                 {/* دکمه ذخیره و افزودن */}
                 {skills.length > 0 && (
                   <div className="flex flex-col sm:flex-row gap-4 justify-end items-stretch sm:items-center pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
-                    {/* دکمه افزودن مهارت - سمت چپ */}
                     <button
                       onClick={addSkill}
                       className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center font-medium text-lg order-2 sm:order-1 h-[60px] sm:h-auto"
@@ -353,7 +373,6 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
                       افزودن مهارت جدید
                     </button>
 
-                    {/* دکمه ذخیره - سمت راست */}
                     <button
                       onClick={handleSave}
                       disabled={saving}
