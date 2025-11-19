@@ -1,7 +1,15 @@
 import React from "react";
-import { type Lang } from "@/configs/language";
+
+// Components
+
 import LanguageSwitcher from "@/components/base/LanguageSwitcher";
-import Links from "../Links";
+import ThemeSwitcher from "@/components/base/ThemeSwitcher";
+import Links from "@/components/ui/landing/header/Links";
+import UserInfo from "@/components/ui/landing/header/UserInfo";
+
+// Interfaces
+
+import { type Lang } from "@/configs/language";
 
 interface HeaderServerProps {
   params?: { lang: Lang };
@@ -33,14 +41,23 @@ const HeaderServer = ({ params = { lang: "en" } }: HeaderServerProps) => {
               className="fixed inset-x-4 top-20 z-50 w-[calc(100%-32px)] mt-4 rounded-2xl"
             >
               <div className="w-full mx-auto bg-white rounded-2xl p-4 shadow-lg border border-gray-200">
-                <nav className="flex flex-col w-full gap-2">
+                <div className="pb-2 border-b border-neutral-300">
+                  <UserInfo modal={false} />
+                </div>
+
+                <nav className="flex flex-col w-full pt-4 gap-2">
                   <Links params={{ lang: params.lang as Lang }} />
                 </nav>
               </div>
             </div>
           </div>
 
-          <LanguageSwitcher />
+          <h1 className="font-medium">SkyTeach</h1>
+
+          <div className="flex gap-2">
+            <ThemeSwitcher />
+            <LanguageSwitcher />
+          </div>
         </div>
       </header>
     </>

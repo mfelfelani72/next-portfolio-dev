@@ -1,7 +1,9 @@
 {
   "home": "Startseite",
   "blogs": "Blogs",
+  "certifications":"Zertifizierungen",
   "skills": "Fähigkeiten",
+  "count_skills": "Fähigkeiten",
   "projects": "Projekte",
   "network": "Netzwerk",
   "certs": "Zertifikate",

@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
-const UserInfo = () => {
+const UserInfo = ({ modal = true }: { modal: boolean }) => {
   // States
 
   const user = useUserStore((state) => state.user);
@@ -24,7 +24,7 @@ const UserInfo = () => {
             src={user.avatar}
             alt="avatar"
             className="w-12 h-12 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {modal && setIsModalOpen(true)}}
           />
         )}
         <div>
@@ -43,7 +43,9 @@ const UserInfo = () => {
         createPortal(
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm"
-            onClick={() => setIsModalOpen(false)}
+            onClick={() => {
+              modal && setIsModalOpen(false);
+            }}
           >
             <div
               className="relative bg-white/20 dark:bg-gray-900/30 backdrop-blur-xl rounded-3xl shadow-2xl p-6 max-w-[90vw] max-h-[90vh] animate-scaleFade flex flex-col items-center text-center"

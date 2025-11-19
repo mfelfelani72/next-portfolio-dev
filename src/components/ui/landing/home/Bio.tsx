@@ -3,12 +3,16 @@
 import React from "react";
 
 // Interfaces
+
 import { Lang } from "@/configs/language";
 
 // Zustand
+
 import { useUserStore } from "@/app/[lang]/stores/UserStore";
 
 const Bio = ({ params }: { params: { lang: Lang } }) => {
+  // States
+  
   const user = useUserStore((state) => state.user);
 
   return (

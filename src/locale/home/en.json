@@ -1,8 +1,18 @@
 {
   "home": "Home",
   "blogs": "Blogs",
-  "projects": "Projects",
+
+  "certifications":"Certifications",
+
   "skills": "Skills",
+  "count_skills": "Skills",
+  "expert": "Expert",
+  "advanced": "Advanced",
+  "intermediate": "Intermediate",
+  "beginner": "Beginner",
+
+
+  "projects": "Projects",
   "network": "Network",
   "certs": "Certs",
   "languages": "Languages",

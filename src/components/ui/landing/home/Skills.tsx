@@ -1,47 +1,58 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
+
+// Components
+
+import { Skill } from "@/Interfaces/portfolio";
+
+// Functions
+
 import { indexDB } from "@/libs/cache/indexDB/IndexDB";
 import { saveResumeSection } from "@/libs/cache/indexDB/helper";
+
+// Hooks
+
 import { useFetch } from "@/libs/api/useFetch";
-import { Skill } from "@/Interfaces/portfolio";
+
+// Interfaces
 
 interface SkillsResponse {
   skills: Skill[];
 }
 
-// رنگ‌های شاد
-const COLORS = [
-  "bg-red-400",
-  "bg-orange-400",
-  "bg-yellow-400",
-  "bg-green-400",
-  "bg-teal-400",
-  "bg-blue-400",
-  "bg-indigo-400",
-  "bg-purple-400",
-  "bg-pink-400",
-  "bg-fuchsia-400",
-];
-
-// تخصیص رنگ‌های منحصربه‌فرد به هر مهارت
-const assignUniqueColors = (skills: Skill[]) => {
-  const colors = [...COLORS]; // کپی آرایه رنگ‌ها
-  const skillsWithColors = skills.map((skill) => {
-    // اگر رنگ‌ها تموم شد، دوباره آرایه رنگ‌ها رو کپی می‌کنیم
-    if (colors.length === 0) colors.push(...COLORS);
-    // انتخاب رندوم رنگ و حذف از آرایه برای جلوگیری از تکرار
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    const colorClass = colors.splice(randomIndex, 1)[0];
-    return { ...skill, colorClass };
-  });
-  return skillsWithColors;
-};
-
 const Skills = () => {
+  // States and Refs
+
   const [manualFetch, setManualFetch] = useState(true);
-  const [skills, setSkills] = useState<(Skill & { colorClass: string })[]>([]);
+  const [skills, setSkills] = useState<(Skill & { color: string; darkColor: string })[]>([]);
+
   const hasFetchedFromAPI = useRef(false);
+
+  // Constants
+
+  const COLOR_PAIRS = [
+    { light: "#3B82F6", dark: "#60A5FA" }, // blue
+    { light: "#10B981", dark: "#34D399" }, // green
+    { light: "#8B5CF6", dark: "#A78BFA" }, // purple
+    { light: "#EF4444", dark: "#F87171" }, // red
+    { light: "#F59E0B", dark: "#FBBF24" }, // yellow
+    { light: "#6366F1", dark: "#818CF8" }, // indigo
+    { light: "#EC4899", dark: "#F472B6" }, // pink
+    { light: "#14B8A6", dark: "#2DD4BF" }, // teal
+    { light: "#F97316", dark: "#FB923C" }, // orange
+    { light: "#06B6D4", dark: "#22D3EE" }, // cyan
+    { light: "#84CC16", dark: "#A3E635" }, // lime
+    { light: "#F43F5E", dark: "#FB7185" }, // rose
+    { light: "#A855F7", dark: "#C084FC" }, // violet
+    { light: "#0EA5E9", dark: "#38BDF8" }, // sky
+    { light: "#64748B", dark: "#94A3B8" }, // slate
+  ];
+
+  // Hooks
+
+  const { t } = useTranslation();
 
   const { mutate } = useFetch<SkillsResponse>(
     "get",
@@ -64,6 +75,47 @@ const Skills = () => {
     }
   );
 
+  // Functions
+
+  const assignUniqueColors = (skills: Skill[]) => {
+    const availableColorPairs = [...COLOR_PAIRS];
+    const skillsWithColors = skills.map((skill) => {
+      if (availableColorPairs.length === 0) {
+        
+        const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+        const randomDarkColor = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+        return {
+          ...skill,
+          color: randomColor,
+          darkColor: randomDarkColor
+        };
+      }
+
+      const randomIndex = Math.floor(Math.random() * availableColorPairs.length);
+      const colorPair = availableColorPairs.splice(randomIndex, 1)[0];
+      return { 
+        ...skill, 
+        color: colorPair.light,
+        darkColor: colorPair.dark
+      };
+    });
+    return skillsWithColors;
+  };
+
+  const getProficiencyText = (level: number) => {
+    if (level >= 90) return t("expert");
+    if (level >= 70) return t("advanced");
+    if (level >= 50) return t("intermediate");
+    return t("beginner");
+  };
+
+  const getGradientStyle = (color: string, darkColor: string, level: number) => {
+    return {
+      background: `linear-gradient(90deg, ${color} ${level}%, ${color}22 ${level}%)`,
+    };
+  };
+
+
   useEffect(() => {
     let mounted = true;
 
@@ -77,10 +129,9 @@ const Skills = () => {
         );
 
         if (cachedSkills.success && cachedSkills.data?.data) {
-          console.log("Using cached global skills");
-          if (mounted) setSkills(assignUniqueColors(cachedSkills.data.data.skills));
+          if (mounted)
+            setSkills(assignUniqueColors(cachedSkills.data.data.skills));
         } else {
-          console.log("No cached skills → fetching from API...");
           setManualFetch(false);
           mutate();
         }
@@ -91,7 +142,6 @@ const Skills = () => {
           ?.split("=")[1];
 
         if (skillsCookie === "1") {
-          console.log("Skills cookie changed → refetching...");
           setManualFetch(false);
           mutate();
         }
@@ -110,30 +160,51 @@ const Skills = () => {
   }, [mutate, manualFetch]);
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm w-full mx-auto">
-      <h2 className="text-lg font-bold mb-3 text-center md:text-left">مهارت‌ها</h2>
-      {skills.length > 0 ? (
-        <div className="space-y-3">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t("skills")}</h2>
+        <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded">
+          {skills.length}{" "} {t("count_skills")}
+        </div>
+      </div>
+      
+      {skills.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {skills.map((skill, index) => (
-            <div key={index}>
-              <div className="flex justify-between text-xs font-medium text-gray-700 mb-1">
-                <span>{skill.name}</span>
-                <span>{skill.level}%</span>
+            <div 
+              key={index} 
+              className="group p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200 hover:shadow-sm dark:hover:shadow-sm-dark"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {skill.name}
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                    {skill.level}%
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">
+                    {getProficiencyText(skill.level)}
+                  </span>
+                </div>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                <div
-                  className={`h-1.5 rounded-full ${skill.colorClass}`}
-                  style={{
-                    width: `${skill.level}%`,
-                    transition: "width 1s ease-in-out",
-                  }}
-                />
+              
+              <div className="space-y-2">
+                <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-2 rounded-full transition-all duration-1000 ease-out group-hover:scale-[1.02] transform"
+                    style={getGradientStyle(skill.color, skill.darkColor, skill.level)}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                  <span>0%</span>
+                  <span className="sm:hidden">{getProficiencyText(skill.level)}</span>
+                  <span>100%</span>
+                </div>
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <p className="text-sm text-gray-500 text-center">هیچ مهارتی ثبت نشده است</p>
       )}
     </div>
   );
