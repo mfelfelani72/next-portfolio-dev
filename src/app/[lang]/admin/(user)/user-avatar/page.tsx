@@ -1,10 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Hooks
 
 import { useFetch } from "@/libs/api/useFetch";
+
+// Zustand
+
+import { useLangStore } from "@/app/[lang]/stores/LangStore";
 
 export default function AvatarPage() {
   // States and Refs
@@ -16,9 +21,13 @@ export default function AvatarPage() {
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const { schemaLocale } = useLangStore();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Hooks
+
+  const { t } = useTranslation();
 
   const { data: avatarData } = useFetch("get", {
     endPoint: `/api/resume/avatar/`,
@@ -38,7 +47,7 @@ export default function AvatarPage() {
   );
 
   // Functions
-  
+
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -52,12 +61,12 @@ export default function AvatarPage() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setError("لطفاً یک فایل تصویری انتخاب کنید");
+      setError("please_enter_media");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("حجم فایل باید کمتر از ۵ مگابایت باشد");
+      setError("error_size");
       return;
     }
 
@@ -68,7 +77,7 @@ export default function AvatarPage() {
       const base64 = await fileToBase64(file);
       setSelectedImage(base64);
     } catch {
-      setError("خطا در تبدیل فایل");
+      setError("error_in_convert");
     } finally {
       setUploading(false);
     }
@@ -82,7 +91,7 @@ export default function AvatarPage() {
       if (fileInputRef.current) fileInputRef.current.value = "";
       setError("");
     } catch (error) {
-      setError("خطا در ذخیره‌سازی");
+      setError("error_in_storage");
     } finally {
       setSaving(false);
     }
@@ -134,10 +143,10 @@ export default function AvatarPage() {
         {/* ===== Page Header ===== */}
         <div className="mb-6 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            آواتار پروفایل
+            {t("avatar")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg max-w-xl">
-            تصویر شخصی خود را برای ایجاد تاثیر اولیه حرفه‌ای انتخاب کنید
+            {t("avatar_suggest")}
           </p>
         </div>
 
@@ -146,7 +155,7 @@ export default function AvatarPage() {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-5 sticky top-4">
               <h2 className="text-lg font-semibold mb-4 dark:text-white text-center">
-                پیش‌نمایش
+                {t("preview")}
               </h2>
 
               {/* Avatar Preview */}
@@ -164,13 +173,13 @@ export default function AvatarPage() {
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 text-sm">
-                      بدون تصویر
+                      {t("without_picture")}
                     </div>
                   )}
 
                   {uploading && (
                     <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-white text-xs">
-                      در حال پردازش...
+                      {t("progressing")}
                     </div>
                   )}
                 </div>
@@ -183,7 +192,7 @@ export default function AvatarPage() {
                       disabled={saving}
                       className="px-3 py-1.5 bg-green-600 text-white rounded-full text-xs shadow"
                     >
-                      {saving ? "ذخیره..." : "تأیید"}
+                      {saving ? t("saving") : t("save")}
                     </button>
 
                     <button
@@ -191,7 +200,7 @@ export default function AvatarPage() {
                       disabled={saving}
                       className="px-3 py-1.5 bg-gray-600 text-white rounded-full text-xs shadow"
                     >
-                      انصراف
+                      {t("cancel")}
                     </button>
                   </div>
                 )}
@@ -201,8 +210,10 @@ export default function AvatarPage() {
               <div className="space-y-2 text-center text-sm">
                 {avatarData?.updatedAt && !selectedImage && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-xs">
-                    آخرین بروزرسانی:{" "}
-                    {new Date(avatarData.updatedAt).toLocaleDateString("fa-IR")}
+                    {t("last_update")}{" "}
+                    {new Date(avatarData.updatedAt).toLocaleDateString(
+                      schemaLocale
+                    )}
                   </div>
                 )}
               </div>
@@ -214,7 +225,7 @@ export default function AvatarPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-bold dark:text-white">
-                  آپلود آواتار جدید
+                  {t("upload_new_avatar")}
                 </h2>
               </div>
 
@@ -238,34 +249,26 @@ export default function AvatarPage() {
                     className="hidden"
                   />
 
-                  <p className="text-base font-semibold mb-1 dark:text-gray-200">
-                    عکس جدید را اینجا رها کنید
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">
-                    یا
+                  <p className="text-base font-semibold mb-3 dark:text-gray-200">
+                    {t("drop_photo_here")}
                   </p>
 
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm shadow"
                   >
-                    انتخاب فایل
+                    {t("choose_file")}
                   </button>
 
                   <p className="mt-4 text-xs text-gray-600 dark:text-gray-400">
-                    فرمت‌های مجاز: JPG, PNG, GIF, WEBP — حداکثر ۵ مگابایت
+                    {t("allow_format_picture")}
                   </p>
-                </div>
-
-                {/* Note */}
-                <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-5 text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-                  این آواتار برای تمام زبان‌ها یکسان نمایش داده می‌شود.
                 </div>
 
                 {/* Error under uploader */}
                 {error && (
                   <div className="mt-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-3 py-2 rounded-lg text-xs text-center">
-                    {error}
+                    {t(error)}
                   </div>
                 )}
               </div>

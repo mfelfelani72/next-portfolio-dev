@@ -57,23 +57,33 @@ export const useLangStore = create<LangState>()(
     (set, get) => ({
       lang: "en",
       dir: languages.en.dir,
+      locale: languages.en.locale,
+      schemaLocale: languages.en.schemaLocale,
+      name: languages.en.name,
+      flag: languages.en.flag,
+      nativeName: languages.en.nativeName,
       isInitialized: false,
-      refreshKey: 0, // 🔹 اضافه شد
+      refreshKey: 0,
 
       setLang: (newLang: Lang) => {
-        const dir = languages[newLang].dir;
+        const langData = languages[newLang];
 
         set({
           lang: newLang,
-          dir,
-          refreshKey: get().refreshKey + 1, // 🔹 trigger برای کامپوننت‌ها
+          dir: langData.dir,
+          locale: langData.locale,
+          schemaLocale: langData.schemaLocale,
+          name: langData.name,
+          flag: langData.flag,
+          nativeName: langData.nativeName,
+          refreshKey: get().refreshKey + 1,
         });
 
         if (isBrowser()) {
           const langCookieValue = JSON.stringify({
             state: {
               lang: newLang,
-              dir: dir,
+              dir: langData.dir,
             },
           });
 
@@ -120,6 +130,11 @@ export const useLangStore = create<LangState>()(
         set({
           lang: finalLang,
           dir: finalDir,
+          locale: languages[finalLang].locale,
+          schemaLocale: languages[finalLang].schemaLocale,
+          name: languages[finalLang].name,
+          flag: languages[finalLang].flag,
+          nativeName: languages[finalLang].nativeName,
           isInitialized: true,
         });
       },
@@ -130,8 +145,13 @@ export const useLangStore = create<LangState>()(
       partialize: (state) => ({
         lang: state.lang,
         dir: state.dir,
+        locale: state.locale,
+        schemaLocale: state.schemaLocale,
+        name: state.name,
+        flag: state.flag,
+        nativeName: state.nativeName,
         isInitialized: state.isInitialized,
-        refreshKey: state.refreshKey, // 🔹 اضافه شد
+        refreshKey: state.refreshKey,
       }),
     }
   )

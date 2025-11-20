@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/app/button";
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/app/avatar";
 import { LogoutIcon } from "forma-ui";
 

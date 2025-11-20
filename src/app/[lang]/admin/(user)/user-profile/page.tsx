@@ -9,6 +9,7 @@ import { useFetch } from "@/libs/api/useFetch";
 // Interfaces
 
 import { languages } from "@/configs/language";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Profile() {
   // States
@@ -24,6 +25,8 @@ export default function Profile() {
   });
 
   // Hooks
+
+  const { t } = useTranslation();
 
   const { data } = useFetch("get", {
     endPoint: `/api/resume/${activeLang}/profile/`,
@@ -49,7 +52,7 @@ export default function Profile() {
       setError("");
       return profile;
     } catch {
-      setError("خطا در ذخیره‌سازی");
+      setError("error_in_storage");
     } finally {
       setSaving(false);
     }
@@ -74,16 +77,16 @@ export default function Profile() {
         {/* Header */}
         <div className="mb-6 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            Profile Settings
+            {t("profile")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-base max-w-xl">
-            Manage your professional profile information across different languages
+            {t("profile_slogan")}
           </p>
 
           {/* Error Display */}
           {error && (
             <div className="mt-4 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg p-3 text-sm">
-              {error}
+              {t(error)}
             </div>
           )}
         </div>
@@ -93,7 +96,7 @@ export default function Profile() {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-5 sticky top-6">
               <h2 className="text-lg font-semibold mb-4 dark:text-white text-center">
-                Language
+                {t("language")}
               </h2>
               <div className="space-y-2">
                 {Object.entries(languages).map(([langKey, langData]) => (
@@ -152,9 +155,11 @@ export default function Profile() {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold dark:text-white">Profile Information</h2>
+                  <h2 className="text-lg font-bold dark:text-white">
+                    {t("profile_information")}
+                  </h2>
                   <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                    Update your personal and professional details
+                    {t("profile_information_slogan")}
                   </p>
                 </div>
               </div>
@@ -162,38 +167,50 @@ export default function Profile() {
               {/* Form Content */}
               <div className="p-6 md:p-7 space-y-4">
                 <div>
-                  <label className="text-sm font-semibold mb-1 dark:text-gray-300">Full Name</label>
+                  <label className="text-sm font-semibold mb-1 dark:text-gray-300">
+                    {t("full_name")}
+                  </label>
                   <input
                     type="text"
                     value={profile.name}
-                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                    placeholder="Enter your full name"
+                    onChange={(e) =>
+                      setProfile({ ...profile, name: e.target.value })
+                    }
+                    placeholder={t("enter_full_name")}
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500 transition-all duration-150 shadow-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold mb-1 dark:text-gray-300">Professional Title</label>
+                  <label className="text-sm font-semibold mb-1 dark:text-gray-300">
+                    {t("professional_title")}
+                  </label>
                   <input
                     type="text"
                     value={profile.title}
-                    onChange={(e) => setProfile({ ...profile, title: e.target.value })}
-                    placeholder="e.g., Senior Frontend Developer"
+                    onChange={(e) =>
+                      setProfile({ ...profile, title: e.target.value })
+                    }
+                    placeholder={t("professional_title_ex")}
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500 transition-all duration-150 shadow-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold mb-1 dark:text-gray-300">Professional Summary</label>
+                  <label className="text-sm font-semibold mb-1 dark:text-gray-300">
+                    {t("professional_summary")}
+                  </label>
                   <textarea
                     value={profile.summary}
-                    onChange={(e) => setProfile({ ...profile, summary: e.target.value })}
-                    placeholder="Write a compelling summary..."
+                    onChange={(e) =>
+                      setProfile({ ...profile, summary: e.target.value })
+                    }
+                    placeholder={t("professional_summary_pl")}
                     rows={5}
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500 transition-all duration-150 shadow-sm resize-vertical"
                   />
                   <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    <span>Brief but impactful</span>
+                    <span>{t("brief_but_impactful")}</span>
                     <span>{profile.summary.length}/500</span>
                   </div>
                 </div>
@@ -212,10 +229,21 @@ export default function Profile() {
                           fill="none"
                           viewBox="0 0 24 24"
                         >
-                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"></circle>
-                          <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75"></path>
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            className="opacity-25"
+                          ></circle>
+                          <path
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            className="opacity-75"
+                          ></path>
                         </svg>
-                        Saving...
+                        {t("saving")}
                       </span>
                     ) : (
                       <span className="flex items-center">
@@ -225,9 +253,14 @@ export default function Profile() {
                           stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
-                        Save Profile
+                        {t("save")}
                       </span>
                     )}
                   </button>

@@ -26,9 +26,14 @@ export type Dictionary = Record<
 export interface LangState {
   lang: Lang;
   dir: "ltr" | "rtl";
+  locale: string;
+  schemaLocale: string;
+  name: string;
+  flag: string;
+  nativeName: string;
   refreshKey: number;
   isInitialized: boolean;
   setLang: (newLang: Lang) => void;
   initializeLang: (langFromUrl?: string) => void;
-  triggerRefresh?: () => void; 
+  triggerRefresh?: () => void;
 }

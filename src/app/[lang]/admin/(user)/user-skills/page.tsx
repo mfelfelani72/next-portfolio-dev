@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 // Hooks
 
 import { useFetch } from "@/libs/api/useFetch";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Interfaces
 
@@ -26,6 +27,8 @@ export default function SkillsPage({ lang }: SkillsTabProps) {
   const [error, setError] = useState("");
 
   // Hooks
+
+  const {t} = useTranslation();
 
   const { data } = useFetch("get", {
     endPoint: `/api/resume/skills/`,

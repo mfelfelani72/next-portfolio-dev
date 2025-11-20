@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 // Hooks
 
 import { useFetch } from "@/libs/api/useFetch";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Interfaces
 
@@ -22,13 +23,15 @@ export default function Certifications() {
 
   const [manualCertification, setManualCertification] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   const [certificationsData, setCertificationsData] =
     useState<CertificationsData>({
       certifications: [],
     });
 
   // Hooks
+
+  const { t } = useTranslation();
 
   const { data } = useFetch("get", {
     endPoint: `/api/resume/certifications/`,
@@ -45,7 +48,7 @@ export default function Certifications() {
     }
   );
 
- // Functions
+  // Functions
 
   const addCertification = () =>
     setCertificationsData((prev) => ({
@@ -99,10 +102,10 @@ export default function Certifications() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-6 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            گواهینامه‌ها
+            {t("certifications")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-base max-w-xl">
-            مدارک و گواهینامه‌های معتبر خود را برای تقویت رزومه اضافه کنید
+            {t("certifications_slogan")}
           </p>
         </div>
 
@@ -111,7 +114,7 @@ export default function Certifications() {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-5 sticky top-6">
               <h2 className="text-lg font-semibold mb-4 dark:text-white text-center">
-                گواهینامه‌ها
+                {t("certifications")}
               </h2>
 
               {/* Stats */}
@@ -121,16 +124,16 @@ export default function Certifications() {
                     {certificationsData.certifications.length}
                   </div>
                   <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                    گواهینامه ثبت شده
+                    {t("registered_certificate")}
                   </p>
                 </div>
 
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
                   <p className="text-xs text-green-700 dark:text-green-300 font-medium">
-                    نکات مهم
+                    {t("important_point")}
                   </p>
                   <p className="text-xs text-green-600 dark:text-green-400 mt-1 leading-relaxed">
-                    گواهینامه‌های معتبر و مرتبط با فعالیت خود را اضافه کنید
+                    {t("important_point_certificate")}
                   </p>
                 </div>
               </div>
@@ -159,10 +162,10 @@ export default function Certifications() {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold dark:text-white">
-                      مدیریت گواهینامه‌ها
+                      {t("manage_certifications")}
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                      اضافه، ویرایش یا حذف کنید
+                      {t("add_remove_edit")}
                     </p>
                   </div>
                 </div>
@@ -188,16 +191,16 @@ export default function Certifications() {
                       </svg>
                     </div>
                     <h3 className="text-md font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      هیچ گواهینامه‌ای ثبت نشده
+                      {t("no_certificate_registered")}
                     </h3>
                     <p className="text-gray-500 dark:text-gray-500 text-sm mb-5">
-                      اولین گواهینامه خود را اضافه کنید
+                      {t("add_first_certification")}
                     </p>
                     <button
                       onClick={addCertification}
                       className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-md text-sm"
                     >
-                      افزودن اولین گواهینامه
+                      {t("add_certificate")}
                     </button>
                   </div>
                 ) : (
@@ -219,11 +222,11 @@ export default function Certifications() {
                           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-xs font-medium mb-1 dark:text-gray-300">
-                                عنوان گواهینامه
+                                {t("title_certificate")}
                               </label>
                               <input
                                 type="text"
-                                placeholder="مثال: AWS Certified Architect"
+                                placeholder={t("title_certificate_ex")}
                                 value={cert.title}
                                 onChange={(e) =>
                                   updateCertification(
@@ -238,11 +241,11 @@ export default function Certifications() {
 
                             <div>
                               <label className="block text-xs font-medium mb-1 dark:text-gray-300">
-                                سال دریافت
+                                {t("year_received")}
                               </label>
                               <input
                                 type="text"
-                                placeholder="مثال: ۱۴۰۲"
+                                placeholder={t("year_received_ex")}
                                 value={cert.year}
                                 onChange={(e) =>
                                   updateCertification(
@@ -275,7 +278,6 @@ export default function Certifications() {
                                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                 />
                               </svg>
-                              حذف
                             </button>
                           </div>
                         </div>
@@ -305,7 +307,7 @@ export default function Certifications() {
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                         />
                       </svg>
-                      افزودن گواهینامه جدید
+                      {t("new")}
                     </button>
 
                     {/* Save Button */}
@@ -335,7 +337,7 @@ export default function Certifications() {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                           </svg>
-                          در حال ذخیره...
+                          {t("saving")}
                         </>
                       ) : (
                         <>
@@ -352,7 +354,7 @@ export default function Certifications() {
                               d="M5 13l4 4L19 7"
                             />
                           </svg>
-                          ذخیره تغییرات
+                          {t("save")}
                         </>
                       )}
                     </button>
