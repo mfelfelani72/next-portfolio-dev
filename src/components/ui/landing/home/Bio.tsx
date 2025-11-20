@@ -18,23 +18,35 @@ const Bio = ({ params }: { params: { lang: Lang } }) => {
   return (
     <>
       {user && (
-        <div className="md:col-span-2 bg-white rounded-xl p-5 shadow-sm">
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="w-14 h-14 rounded-lg bg-gradient-to-tr from-indigo-600 to-pink-500 flex items-center justify-center font-bold text-white text-xl shrink-0">
-              {user?.name?.includes(" ")
-                ? user.name
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase())
-                    .join("")
-                : user?.name?.charAt(0).toUpperCase()}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white text-xl shadow-lg">
+                {user?.name?.includes(" ")
+                  ? user.name
+                      .split(" ")
+                      .map((word) => word.charAt(0).toUpperCase())
+                      .join("")
+                  : user?.name?.charAt(0).toUpperCase()}
+              </div>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
-              <h1 className="text-xl font-bold">{user.name}</h1>
-              <div className="text-xs text-indigo-600 font-medium mt-1">
-                {user.title}
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="mb-4">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {user.name}
+                </h1>
+                <div className="text-sm text-blue-600 dark:text-blue-400 font-medium mt-1">
+                  {user.title}
+                </div>
               </div>
-              <p className="mt-2 text-sm text-gray-700">{user.summary}</p>
+
+              {/* Summary */}
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
+                {user.summary}
+              </p>
             </div>
           </div>
         </div>

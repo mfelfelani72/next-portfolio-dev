@@ -1,12 +1,30 @@
 {
   "home": "خانه",
-  "projects": "بروژه ها",
   "blogs": "بلاگ ها",
-  "certifications":"مدارک",
+
+  "certifications": "مدارک",
+  "count_certifications": "مدرک",
+
   "skills": "مهارتها",
   "count_skills": "مهارت",
-  "network": "شبکه",
-  "certs": "گواهینامه ها",
+  "expert": "متخصص",
+  "advanced": "پیشرفته",
+  "intermediate": "متوسط",
+  "beginner": "مبتدی",
+
+  "projects": "پروژه ها",
+  "count_projects": "پروژه",
+  "view_project": "نمایش پروژه",
+  "techs": "تکنولوژی",
+
   "languages": "زبان ها",
-  "contact": "ارتباط با من"
+  "count_languages": "زبان",
+
+  "contact": "ارتباط با من",
+  "get_in_touch": "تماس بگیرید",
+  "contact_slogan": "بیایید چیزی شگفت‌انگیز بسازیم",
+  "email": "ایمیل",
+  "linkedin": "لینکدین",
+  "github": "گیت هاب",
+  "telegram": "تلگرام"
 }

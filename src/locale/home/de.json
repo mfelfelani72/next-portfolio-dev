@@ -1,12 +1,30 @@
 {
   "home": "Startseite",
   "blogs": "Blogs",
-  "certifications":"Zertifizierungen",
+
+  "certifications": "Zertifizierungen",
+  "count_certifications": "Zertifizierungen",
+
   "skills": "Fähigkeiten",
   "count_skills": "Fähigkeiten",
+  "expert": "Experte",
+  "advanced": "Fortgeschritten",
+  "intermediate": "Mittelstufe",
+  "beginner": "Anfänger",
+
   "projects": "Projekte",
-  "network": "Netzwerk",
-  "certs": "Zertifikate",
+  "count_projects": "Projekte",
+  "view_project": "Projekt ansehen",
+  "techs": "Technologien",
+
   "languages": "Sprachen",
-  "contact": "Kontakt"
+  "count_languages": "Sprachen",
+
+  "contact": "Kontakt",
+  "get_in_touch": "Nehmen Sie Kontakt auf",
+  "contact_slogan": "Lasst uns etwas Großartiges erschaffen.",
+    "email": "Email",
+  "linkedin": "LinkedIn",
+  "github": "GitHub",
+  "telegram": "Telegram"
 }

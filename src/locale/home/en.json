@@ -2,7 +2,8 @@
   "home": "Home",
   "blogs": "Blogs",
 
-  "certifications":"Certifications",
+  "certifications": "Certifications",
+  "count_certifications": "Certifications",
 
   "skills": "Skills",
   "count_skills": "Skills",
@@ -11,10 +12,20 @@
   "intermediate": "Intermediate",
   "beginner": "Beginner",
 
-
   "projects": "Projects",
-  "network": "Network",
-  "certs": "Certs",
+  "count_projects": "Projects",
+  "view_project": "View Project",
+  "techs": "techs",
+
   "languages": "Languages",
-  "contact": "Contact"
+  "count_languages": "Languages",
+
+  "contact": "Contact",
+  "get_in_touch": "Get In Touch",
+  "contact_slogan": "Let's build something amazing",
+  "email": "Email",
+  "linkedin": "LinkedIn",
+  "github": "GitHub",
+  "telegram": "Telegram"
+  
 }
