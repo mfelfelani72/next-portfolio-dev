@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 // Hooks
 
 import { useFetch } from "@/libs/api/useFetch";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Interfaces
 
@@ -23,9 +24,13 @@ export default function Projects() {
   const [saving, setSaving] = useState(false);
   const [manualProjects, setManualProjects] = useState(true);
   const [error, setError] = useState("");
-  const [uploadingImages, setUploadingImages] = useState<{ [key: number]: boolean }>({});
+  const [uploadingImages, setUploadingImages] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   // Hooks
+
+  const { t } = useTranslation();
 
   const { data } = useFetch("get", { endPoint: `/api/resume/projects/` });
 
@@ -36,7 +41,7 @@ export default function Projects() {
   );
 
   // Functions
-  
+
   const executeMutation = async () => {
     try {
       await mutateProjects();
@@ -44,7 +49,7 @@ export default function Projects() {
       setError("");
       return { projects };
     } catch {
-      setError("خطا در ذخیره‌سازی");
+      setError("error_in_storage");
     } finally {
       setSaving(false);
     }
@@ -56,11 +61,19 @@ export default function Projects() {
   };
 
   const addProject = () =>
-    setProjects([...projects, { title: "", description: "", link: "", technologies: [], image: "" }]);
+    setProjects([
+      ...projects,
+      { title: "", description: "", link: "", technologies: [], image: "" },
+    ]);
 
-  const removeProject = (i: number) => setProjects(projects.filter((_, index) => index !== i));
+  const removeProject = (i: number) =>
+    setProjects(projects.filter((_, index) => index !== i));
 
-  const updateProjectField = (index: number, field: keyof Project, value: any) => {
+  const updateProjectField = (
+    index: number,
+    field: keyof Project,
+    value: any
+  ) => {
     const arr = [...projects];
     arr[index][field] = value;
     setProjects(arr);
@@ -68,11 +81,11 @@ export default function Projects() {
 
   const handleImageUpload = async (index: number, file: File) => {
     if (!file.type.startsWith("image/")) {
-      setError("لطفاً یک فایل تصویری انتخاب کنید");
+      setError("please_enter_media");
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
-      setError("حجم فایل باید کمتر از ۲ مگابایت باشد");
+      setError("error_size");
       return;
     }
 
@@ -113,11 +126,11 @@ export default function Projects() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-            پروژه‌ها و نمونه کارها
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+            {t("projects")}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
-            پروژه‌های برجسته و نمونه کارهای خود را به نمایش بگذارید
+          <p className="text-gray-600 dark:text-gray-400 text-base max-w-2xl">
+            {t("projects_slogan")}
           </p>
         </div>
 
@@ -126,27 +139,39 @@ export default function Projects() {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 sticky top-6">
               <h2 className="text-xl font-semibold mb-6 dark:text-white flex items-center justify-center">
-                <svg className="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                <svg
+                  className="w-6 h-6 mr-2 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
                 </svg>
-                آمار پروژه‌ها
+                {t("projects")}
               </h2>
 
               <div className="space-y-4 text-center">
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{projects.length}</div>
-                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">پروژه ثبت شده</p>
-                </div>
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-                  <div className="text-lg font-bold text-green-600 dark:text-green-400">{projects.filter((p) => p.image).length}</div>
-                  <p className="text-sm text-green-700 dark:text-green-300 mt-1">پروژه دارای تصویر</p>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {projects.length}
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                    {t("registered_projects")}
+                  </p>
                 </div>
 
                 {/* Sidebar notes */}
                 <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-                  <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">نکات مهم</p>
+                  <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
+                    {t("important_point")}
+                  </p>
                   <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 leading-relaxed">
-                    از تصاویر با کیفیت و توضیحات کامل استفاده کنید
+                    {t("important_point_projects")}
                   </p>
                 </div>
               </div>
@@ -161,13 +186,27 @@ export default function Projects() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 mr-4">
-                      <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                      <svg
+                        className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                        />
                       </svg>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold dark:text-white">مدیریت پروژه‌ها</h2>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">پروژه‌های خود را اضافه، ویرایش یا حذف کنید</p>
+                      <h2 className="text-xl font-bold dark:text-white">
+                        {t("manage_projects")}
+                      </h2>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                        {t("add_remove_edit")}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -176,7 +215,7 @@ export default function Projects() {
               {/* Error Message */}
               {error && (
                 <div className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-6 py-4">
-                  {error}
+                  {t(error)}
                 </div>
               )}
 
@@ -185,41 +224,72 @@ export default function Projects() {
                 {projects.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                      <svg
+                        className="w-12 h-12 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1}
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                        />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">هیچ پروژه‌ای ثبت نشده است</h3>
-                    <p className="text-gray-500 dark:text-gray-500 text-sm mb-6">برای شروع، اولین پروژه خود را اضافه کنید</p>
+                    <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                      {t("no_projects_registered")}
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-500 text-sm mb-6">
+                      {t("add_first_projects")}
+                    </p>
                     <button
                       onClick={addProject}
                       className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg font-medium"
                     >
-                      افزودن اولین پروژه
+                      {t("add_project")}
                     </button>
                   </div>
                 ) : (
                   <div className="space-y-6">
                     {projects.map((project, index) => (
-                      <div key={index} className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 overflow-hidden">
+                      <div
+                        key={index}
+                        className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 overflow-hidden"
+                      >
                         {/* Single Project */}
                         <div className="p-6">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">{index + 1}</div>
+                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                {index + 1}
+                              </div>
                               <div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">پروژه {index + 1}</h3>
-                                {project.title && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{project.title}</p>}
+                                {project.title && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    {project.title}
+                                  </p>
+                                )}
                               </div>
                             </div>
                             <button
                               onClick={() => removeProject(index)}
                               className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center font-medium"
                             >
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
                               </svg>
-                              حذف پروژه
                             </button>
                           </div>
 
@@ -228,27 +298,45 @@ export default function Projects() {
                             {/* Left Column - Form */}
                             <div className="space-y-4">
                               <div>
-                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">عنوان پروژه</label>
+                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                                  {t("title_project")}
+                                </label>
                                 <input
                                   type="text"
                                   value={project.title}
-                                  onChange={(e) => updateProjectField(index, "title", e.target.value)}
-                                  placeholder="مثال: سیستم مدیریت محتوای اختصاصی"
+                                  onChange={(e) =>
+                                    updateProjectField(
+                                      index,
+                                      "title",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder={t("title_project_ex")}
                                   className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                                 />
                               </div>
                               <div>
-                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">لینک پروژه</label>
+                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                                  {t("link_project")}
+                                </label>
                                 <input
                                   type="text"
                                   value={project.link}
-                                  onChange={(e) => updateProjectField(index, "link", e.target.value)}
+                                  onChange={(e) =>
+                                    updateProjectField(
+                                      index,
+                                      "link",
+                                      e.target.value
+                                    )
+                                  }
                                   placeholder="https://example.com"
                                   className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                                 />
                               </div>
                               <div>
-                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">تکنولوژی‌ها</label>
+                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                                  {t("techs")}
+                                </label>
                                 <input
                                   type="text"
                                   value={project.technologies.join(", ")}
@@ -256,10 +344,12 @@ export default function Projects() {
                                     updateProjectField(
                                       index,
                                       "technologies",
-                                      e.target.value.split(",").map((t) => t.trim())
+                                      e.target.value
+                                        .split(",")
+                                        .map((t) => t.trim())
                                     )
                                   }
-                                  placeholder="React, Node.js, MongoDB (با کاما جدا کنید)"
+                                  placeholder={t("techs_ex")}
                                   className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                                 />
                               </div>
@@ -268,11 +358,17 @@ export default function Projects() {
                             {/* Right Column - Image and Description */}
                             <div className="space-y-4">
                               <div>
-                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">تصویر پروژه</label>
+                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                                  {t("project_picture")}
+                                </label>
                                 <div className="space-y-3">
                                   {project.image ? (
                                     <div className="relative rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600">
-                                      <img src={project.image} alt="Project cover" className="w-full h-48 object-cover" />
+                                      <img
+                                        src={project.image}
+                                        alt="Project cover"
+                                        className="w-full h-48 object-cover"
+                                      />
                                       <button
                                         onClick={() => removeImage(index)}
                                         className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg transition-all duration-200 shadow-lg"
@@ -283,7 +379,9 @@ export default function Projects() {
                                   ) : (
                                     <div
                                       className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-200 cursor-pointer bg-gray-50 dark:bg-gray-700/50"
-                                      onClick={() => fileInputRefs.current[index]?.click()}
+                                      onClick={() =>
+                                        fileInputRefs.current[index]?.click()
+                                      }
                                     >
                                       <input
                                         ref={setFileInputRef(index)}
@@ -291,27 +389,50 @@ export default function Projects() {
                                         accept="image/*"
                                         onChange={(e) => {
                                           const file = e.target.files?.[0];
-                                          if (file) handleImageUpload(index, file);
+                                          if (file)
+                                            handleImageUpload(index, file);
                                         }}
                                         className="hidden"
                                       />
-                                      <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                      <svg
+                                        className="w-12 h-12 text-gray-400 mx-auto mb-3"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={1}
+                                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        />
                                       </svg>
                                       <p className="text-gray-600 dark:text-gray-400 text-sm">
-                                        {uploadingImages[index] ? "در حال آپلود..." : "برای آپلود تصویر کلیک کنید"}
+                                        {uploadingImages[index]
+                                          ? t("uploading")
+                                          : t("click_upload")}
                                       </p>
-                                      <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">JPG, PNG, GIF (حداکثر ۲ مگابایت)</p>
+                                      <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">
+                                        {t("allow_format_picture")}
+                                      </p>
                                     </div>
                                   )}
                                 </div>
                               </div>
                               <div>
-                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">توضیحات پروژه</label>
+                                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                                  {t("description_project")}
+                                </label>
                                 <textarea
                                   value={project.description}
-                                  onChange={(e) => updateProjectField(index, "description", e.target.value)}
-                                  placeholder="توضیحات کامل درباره پروژه، ویژگی‌ها و دستاوردها..."
+                                  onChange={(e) =>
+                                    updateProjectField(
+                                      index,
+                                      "description",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder={t("description_project_ex")}
                                   rows={4}
                                   className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm resize-vertical"
                                 />
@@ -323,41 +444,75 @@ export default function Projects() {
                     ))}
                   </div>
                 )}
-
-                {/* Save and Add Buttons */}
+                {/* Action Buttons */}
                 {projects.length > 0 && (
-                  <div className="flex flex-col sm:flex-row gap-4 justify-end items-stretch sm:items-center pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
-                    {/* Add Project Button */}
+                  <div className="flex flex-col sm:flex-row gap-3 justify-end items-stretch sm:items-center pt-5 mt-6 border-t border-gray-200 dark:border-gray-700">
+                    {/* Add More */}
                     <button
                       onClick={addProject}
-                      className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center font-medium text-lg order-2 sm:order-1 h-[60px] sm:h-auto"
+                      className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-md text-sm flex items-center justify-center"
                     >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                      <svg
+                        className="w-4 h-4 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
                       </svg>
-                      افزودن پروژه جدید
+                      {t("new")}
                     </button>
 
-                    {/* Save All Button */}
+                    {/* Save Button */}
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow flex items-center justify-center text-lg order-1 sm:order-2 h-[60px] sm:h-auto"
+                      className="w-full sm:w-auto px-7 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 text-white rounded-lg font-medium transition-all duration-200 shadow-md text-sm flex items-center justify-center"
                     >
                       {saving ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
                           </svg>
-                          در حال ذخیره...
+                          {t("saving")}
                         </>
                       ) : (
                         <>
-                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
+                          <svg
+                            className="w-4 h-4 ml-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
-                          ذخیره همه تغییرات
+                          {t("save")}
                         </>
                       )}
                     </button>
