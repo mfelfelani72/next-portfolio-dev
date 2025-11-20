@@ -74,7 +74,7 @@ export default function Contact() {
       case "email":
         return (
           <svg
-            className="w-5 h-5 text-gray-400"
+            className="w-5 h-5 text-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -90,7 +90,7 @@ export default function Contact() {
       case "linkedin":
         return (
           <svg
-            className="w-5 h-5 text-gray-400"
+            className="w-5 h-5 text-white"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -100,7 +100,7 @@ export default function Contact() {
       case "github":
         return (
           <svg
-            className="w-5 h-5 text-gray-400"
+            className="w-5 h-5 text-white"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -110,7 +110,7 @@ export default function Contact() {
       case "telegram":
         return (
           <svg
-            className="w-5 h-5 text-gray-400"
+            className="w-5 h-5 text-white"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -140,13 +140,13 @@ export default function Contact() {
   const getFieldLabel = (field: keyof Contact) => {
     switch (field) {
       case "email":
-        return "ایمیل";
+        return "email";
       case "linkedin":
-        return "لینکدین";
+        return "linkedin";
       case "github":
-        return "گیت‌هاب";
+        return "github";
       case "telegram":
-        return "تلگرام";
+        return "telegram";
       default:
         return "";
     }
@@ -163,18 +163,18 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* هدر یکپارچه */}
+        {/* Header */}
         <div className="mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-            اطلاعات تماس
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+            {t("contact_information")}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
-            راه‌های ارتباطی خود را برای نمایش در رزومه تنظیم کنید
+          <p className="text-gray-600 dark:text-gray-400 text-base max-w-2xl">
+            {t("contact_information_slogan")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* سایدبار */}
+          {/* sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 sticky top-6">
               <h2 className="text-xl font-semibold mb-6 dark:text-white flex items-center justify-center">
@@ -191,48 +191,25 @@ export default function Contact() {
                     d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
                   />
                 </svg>
-                اطلاعات
+                {t("contact")}
               </h2>
 
               <div className="space-y-4 text-center">
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {
-                      Object.values(contact).filter(
-                        (value) => value.trim() !== ""
-                      ).length
-                    }
-                  </div>
-                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                    فیلد پر شده
-                  </p>
-                </div>
-
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-                  <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                    {contact.email ? "✓" : "✗"}
-                  </div>
-                  <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                    ایمیل
-                  </p>
-                </div>
-
                 <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
                   <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
-                    نکات مهم
+                    {t("important_point")}
                   </p>
                   <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 leading-relaxed">
-                    لینک‌های معتبر و به‌روز خود را وارد کنید
+                    {t("important_point_contact")}
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* محتوای اصلی */}
+          {/* main */}
           <div className="lg:col-span-3">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-              {/* هدر محتوا */}
               <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700">
                 <div className="flex items-center">
                   <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 mr-4">
@@ -252,11 +229,10 @@ export default function Contact() {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold dark:text-white">
-                      مدیریت اطلاعات تماس
+                      {t("manage_contact")}
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                      راه‌های ارتباطی خود را برای دسترسی آسان کارفرمایان تنظیم
-                      کنید
+                      {t("manage_contact_slogan")}
                     </p>
                   </div>
                 </div>
@@ -264,10 +240,10 @@ export default function Contact() {
               {/* Error Message */}
               {error && (
                 <div className="px-6 py-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm font-medium border-b border-red-200 dark:border-red-700">
-                  {error}
+                  {t(error)}
                 </div>
               )}
-              {/* فرم اطلاعات تماس */}
+              {/* contact form */}
               <div className="p-6 md:p-8">
                 <div className="space-y-6">
                   {(Object.keys(contact) as Array<keyof Contact>).map(
@@ -285,7 +261,7 @@ export default function Contact() {
 
                           <div className="flex-1">
                             <label className="block text-sm font-medium mb-3 dark:text-gray-300">
-                              {getFieldLabel(field)}
+                              {t(getFieldLabel(field))}
                             </label>
                             <div className="relative">
                               <input
@@ -297,31 +273,7 @@ export default function Contact() {
                                 placeholder={getFieldPlaceholder(field)}
                                 className="w-full p-4 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                               />
-                              {contact[field] && (
-                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                </div>
-                              )}
                             </div>
-
-                            {contact[field] && (
-                              <div className="mt-2 flex items-center gap-2 text-xs text-green-600 dark:text-green-400">
-                                <svg
-                                  className="w-3 h-3"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                                <span>پر شده</span>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -329,7 +281,6 @@ export default function Contact() {
                   )}
                 </div>
 
-                {/* دکمه ذخیره */}
                 <div className="flex justify-end pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
                   <button
                     onClick={handleSave}
@@ -357,7 +308,7 @@ export default function Contact() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
-                        در حال ذخیره...
+                        {t("saving")}
                       </>
                     ) : (
                       <>
@@ -374,7 +325,7 @@ export default function Contact() {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        ذخیره اطلاعات تماس
+                        {t("save")}
                       </>
                     )}
                   </button>

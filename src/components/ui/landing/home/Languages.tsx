@@ -63,10 +63,10 @@ export default function Languages() {
   };
 
   const getProficiencyLevel = (percent: number) => {
-    if (percent >= 90) return "Native";
-    if (percent >= 70) return "Fluent";
-    if (percent >= 50) return "Intermediate";
-    return "Basic";
+    if (percent >= 90) return "native";
+    if (percent >= 70) return "fluent";
+    if (percent >= 50) return "intermediate";
+    return "basic";
   };
 
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function Languages() {
                       {language.name}
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {getProficiencyLevel(language.percent)}
+                      {t(getProficiencyLevel(language.percent))}
                     </p>
                   </div>
                 </div>
