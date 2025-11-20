@@ -19,16 +19,17 @@ const HeaderServer = ({ params = { lang: "en" } }: HeaderServerProps) => {
   return (
     <>
       <header className="fixed inset-x-0 top-4 z-40 px-4">
-        <div className="max-w-5xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl p-3 px-6 flex items-center justify-between shadow-sm">
+        <div className="max-w-5xl mx-auto bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl p-3 px-6 flex items-center justify-between shadow-sm border border-gray-200 dark:border-gray-600">
           <div className="flex items-center gap-4">
             <button
-              className="p-2 rounded-md bg-white shadow-sm"
+              className="p-2 rounded-md bg-white dark:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-600"
               popoverTarget="mobile-menu"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M4 7h16M4 12h16M4 17h16"
-                  stroke="#111827"
+                  stroke="currentColor"
+                  className="text-gray-900 dark:text-gray-100"
                   strokeWidth="1.6"
                   strokeLinejoin="round"
                 />
@@ -40,8 +41,8 @@ const HeaderServer = ({ params = { lang: "en" } }: HeaderServerProps) => {
               popover="auto"
               className="fixed inset-x-4 top-20 z-50 w-[calc(100%-32px)] mt-4 rounded-2xl"
             >
-              <div className="w-full mx-auto bg-white rounded-2xl p-4 shadow-lg border border-gray-200">
-                <div className="pb-2 border-b border-neutral-300">
+              <div className="w-full mx-auto bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="pb-2 border-b border-gray-200 dark:border-gray-600">
                   <UserInfo modal={false} />
                 </div>
 
@@ -52,7 +53,7 @@ const HeaderServer = ({ params = { lang: "en" } }: HeaderServerProps) => {
             </div>
           </div>
 
-          <h1 className="font-medium">SkyTeach</h1>
+          <h1 className="font-medium text-gray-900 dark:text-gray-100">SkyTeach</h1>
 
           <div className="flex gap-2">
             <ThemeSwitcher />

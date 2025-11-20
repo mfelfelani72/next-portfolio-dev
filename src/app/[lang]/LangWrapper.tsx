@@ -13,7 +13,6 @@ export default function LangWrapper({
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-
     if (lang !== langFromUrl) {
       setLang(langFromUrl);
       triggerRefresh?.();
@@ -24,7 +23,11 @@ export default function LangWrapper({
   if (!loaded) return null;
 
   return (
-    <div lang={lang} dir={dir} className="bg-gradient-to-br from-sky-50 to-slate-50">
+    <div
+      lang={lang}
+      dir={dir}
+      className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800"
+    >
       <AppLoading>{children}</AppLoading>
     </div>
   );

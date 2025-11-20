@@ -57,7 +57,7 @@ const LinksClient = ({ items, initialActivePage }: LinksClientProps) => {
             className={`px-3 py-1 rounded-md text-xs font-medium transition transform ${
               isActive(item.id)
                 ? "bg-indigo-600 text-white scale-105 shadow"
-                : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
             }`}
           >
             {item.label}
