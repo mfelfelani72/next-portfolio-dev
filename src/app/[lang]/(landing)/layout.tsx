@@ -49,8 +49,8 @@ export default async function landingLayout({
       <div className="relative min-w-screen h-screen">
         <div className="text-slate-900 text-sm h-full flex flex-col">
           <Header params={{ lang }} />
-          <main className="flex overflow-y-scroll pt-24 pb-12 w-full justify-center items-center">
-            <div className="flex w-full max-w-5xl mx-auto justify-center">{children}</div>
+          <main className="flex-1 overflow-y-scroll pt-24 pb-12 w-full">
+            <div className="max-w-5xl mx-auto">{children}</div>
           </main>
         </div>
       </div>
